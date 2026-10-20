@@ -53,7 +53,7 @@ always walk the declared frame. Minas Ithil's 14 sections:
 | `KEYF` v1 | 15k | 9 key-frame tracks |
 | `SFXS`, `SWFX` | 62k, 40k | FX paths / world FX |
 | `ONLS`, `NLFE` | 488k, 39k | (undecoded) |
-| `PFDG` | 1.5M | nav surface float triples (pathfinding) |
+| `PFDG` | 1.5M | nav surface points + markup records — PARTIAL, below |
 | (none) | 984k | clutter-prop `.mat` paths |
 | `SCRB` | 173k | (undecoded) |
 | `VOLM` | 3.5M | volumes |
@@ -62,6 +62,18 @@ always walk the declared frame. Minas Ithil's 14 sections:
 | `GADB` | 800k | per-region gamedb (`ObjectDB` records; names `minasithil.ss_*` stamp bundles) |
 | (none) | 30.9M | object resource table: 740 `{u16 len, path}` (.inst/.fxp) each + `u32 id, f32 draw_dist, vec3 half_extent, vec3 centre` (bounds, not placements) |
 | `OBJL` v5 | 4.7M | **object list** — the region's named objects |
+
+### PFDG — nav surface — PARTIAL (Andúril)
+
+`{u32 n1, u32 n2}` then `n1 + n2` × 12-byte vec3 slots of nav-surface
+points (~2% sentinel slots skipped on the same grid), then 21-byte
+markup records to EOF in two flavours: `{rgba, u32 a, u32 b, u8 flag,
+u32 -1, u32 -1}` and `{u32 seq, rgba, u32 a, u32 b, u8 flag, u32 -1}`
+(seq counts up monotonically). Minas Ithil: 67,354 real points /
+34,380 records; the point cloud plots as the city's street map —
+CONFIRMED nav-surface semantics. `a`/`b` are small index pairs
+(3,896→3,916, 687→723); what they index is OPEN. `rgba` values run
+the rainbow spectrum — debug colours.
 
 ### OBJL v5 — VERIFIED
 
