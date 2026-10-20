@@ -37,6 +37,34 @@ individual semantics may still be PARTIAL inside a "verified" format.
 
 Loader addresses for the exe-verified formats are in `engine.md`.
 
+## Detailed specs
+
+Full field-level specs per format (provenance: the Andúril
+implementation's evidence docs, mirrored here verbatim):
+
+- Archives/containers: [`arch06.md`](arch06.md) (LTAR),
+  [`embb.md`](embb.md) / [`bndl.md`](bndl.md), [`slvt.md`](slvt.md),
+  [`pck.md`](pck.md)
+- Records/DB: [`gamedb.md`](gamedb.md) (digest), [`bvr.md`](bvr.md),
+  [`scri.md`](scri.md), [`strdb.md`](strdb.md), [`save.md`](save.md),
+  [`subb.md`](subb.md)
+- Geometry/skeleton/animation: [`geometry.md`](geometry.md) (digest),
+  [`mesh.md`](mesh.md), [`inst.md`](inst.md), [`wldmsh.md`](wldmsh.md),
+  [`skel.md`](skel.md), [`anix.md`](anix.md), [`cres.md`](cres.md)
+- World/regions: [`world.md`](world.md) (digest),
+  [`wldclnt.md`](wldclnt.md), [`objres.md`](objres.md),
+  [`terrain.md`](terrain.md), [`veggrid_sndmap.md`](veggrid_sndmap.md),
+  [`vegtile.md`](vegtile.md), [`hkai.md`](hkai.md)
+- Materials/textures/UI/AV: [`materials.md`](materials.md) (digest),
+  [`mat.md`](mat.md), [`tex.md`](tex.md), [`gfx.md`](gfx.md),
+  [`uis.md`](uis.md), [`uiwd.md`](uiwd.md), [`vid.md`](vid.md),
+  [`vib.md`](vib.md), [`bnk.md`](bnk.md), [`pmo_rcv.md`](pmo_rcv.md),
+  [`fx.md`](fx.md)
+- Script reference (script classes, event surface, event subs):
+  [`../reference/script-classes.md`](../reference/script-classes.md),
+  [`../reference/script-surface.md`](../reference/script-surface.md),
+  [`../reference/scri_event_subs.tsv`](../reference/scri_event_subs.tsv)
+
 ## Format families
 
 - **Containers:** LTAR archives → entries; EMBB bundles → entries;

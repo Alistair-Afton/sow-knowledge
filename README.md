@@ -40,10 +40,13 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
   Rust engine reimplementation
   (in development, not yet publicly released); findings verified
   against the install by its own parsers, probes, and renders.
+  Primary source for file-format and container structure — the
+  per-format spec docs under `formats/` are its evidence docs.
 - **sow-rs** (author: **OnSight**): a parallel Rust/Bevy
   reimplementation, also in development — his field notes are the
-  single largest source of verified semantics here. Where the two
-  projects' work overlapped, claims were validated against retail
+  primary source for gameplay and runtime semantics here (combat,
+  nemesis, traversal, materials/shaders, engine landmarks). Where the
+  two projects' work overlapped, claims were validated against retail
   bytes; every overlap agreed. Credited per-file.
 - Universal-modder field notes ("Goblins of War"), QuickBMS
   `shadow_of_mordor.bms` v0.4, SoW Modding Community ImHex-Patterns /
@@ -63,6 +66,8 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/materials.md` | LTMI `.mat`, TEXR/TEXA/SLVT `.tex*`, shaders, texture conventions |
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
+| `formats/<name>.md` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
+| `reference/` | Script classes, event surface, and event-subscription tables |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |
 | `gameplay/nemesis.md` | Nemesis gamedb categories, captain generation, save data |
