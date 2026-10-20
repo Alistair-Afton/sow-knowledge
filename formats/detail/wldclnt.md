@@ -184,12 +184,18 @@ Section B — spatial tree   (FUN_1406b3664)
            n_b × u16   — index list
          — 207/207 leaves tile byte-exact on desert; radii are round
          draw/stream distances (20000–30000, −1 = unbounded)
-  +...   field0 × interior node (FUN_141cd3e54):
-           {60B header incl. AABB, u32 region_idx→72B runtime recs,
-           u32 flags, u8 n_children} + n_children×16B child refs
-           + u32 n, n×u32 → 96B recs + u32 m, m×u32 → 160B recs
+  +...   field0 × interior node (FUN_141cd3e54, full decode):
+           {0x3C header: vec4 bound (0x20B), u32 flags (bit0 selects
+           node type 3 vs 7, >>1 → subtype), u32 region_idx
+           (0xffffffff = none) into the 0x48-stride region array,
+           u32 n_refs60, u32 n_chain160, u8 n_children}
+           + n_children × 16B child refs (→0x14 runtime records)
+           + n_refs60 × u32 → indices into the 0x60-stride leaf array
+           + n_chain160 × u32 → indices into the 0xA0-stride record
+             array, linked as a chain via +0x90 next / +0x98 parent
   +...   field3 × index node (FUN_141cd401c):
-           {20B header {u32 n,…}} + n×u32 leaf refs + 2×u32 →40B recs
+           {20B header {u32 n,…}} + {u8 n, n×0xC} (FUN_141ccb0ec)
+           + n×u32 leaf refs + 2×u32 →40B recs
          — the trailing "sequential u32 1..n" table seen in raw dumps
            is this leaf-index array
 ```
