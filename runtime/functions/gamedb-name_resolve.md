@@ -1,5 +1,5 @@
 # `0x140d23a40` — public name→record resolver (parsed-token input)
-> **Status:** **partial** — Project Nemesis source. Andúril byte-check: the cited function addresses begin with standard x64 prologues (consistent with real entries); instruction-level decode remains Nemesis-only evidence.
+> **Status:** **partial** — Project Nemesis source. Andúril byte-check: `0x140d23a40` opens with a standard x64 prologue, and **6/7 claimed callees** (`0x140d18ed0`, `0x140d1a480`, `0x140d19e20`, `0x140189898`, `0x140189ec0`, `0x140190bc0`) appear as direct `call rel32` targets inside it — call graph verified. (`0x140d17110` not a direct callee — indirect or transitive.) Instruction semantics remain Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
