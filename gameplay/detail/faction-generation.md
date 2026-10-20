@@ -82,8 +82,33 @@ mission against the seated holder.
   Caravan1_Revenge, CampVendetta, GetGang_Ghuls, Rescue,
   KillArchers_Outpost_01/02, KillCaragors_Vendetta, RescueG_Origin}`;
   `Default_Warchief` → 5 incl. Arena. Names are
-  `Quest/SimEventPredicates` records. `SimEventGenerationTypeWeight`
-  (4 records) shapes per-type weights.
+  `Quest/SimEventPredicates` records.
+- `SimEventGenerationTypeWeight` (4 records — `PowerStruggle`,
+  `PowerStruggle_Act2`, `Hunting`, `Hunting_Act2`) binds each
+  concurrent-job slot to a `Difficulty/VariableFloat`: cells are
+  `catIdx<<20|recIdx` links to unnamed
+  `{f32 job_slot, VariableFloat ref}` rows. The authored curve is the
+  type's inline `Weights` attr (`PowerStruggle`=[10,7,4,0],
+  `Hunting`=[10,7,5,0], `SpawnConditions`=[4,3,2,1,1,1],
+  `Vendettas`=[1,0], `Prisoner`=[1×6], `Gauntlet`=[1000×3,0]) —
+  decreasing, and a 0 slot caps concurrency. (VERIFIED — the row's
+  f32 field is a 1-based slot selector matching the `WeightN` var it
+  binds, not a weight; reading the rows as a `[1,2,3,4]` curve is a
+  known misread.)
+- Difficulty remap lane (VERIFIED): `Difficulty/VariableFloat` names
+  (`SimEvent_PowerStruggle_Weight{1,2,3,4+}`,
+  `SimEvent_Hunting_Weight{1,2,3,4+}`) are resolved per difficulty
+  tier through unnamed
+  `_StructuresDifficultyVariableFloatAdjust` rows
+  `{Variable ref → Combat/Stat/Constant/FloatArray ref}` — each of
+  the five unnamed `Difficulty/Settings` records (ordered by
+  `DifficultyLists`; `Difficulty/WeightTables` names confirm tiers
+  `1Easy/2Normal/3Hard/4Brutal`, fifth = post-launch Gravewalker)
+  links its own adjust rows. SimEvent weights only ship
+  `*_Diff4+`/`_4Brutal` arrays, i.e. only Brutal+ overrides:
+  PowerStruggle `[10,7,4,0]`→`[5,2,0,0]`, Hunting `[10,7,5,0]`→
+  `[2,0,0,0]` — the hardest tier allows roughly one concurrent
+  nemesis job per region. Below Brutal the inline `Weights` apply.
 - `Difficulty/SimEventLifeSpan` exists (cells empty in both records —
   table-driven elsewhere) — corroborates missions having lifespans.
 
