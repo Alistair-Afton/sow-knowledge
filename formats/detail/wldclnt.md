@@ -162,11 +162,18 @@ baraddur `{3,5,1}`): `n_regions` AABBs verified (`seq` = `0..n-1`,
 desert). In that blob every u32 lane satisfies `(x >> 19) <
 placement_count` on desert (100%) — the stream is a sequence of
 `{placement-index, 19-bit payload}` records grouped into sorted runs
-(longest run: 1099 records on MI, all sharing idx 2 first). Exact bit
-framing is still OPEN — the payload is not u16-aligned, not
-u32-count-framed lists, not LEB128-varint clean; it contains f32
-exponent bytes (0x45/0x46/0xc5/0xc6) so part of it may be float data
-interleaved with index records. The `f2`/`f3` counts for large files
+(longest run: 1099 records on MI, all sharing idx 2 first). Byte-level
+analysis (MI): the stream splits into u16 lanes whose low byte is
+dominated by `{0, 0x44-0x48, 0xC4-0xCA}` — i.e. 0, or ~0x44-0x48
+(68±4), or the same values | 0x80 — while the high byte is a small int
+0-7. That reads like per-lane `{u5+ aux, u8 quantized-direction}`
+pairs: a quantized signed component centred on ~68 (±4) with a sign/
+flag bit at 0x80, or 0 for "unset". The same 64-72/196-202 family
+appears at both even and odd u16 positions, so the record granularity
+is 2-byte, not 4-byte. Exact field layout and what the lanes index is
+still OPEN — the earlier `(x>>19)<pl` fit (94-100%) is likely an
+artifact of the small-int high bytes, not a real placement-index
+field. The `f2`/`f3` counts for large files
 (5/6, 5/1, 6/2, 5/1) presumably size two further sub-tables — record
 shapes undetermined. Preserved raw as `tail`.
 

@@ -43,9 +43,11 @@ store an `f3 × u32` permutation of `0..pl`, then `n_regions × 32B
 footer. Grouped files store per-region
 `{AABB32, u32 lo, u32 cnt, cnt × u32 idx}` membership lists covering
 `0..pl`. Large worlds (MI `{17,5,6}`) append a packed blob in which
-every u32 lane decodes as `(x >> 19) < placement_count` — records of
-`{placement-idx, 19-bit payload}` in sorted runs; the payload's exact
-bit framing is OPEN.
+the u16 lanes carry low bytes dominated by `{0, 0x44-0x48, 0xC4-0xCA}`
+(0, ~68±4, or the same | 0x80 — a quantized signed component) with
+small-int high bytes — per-lane direction/aux pairs; the earlier
+`(x>>19)<pl` u32 reading is likely a small-int artifact. Exact
+record layout and what the lanes index is OPEN.
 Andúril's CPU scene render confirms the placements compose a
 coherent city.
 
