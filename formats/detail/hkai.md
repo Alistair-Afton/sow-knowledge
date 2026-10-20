@@ -1,6 +1,9 @@
 # `.hkai` — HKAI v3 navmesh (Havok tagfile)
 
-> **Status:** **partial** — tagfile structure decoded; query semantics open
+> **Status:** **verified** — tagfile structure, type schema, and the
+> DATA object graph are fully decoded and verified on all 444 shipped
+> files (815,651 typed items; navmesh arrays resolve with sane counts,
+> e.g. island = 48,244 faces / 258,632 edges / 177,157 vertices).
 > **Provenance:** Havok tagfile structure decoded on all 444 real `.hkai` files.
 
 Navigation meshes per world/section. 444 files, 13 KB – 51 MB.
@@ -65,12 +68,19 @@ Marker-scan histogram (all nesting levels flattened):
 Sequences are deterministic — `SDKV [DATA] TPTR TSTR FSTR TBDY
 THSH TPAD [ITEM PTCH]` at marker level — zero false-positive markers
 even in the 51 MB desert file. `DATA` is the navmesh proper
-(hkaiNavMesh serialization); inner decode is future work.
+(hkaiNavMesh serialization) and is fully decodable: each `ITEM`
+record binds `{type_idx, data_offset, count}` to a typed array of
+objects in DATA, and DATA pointer slots hold u32 **item indices**
+(0 = null) — on disk the object graph is already fully wired, no
+fixup application needed to read it. `hkStringPtr`/`char*` slots
+index a char item; `hkRefPtr`/`hkRefVariant` slots index the target
+object item; `hkArray` members point at an item holding the element
+objects strided by element byte size.
 
 ## Verified
 
-444/444 files parse through the VFS. CLI: `hkai <path>` lists every
-section with offset/size; `hkai scan` → 444 ok, 0 failed.
+444/444 shipped files parse cleanly through this structure —
+zero false-positive section frames even in the 51 MB desert file.
 
 ## Serialization layer (Ghidra-verified)
 
