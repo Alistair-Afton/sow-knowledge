@@ -34,11 +34,18 @@ trailing name fits 1,104:8 and 6,263/6,556 records agree within 3 m):
 
 11 type hashes share the layout (MI): `0xD238B9DD` 6,233 static
 prefabs, `0xD238B9DE` 225 terrain pieces, `0x00003249` 32 lanterns/
-torches/props, eight more prop hashes 1–20 records each. The tail
-after the table is PARTIAL: `{u32 17, u32 5, u32 6}` + `17 × 32B
-{vec3 min, vec3 max, u32 flag(0/1), u32 seq}` region AABBs, then
-~64KB packed data whose u16 lanes are ~51% valid placement indices
-(likely per-region membership lists; list framing OPEN).
+torches/props, eight more prop hashes 1–20 records each.
+
+The tail is a region spatial index (PARTIAL). Header `{u32
+n_regions, u32 f2, u32 f3}`. Small files (`f2=0, f3=placement_count`)
+store an `f3 × u32` permutation of `0..pl`, then `n_regions × 32B
+{vec3 min, vec3 max, u32 flag(0/1), u32 seq}` AABBs, then a 20B
+footer. Grouped files store per-region
+`{AABB32, u32 lo, u32 cnt, cnt × u32 idx}` membership lists covering
+`0..pl`. Large worlds (MI `{17,5,6}`) append a packed blob in which
+every u32 lane decodes as `(x >> 19) < placement_count` — records of
+`{placement-idx, 19-bit payload}` in sorted runs; the payload's exact
+bit framing is OPEN.
 Andúril's CPU scene render confirms the placements compose a
 coherent city.
 
