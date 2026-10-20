@@ -180,8 +180,11 @@ Section B — spatial tree   (FUN_1406b3664)
   +...   field8(n_leaf) × leaf record:
            {f32 radius, u32 flags, u32 n_vec3, u32 n_a, u32 n_b}   20B
            n_vec3 × 12B vec3 positions
-           n_a × u16   — index list
-           n_b × u16   — index list
+           n_a × u16   — indices into this leaf's own point cloud
+                         (verified < n_vec3 on all 715 main-world
+                         leaves — a polygon index list)
+           n_b × u16   — every value < Section-A n_aabb on every
+                         file; consistent with region-AABB refs
          — 207/207 leaves tile byte-exact on desert; radii are round
          draw/stream distances (20000–30000, −1 = unbounded)
   +...   field0 × interior node (FUN_141cd3e54, full decode):
@@ -191,10 +194,10 @@ Section B — spatial tree   (FUN_1406b3664)
            0x48-stride region array, u8 n_children}
            + n_children × 16B child refs (→0x14 runtime records)
            + n_refs60 × u32 → indices into the 0x60-stride leaf array
+           — on main worlds this lane is the sequential 0..n-1 run:
+             the single root references every leaf (desert: 207)
            + n_chain160 × u32 → indices into the 0xA0-stride record
              array, linked as a chain via +0x90 next / +0x98 parent
-           — on main worlds this lane is the sequential 0..n-1 run
-             seen at tail end in raw dumps (desert: 207 = n_leaf)
   +...   field3 × index node (FUN_141cd401c, full decode):
            {u32 n, u32, u32, u32 ref28_a, u32 ref28_b}
            + n × u32 → indices into the 0xA0-stride record array
@@ -226,11 +229,13 @@ worlds. Tree-header field map (from `FUN_1406b3838`): `[0]`=interior
 count, `[1]`=region skip, `[3]`=index count, `[4]`=trailer alloc,
 `[8]`=leaf count; positions 2/5/10/12 are zero-sentinels.
 
-Semantics: Section B is a two-level bounding-volume / streaming
-index — one interior root over `n_leaf` leaves, each leaf covering a
-spatial cell of `n_vec3` positions + `n_a`/`n_b` placement-index
-lists (u16 lanes seen in earlier byte censuses were the u16 index
-arrays; the 0x44–0x48 "codes" were f32 radii). `f44` leading
+Semantics: Section B is a two-level spatial index — one interior
+root whose `refs60` lane lists every leaf (desert: the sequential
+207-run), each leaf covering a spatial cell defined by `n_vec3`
+positions with a `n_a`-entry polygon index list (a convex
+footprint / nav cell) and a `n_b`-entry lane of region-AABB refs.
+The 0x44–0x48 "codes" seen in byte censuses were f32 radii.
+`f44` leading
 placement records are skipped when the runtime region array is
 bound (`records + f44×0x48`) — consistent with record 0 being a
 material/section header, not a placement.
