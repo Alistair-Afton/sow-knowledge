@@ -200,7 +200,11 @@ Section B — spatial tree   (FUN_1406b3664)
            is this leaf-index array
 ```
 
-Semantics: Section B is a two-level bounding-volume / streaming
+**Corpus coverage of the A+B model:** 62/109 files parse
+byte-clean (layout-A files); the other 47 carry a different tail
+variant — an `f0c`-counted secondary record table (rows like
+`{f32 1.0, u32 1, 0, u32 object_id, …}`) followed by the same
+`{1,3,0,-1,-1,0}` footer. OPEN: that variant's row layout.
 index — one interior root over `n_leaf` leaves, each leaf covering a
 spatial cell of `n_vec3` positions + `n_a`/`n_b` placement-index
 lists (u16 lanes seen in earlier byte censuses were the u16 index
