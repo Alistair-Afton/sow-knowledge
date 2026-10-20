@@ -72,12 +72,19 @@ readers exist in both projects).
 - Existing health check: `x64/modmenulog.txt` after a launch should
   show `Injected successfully!` + all offsets resolved.
 
-## Where to look in this repo
+## Implementations to study
 
-- `crates/anduril-vfs`, `-ltar`, `-bndl`, `-oodle` — asset loading
-- `crates/anduril-gamedb`, `-scri`, `-lua`, `-mods` — data + mod glue
-- `crates/anduril-mesh/-skel/-anix/-inst/-tex/-mat` — format readers
-- `crates/anduril-render`, `-view` — CPU rasterizer + GPU viewer
-- `crates/anduril-sim`, `-wcl`, `-terr`, `-ui` — world/simulation
-- `anduril <cmd>` CLI: `info`, `mounts`, `gamedb`, `inst`, `mesh`,
-  `anix`, `tex`, `mat`, `wldclnt`, `sim view`, `mesh view`
+Two independent Rust codebases implement readers for nearly
+everything documented here — crib from either:
+
+- **Andúril** — clean-room Rust engine reimplementation:
+  `anduril-vfs/-ltar/-bndl/-oodle` (asset loading),
+  `-gamedb/-scri/-lua/-mods` (data + mod glue),
+  `-mesh/-skel/-anix/-inst/-tex/-mat/-objr` (format readers),
+  `-render/-view` (CPU rasterizer + GPU viewer),
+  `-sim/-wcl/-terr` (world/simulation). Its CLI has per-format dump
+  and render commands (`inst`, `mesh`, `anix`, `tex`, `mat`,
+  `objres`, `wldclnt`, `sim view`).
+- **sow-rs** — Rust/Bevy reimplementation; its `docs/` are the
+  OnSight field notes this corpus draws on (all-codecs anix decode,
+  CADB traversal maps, material censuses, combat/movement records).

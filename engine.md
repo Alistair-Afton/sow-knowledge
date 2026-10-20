@@ -24,9 +24,9 @@ A consumer that wants a right-handed world mirrors X once on import:
 point `(x,y,z) → (−x,y,z)`; quaternion `(x,y,z,w) → (x,−y,−z,w)`;
 triangle winding `(a,b,c) → (a,c,b)`; bounds swap X ends; bitangent
 handedness must then be taken per-vertex (`w = sign((N×T)·B)`).
-Andúril currently renders in the game's native frame directly (no
-mirror) — works because the whole pipeline is self-consistent; mirror
-at the boundary only if your renderer is right-handed.
+A consumer can also render in the game's native frame directly (no
+mirror) — that works if the whole pipeline is self-consistent; mirror
+at the boundary only if the renderer is right-handed.
 
 Distances in gamedb records are centimetres unless stated; HUD "m"
 figures are cm/100. Durations are milliseconds.

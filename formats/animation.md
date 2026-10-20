@@ -5,8 +5,8 @@
 
 Skeletons, bind poses, and every animation codec. Source: sow-rs
 docs (all-codecs decode verified on the full install) cross-checked
-against Andúril's own working anix/skel pipeline, which skins
-animated captains correctly in the live viewer.
+against an independent anix/skel pipeline (Andúril) that skins
+animated captains correctly in its live viewer.
 
 ## SKEL — `.skel` — CONFIRMED
 
@@ -25,7 +25,7 @@ animated captains correctly in the live viewer.
   hash/sentinel the community format doesn't cover; OPEN), and
   `torvin_desertt1shield.skel` has a rig record shape no pattern
   describes. Both failures are input-true, not reader bugs.
-- Andúril: `crates/anduril-skel`.
+- Readers exist in Andúril and sow-rs.
 
 ## ANIX — `.anix` — VERIFIED (every codec decoded)
 
@@ -96,7 +96,7 @@ for vectors, shorter-arc nlerp for quats.
 
 - Track node hashes = bone name hashes in the paired skel; per-vertex
   skin weights (MMSH u8 weights + palette) pose via each bone's delta
-  from bind. Andúril's `skin()` + `skin_normals()` implement it —
-  captains animate correctly in `mesh view`/`sim view`.
+  from bind. Implemented in both projects — Andúril's viewer poses
+  textured, animated captains correctly.
 - Param/CAF4 tracks drive facial pose library curves and camera
   properties (PARTIAL: which param maps to which control is OPEN).

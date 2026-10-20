@@ -77,11 +77,16 @@ what's missing and where to start.
 - Audio: `.bnk`/`.pck` formats barely mapped.
 - Networking/MP: none (single-player title).
 
-## Andúril-specific residuals
+## Residual decode / parity gaps
 
-- ~30/407 corpus `.inst` files decode with geometric outliers —
-  residual flavors + stream-tail truncation (see geometry.md).
-- `sim view` renders the world but far-shell/LOD selection is
-  approximate; decals/alpha not rendered.
-- Combat/traversal/gameplay docs above are **sow-rs evidence** —
-  verified against records, not yet exercised in our runtime.
+- ~30/407 corpus `.inst` files decode with geometric outliers in
+  Andúril — residual flavors + stream-tail truncation (see
+  geometry.md). Whether sow-rs's decode handles these files is
+  untested — worth cross-checking.
+- No public viewer yet renders with correct far-shell/LOD selection,
+  decal/alpha handling, or real shader states — expect "sharded" or
+  placeholder visuals until the flavor/brdf questions above close.
+- Combat/traversal/gameplay docs above are **record-level evidence** —
+  verified against gamedb/`.bvr` records, not yet exercised inside a
+  running engine. Treat them as the spec the runtime should
+  reproduce, then check parity in-game.

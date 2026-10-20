@@ -40,7 +40,7 @@ Common pairs: `[pos f16x4 | uv]` 12 B; `[pos f16x4 | nrm, uv0, uv1,
 tan, btan, col]` 52 B; `[pos f32x3 | uv]` 16 B; `[pos f32x3 | nrm,
 uv, tan, btan, col]` 56 B.
 
-**Position pad lane varies by file** (CONFIRMED — our fix): f16x4
+**Position pad lane varies by file** (CONFIRMED): f16x4
 positions carry the constant `1.0` in lane 1 on some files
 (`{x,1,y,z}`) and lane 3 on others (`{x,y,z,1}`). Detect per block by
 the lane with the strongest ≈1.0 prevalence; read the other three as
@@ -69,7 +69,7 @@ Verified relations: `idx_off` advances by `3×ntri`; block =
 descriptors (material/LOD twins); max `vert_off` = `vertex_bytes`,
 max index end × 2 = `index_bytes`.
 
-**Truncation quirk (CONFIRMED, ours):** the last block can end in
+**Truncation quirk (CONFIRMED — Andúril):** the last block can end in
 zero padding — reads must clamp to the real vertex/index boundary;
 the missing stream-1 tail is virtual, not corrupt data.
 
@@ -126,8 +126,8 @@ region's merged terrain/cliff geometry (Minas Ithil: 17 submeshes;
 
 ## MMSH — `.mesh` — CONFIRMED (skinned meshes)
 
-Our reader + sow-rs agree on the structure (docs/formats/mesh.md has
-Andúril's byte-level notes):
+Two independent readers (Andúril, sow-rs) agree on the structure —
+Andúril's byte-level notes are in its `docs/formats/mesh.md`:
 
 - Header → LOD table; per LOD: declared vertex/index/group byte
   sizes checked to the byte (sow-rs: 348/348 files).
@@ -140,8 +140,8 @@ Andúril's byte-level notes):
   f16 instead — the encoding differs by asset class.
 - Skin weights are u8s summing to 255; the skin palette maps mesh
   joints to skeleton bones in **Havok sibling-block order** → convert
-  to source bone indices (VERIFIED; also CONFIRMED in our skel/anix
-  path which skins captains correctly).
+  to source bone indices (VERIFIED; also CONFIRMED in Andúril's
+  skel/anix path which skins captains correctly).
 - Every vertex carries Normal/Tangent/Bitangent `Vec3F32` + u8x4
   colour — real smooth-shading data (CONFIRMED; Andúril uses it
   per-pixel).

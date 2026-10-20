@@ -36,8 +36,8 @@ trailing name fits 1,104:8 and 6,263/6,556 records agree within 3 m):
 prefabs, `0xD238B9DE` 225 terrain pieces, `0x00003249` 32 lanterns/
 torches/props, eight more prop hashes 1–20 records each. Sections
 after the table (`u32 17, 5, 6` + float data) are OPEN.
-Andúril's `wldclnt scene` CPU render confirms the placements compose
-a coherent city.
+Andúril's CPU scene render confirms the placements compose a
+coherent city.
 
 ## `.objres` — OBJR v13 — sectioned object resources — CONFIRMED
 

@@ -4,7 +4,8 @@
 > **Provenance:** per-format status table — Andúril + sow-rs.
 
 Every identified file/container type, its magic, and decode status.
-"Status" = best available understanding across Andúril + sow-rs;
+"Status" = best available understanding across contributing projects
+(Andúril, sow-rs);
 individual semantics may still be PARTIAL inside a "verified" format.
 
 | Extension | Magic / ver | What it is | Status |
@@ -27,12 +28,12 @@ individual semantics may still be PARTIAL inside a "verified" format.
 | `.texa` | (TEXR array) | DX10 array texture | VERIFIED |
 | (in `.tex`) | `SLVT` v4 | container of embedded TEXR records | VERIFIED (15 files) |
 | `.gfx` | `GFX`/`CFX` | Scaleform movie (SWF superset) | VERIFIED tag walk |
-| `.strdb` | — | localized string table | CONFIRMED (ours) |
-| `.scri` | — | script/quest data | CONFIRMED (ours, see docs/formats/scri.md) |
-| `.save` files | — | save data | PARTIAL (see docs/formats/save.md) |
+| `.strdb` | — | localized string table | CONFIRMED (Andúril) |
+| `.scri` | — | script/quest data | CONFIRMED (Andúril `docs/formats/scri.md`) |
+| `.save` files | — | save data | PARTIAL (Andúril `docs/formats/save.md`) |
 | `.fxp` / `.fx` | — | particle FX records | PARTIAL |
 | `.cres` | — | shadow tree / cinematic resources | PARTIAL |
-| `.subb`, `.vib`, `.vid`, `.uis`, `.uiwd`, `.hkai`, `.pck`, `.bnk`, `.pmo_rcv`, `.veg*, `*.ss_*` | various | see `docs/formats/` — Anduril has structural readers | PARTIAL |
+| `.subb`, `.vib`, `.vid`, `.uis`, `.uiwd`, `.hkai`, `.pck`, `.bnk`, `.pmo_rcv`, `.veg*, `*.ss_*` | various | Andúril has structural readers + `docs/formats/` notes | PARTIAL |
 
 Loader addresses for the exe-verified formats are in `engine.md`.
 

@@ -11,9 +11,10 @@ label describes **how we know**, not how confident we feel.
 
 ### CONFIRMED
 
-Independently verified by Andúril on retail data — byte-level checks
-on real files, multiple samples, or a working decode producing
-correct output.
+Independently reproduced on real install data — byte-level checks on
+real files, multiple samples, or a working decode producing correct
+output. The reproducing project is named inline (e.g. "CONFIRMED
+(Andúril)").
 
 Example: PRFB `.inst` submesh descriptors are 52-byte D3D9-style
 draw-parameter records — verified field-by-field on real files
@@ -23,21 +24,16 @@ index.
 
 ### VERIFIED
 
-Verified by a credited external project (currently mostly sow-rs /
-"OnSight") with a stated method and corpus size — and not
-independently re-tested by us. Treat as reliable, cite the source.
+Verified by a named source with a stated method and corpus — and not
+independently reproduced by a second party. Treat as reliable, cite
+the source.
 
 Example: `.gfx` Scaleform tag walks — sow-rs reports exact walks over
-all 19 installed files (47,559 tags). We have not built a GFX reader,
+all 19 installed files (47,559 tags). No second decoder exists yet,
 so the tag layouts are VERIFIED (sow-rs), not CONFIRMED.
 
-When Andúril later re-verifies a VERIFIED claim on retail data, it is
-promoted to CONFIRMED (the provenance stays).
-
-### IMPL-UNTESTED
-
-Implemented in Andúril and appears to work, but inadequately tested.
-Present so you know code exists — don't cite it as fact.
+When a VERIFIED claim is later reproduced independently on real data,
+it is promoted to CONFIRMED (the original provenance stays).
 
 ### PARTIAL
 
@@ -70,7 +66,7 @@ these with starting points for investigation.
 |---|---|
 | PARTIAL | A real observation on real data (one sample, a parse, a render) with the source file named |
 | VERIFIED | A method + corpus stated by a credited source (e.g. "exact tag walk, all 19 files"), or an independent reproduction described precisely enough to rerun |
-| CONFIRMED | The reproduction *was run by us* on retail data — the test/probe must exist and be cited |
+| CONFIRMED | The reproduction *was run* on retail install data — the test/probe must exist and be cited |
 
 ## Evidence is about *semantics*, not just structure
 

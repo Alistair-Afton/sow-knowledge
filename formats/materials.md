@@ -85,9 +85,9 @@ Submesh → `.mat`:
    table / `.wldclnt` `.mat` list.
 3. **No universal name-matching fallback** — OnSight checked: no
    gamedb attribute stores `.mesh` paths, and `.mat` paths alone
-   don't bind a submesh; our earlier prefix-matching heuristic
-   (`orc_buff_body001.mesh` → `orc_body001.mat`) happened to work on
-   that asset but is NOT the real binding.
+   don't bind a submesh; an earlier prefix-matching heuristic in a
+   viewer (`orc_buff_body001.mesh` → `orc_body001.mat`) happened to
+   work on that asset but is NOT the real binding.
 
 The mesh/submesh → `MaterialSet` entry binding field is OPEN — the
 LOD-group material index is the proven path.

@@ -1,10 +1,11 @@
 # Shadow of War — Shareable Knowledge Base
 
-Everything the Andúril project knows about *Middle-earth: Shadow of War*
-(Steam appid 356190, retail build 1.0.8874 / content build 3095001), its
-file formats, runtime behavior, and modding surface — written for
-modders, engine programmers, and AI agents working on any goal:
-reimplementation, tooling, data extraction, mods, or research.
+A community knowledge base of everything known about *Middle-earth:
+Shadow of War* (Steam appid 356190, retail build 1.0.8874 / content
+build 3095001): file formats, runtime behavior, and the modding
+surface — written for modders, engine programmers, and AI agents
+working on any goal: reimplementation, tooling, data extraction,
+mods, or research.
 
 **Legal:** documentation only. No game files, extracted assets, or
 decompiled code. Everything here was derived by observing the files of
@@ -18,10 +19,9 @@ as proof for each, why structure ≠ semantics) is in `EVIDENCE.md`:
 
 | Label | Meaning |
 |---|---|
-| **CONFIRMED** | Independently verified by Andúril on retail data (byte-level checks, multiple samples, or a working decode) |
-| **VERIFIED** | Verified by sow-rs (OnSight docs) with a stated method and corpus size; not independently re-tested by us |
+| **CONFIRMED** | Independently reproduced on real install data (by at least one named project — byte-level checks, multiple samples, or a working decode) |
+| **VERIFIED** | Verified by a named source with a stated method and corpus; not independently reproduced |
 | **PARTIAL** | Real evidence exists but interpretation is incomplete or only checked on a few samples |
-| **IMPL-UNTESTED** | Implemented and appears to work, but not adequately tested |
 | **HYPOTHESIS** | A consistent guess; not proven |
 | **PLACEHOLDER** | A working approximation known to be wrong/incomplete |
 | **OPEN** | Known unknown; no reliable answer yet |
@@ -36,13 +36,13 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 
 ## Sources
 
-- **Andúril** (this repo): clean-room Rust reimplementation; findings
-  verified against the install via `crates/` parsers and
-  `ANDURIL_GAME_DIR`-gated tests.
-- **sow-rs "OnSight" docs** (`Helper/OnSights Docs/`): a parallel
-  Rust/Bevy reimplementation's field notes — the single largest source
-  of verified semantics here. Validated by us against retail bytes
-  where our work overlapped; every overlap agreed. Credited per-file.
+- **Andúril**: clean-room open-source Rust engine reimplementation;
+  findings verified against the install by its own parsers, probes,
+  and renders.
+- **sow-rs "OnSight" docs**: a parallel Rust/Bevy reimplementation's
+  field notes — the single largest source of verified semantics here.
+  Where the two projects' work overlapped, claims were validated
+  against retail bytes; every overlap agreed. Credited per-file.
 - Universal-modder field notes ("Goblins of War"), QuickBMS
   `shadow_of_mordor.bms` v0.4, SoW Modding Community ImHex-Patterns /
   MeshParser, LordMonstey's Mesh Publisher, WarpZephyr's

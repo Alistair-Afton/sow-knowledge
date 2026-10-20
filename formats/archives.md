@@ -20,9 +20,8 @@ loose-file mods.
   lists (hashed with the engine name hash).
 - Verified by sow-rs against build 3095001: all 48 HotChunk archives
   decompress; 18 optional DLC/UWP paths absent from the Steam install.
-- Andúril: `crates/anduril-ltar` reader + `anduril-vfs` mounting;
-  `docs/formats/arch06.md` has our own byte-level notes. Do not copy,
-  move, or hash these files casually — several are multi-GB.
+- Readers exist in Andúril and QuickBMS (`shadow_of_mordor.bms`). Do
+  not copy, move, or hash these files casually — several are multi-GB.
 
 ### `default.archcfg` — CONFIRMED
 
@@ -73,5 +72,6 @@ the sample is a menu atlas: 3 entries).
 ## Save / misc containers
 
 `.save`, `.subb`, `.vib`, `.vid`, `.pck`, `.bnk`, `.uis`, `.uiwd`,
-`.pmo_rcv`, `.vegtile/.veggrid` have structural readers in Andúril —
-see `docs/formats/*.md` (PARTIAL; not re-verified for this corpus).
+`.pmo_rcv`, `.vegtile/.veggrid` have structural readers in the
+Andúril project — see its `docs/formats/` notes (PARTIAL; not
+re-verified for this corpus).

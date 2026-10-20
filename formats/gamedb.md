@@ -26,7 +26,7 @@ gameplay data is typed GADB records linked by index.
   ~8.5 M value words.
 - Embedded GADBs differ: the `.objres` object DB is GADB version
   0x11 with one category `ObjectDB` of `ObjectRec` records.
-- Andúril reader: `crates/anduril-gamedb`; CLI `anduril gamedb`.
+- Readers exist in Andúril and sow-rs.
 
 ## Attribute names — PARTIAL, structural limitation
 
@@ -76,8 +76,8 @@ VERIFIED record paths (sow-rs, read from installed DB):
   `Weather/Lighting/Base`, `Weather/MaterialOverride/*`.
 - **Input:** `Profile/Commands` (382 records: `ActionId`, `PCKeyboard`,
   `PCGamepad`).
-- **Scripts/quests:** see our `docs/formats/scri.md` (Andúril's own
-  structural work — CONFIRMED there).
+- **Scripts/quests:** structural notes in the Andúril repo's
+  `docs/formats/scri.md` (CONFIRMED there).
 
 ## Semantics that are proven (not just structural)
 
