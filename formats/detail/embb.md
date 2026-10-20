@@ -19,7 +19,16 @@ asset set so a layer loads as one stream.
 
 Followed by a per-member directory (17 x u32 run observed, ~0x40
 strides — member record offsets, layout not yet decoded) then member
-blobs. Members observed in sotp_desert_06: the section's own
+blobs.
+
+**Retail read path (Ghidra `FUN_1411b5e68`, byte-verified):**
+`{EMBB, ver==5}` checked exactly; the whole `file-list` blob is
+loaded in one read, then the directory is `file_count` u32 **offsets
+into that blob** — and the bytes at each offset are read as a
+**16-byte `{4×u32}` member descriptor** copied into runtime records
+(the earlier `~0x40`-stride guess was the u32 table itself). Member
+payloads are whatever remains after the directory — the loader takes
+`stream_end − pos` as the data region. Members observed in sotp_desert_06: the section's own
 `.wldclnt` (embedded copy, stub string pool), `.scripts` (SCRI),
 `.hkai`, `.objres`, `.uis`, `.uiwd`, `.veggrid`, `.terrain`,
 `.inst`, plus shared fx/mesh/skel assets.
