@@ -211,9 +211,18 @@ rejects. The remaining 51 files — including **all main-world
 files** (desert, minasithil, island, snowmtn, volcano, mtnpass,
 blackgates, baraddur) plus small files and `ol_*` layers — carry
 a different tail variant: an `f0c`-counted secondary record table
-(rows like `{f32 1.0, u32 1, 0, u32 object_id, …}`) followed by
-the same `{1,3,0,-1,-1,0}` footer. OPEN: that variant's row
-layout and where Section B begins in it.
+(rows like `{f32 1.0, u32 1, 0, u32 object_id, …}`) in front.
+
+**Variant trailer — decoded by reading the tail backwards.** The
+tail ends with a sequential `u32` run `0,1,…,n-1` (the leaf-index
+array), preceded by a 20-byte index-node header (`{0, n, 0, 0, 0}`
+on main worlds — leaf count at +0x04) and followed by the footer
+`{1,3,0,-1,-1,0}` as the last 24 bytes. Verified: desert n=207,
+volcano 172, mtnpass 166, minasithil 140, island 136, bm_island 32,
+plus 9 single-leaf `ol_*`/`night*` files. OPEN: the front region
+(f0c rows + where Section A/B begin in this variant); snowmtn,
+blackgates, baraddur and `worlduimenuws` lack the footer
+signature entirely.
 
 Semantics: Section B is a two-level bounding-volume / streaming
 index — one interior root over `n_leaf` leaves, each leaf covering a
