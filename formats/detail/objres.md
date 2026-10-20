@@ -90,16 +90,24 @@ the OBJL record's pos/quat to world space.
 Decode implemented in `anduril-objr` (`Objres::pfdg`), verified on
 `minasithil.objres` (1,547,607-byte section):
 
+**Retail read path (Ghidra `FUN_1404b8554`, byte-verified):**
+`{PFDG, ver==1}` then `u32 count, u32 blob_size`, and the section
+is **two parallel 0x18-stride arrays + a blob**, not `{n1,n2}` +
+12B/21B mixed records:
+
 ```text
-u32 n1, u32 n2                          (33 609, 35 186 on MI)
-verts:   (n1 + n2) × 12 B vec3 slots — nav-surface points;
-         ~2 % of slots hold non-plausible data (NaN/sentinel) and
-         are skipped on the same 12-byte grid
-records: 21-byte markup records. Flavour-B shape is the *real* one:
-         {u32 seq, rgba u8×4, u32 a, u32 b, u8 flag, u32 -1} — 23 984
-         on MI. The apparent flavour-A records ({rgba, a, b, flag,
-         -1, -1}) are tolerant-walk false positives in between.
+count × 0x18 raw cells       — bulk-read, no per-field parse (the
+                               "interleaved 24-byte cells" of the
+                               earlier model — partition 2)
+count × 0x18 markup records  — {u32/f32, u32/f32, rgba u8×4,
+                               u32 a, u32 b, u16 flag} read
+                               field-by-field (the doc's flavour-B
+                               records, corrected: 24 B, u16 flag)
+u8[blob_size]                trailing blob (partition-1 data)
 ```
+
+The earlier `{n1, n2}` header was a misread — `n1` is the record
+count and `n2` the trailing-blob size.
 
 - The point cloud renders as Minas Ithil's street layout when plotted
   top-down — the walkable-surface claim is CONFIRMED by shape.
@@ -150,8 +158,15 @@ pairs seen), `SFXS`, `SWFX`, `ONLS`, `BOLS`, `TEDJ`, `TSDJ`, `BSWA`,
 
 ## NLFE — ambient-life feature table — PARTIAL
 
-`NLFE u32 1` header then `u32 28, u32 1086, u32 41, u32 16882, u32 3`
-(field semantics open). Payload contains a name table of **1,097**
+`NLFE u32 1` header then `u32 28, u32 1086, u32 41, u32 16882, u32 3`.
+
+**Retail read path (Ghidra `FUN_1407c34b0`, byte-verified):**
+`{NLFE, ver==1}` then five u32s `{f0, count, blobA_size,
+skip_extra, f4}`; body = `blobA_size` bytes (the string/name
+table) → `count × u32` offset/index array → **skipped region of
+`skip_extra + count·4` bytes** (the loader literally skips it) →
+`count × 0xC` records. The "repeated `0x1b` lane" is the u32 index
+array / 0xC-record fields, not per-record flags. Payload contains a name table of **1,097**
 strings — ambient creature/spawn names observed on MI:
 
 - `<none>`
