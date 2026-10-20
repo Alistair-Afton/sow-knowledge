@@ -25,32 +25,47 @@ so the file is `{HKAI,3,0xffffd00d,size,TAG0…,0xffffdead}`.
 
 ## Embedded tagfile
 
-`TAG0` + `40 00 00 10` + `SDKV20160200` (SDK version). Sections are
-framed by markers `{0x40, 0x00, u16, tag[4]}` where tag = 4 uppercase
-ASCII. The u16 does **not** encode span consistently across tags
-(off-by-8), so section bodies are taken as marker→next-marker (or EOF).
+`TAG0` + `40 00 00 10` + `SDKV20160200` (SDK version). Block frames
+are `{u32be size|flags, u32be tag}` — **big-endian**, top 2 bits =
+flags, `& 0x3fffffff` = span including the 8-byte header (what earlier
+looked like a `u16` was the low half of the big-endian size). Blocks
+nest: the reader (`FUN_1405a3404`) walks headers inside each parent
+span on a stack.
 
-Observed sections (corpus histogram):
+Top-level section dispatcher `FUN_1404bd5dc` accepts exactly:
+
+| Tag | Meaning |
+|-----|---------|
+| SDKV | sdk version `20160200` |
+| DATA | serialized object graph |
+| INDX | item index |
+| DICT | **TCID** — compendium type-id list `{0x20 hdr + n×u64}` referencing an external type library |
+| TYPE | embedded type dictionary (nested blocks below) |
+| FRCT | compendium reference (errors "COMPENDIUM_REFERENCE wrong size") |
+
+`TYPE` iterates nested blocks (`hkTagfileReadFormat.cpp`): `TSTR`
+type-name strings, `ASTR` a second string array, `FSTR` field-name
+strings and `TBDY` packed type-descriptor bytecode (sub-reader taken,
+parse deferred to the lazy type index), `THSH` type hashes, `TPTR`
+zeroed type-pointer relocation slots (`span/8` u64s, all must be 0 or
+"Buffer already inplace loaded"), plus `TNA1`/`TNAM`/`TSEQ`/`TPAD`.
+
+Marker-scan histogram (all nesting levels flattened):
 
 | Tag | Count | Notes |
 |-----|-------|-------|
-| SDKV | 444 | tagfile header registers as first marker |
-| DATA | 339 | navmesh binary payload — `hkai.data()` |
-| TPTR | 444 | type pointers |
-| TSTR | 444 | type strings |
-| FSTR | 444 | ? strings |
-| TBDY | 444 | type body |
-| THSH | 444 | type hashes |
-| TPAD | 444 | pad |
-| ITEM | 437 | items (absent on 7 files) |
-| PTCH | 437 | patch/fixups |
+| SDKV | 444 | top-level |
+| DATA | 339 | navmesh object payload (absent on 105 files) |
+| TPTR/TSTR/FSTR/TBDY/THSH/TPAD | 444 each | TYPE-section children |
+| ITEM | 437 | item block (absent on 7 files) |
+| PTCH | 437 | patch/fixup offsets |
 | FFFF | 4   | pad/fill marks on 1 file |
 | VVVV | 4   | pad marks on 1 file |
 
-Section sequences are deterministic — `SDKV [DATA] TPTR TSTR FSTR TBDY
-THSH TPAD [ITEM PTCH]` — zero false-positive markers even in the 51 MB
-desert file, so the scan is safe on this corpus. `DATA` is the navmesh
-proper (hkaiNavMesh serialization); inner decode is future work.
+Sequences are deterministic — `SDKV [DATA] TPTR TSTR FSTR TBDY
+THSH TPAD [ITEM PTCH]` at marker level — zero false-positive markers
+even in the 51 MB desert file. `DATA` is the navmesh proper
+(hkaiNavMesh serialization); inner decode is future work.
 
 ## Verified
 
@@ -64,14 +79,12 @@ path names `External\hk2016_2_0_r1\Source\Common\Base\Serialize\
 hkSerialize.cpp` (`hkSerialize::Load::toVarInplace`). Chain:
 `FUN_14048427c` (HKAI header + `0xffffdead` tail) →
 `FUN_1404bc7f0` (blob read + decompress fallback) →
-`FUN_1404bc8e4`/`FUN_1404bc9a0` (`toVarInplace`, reader vtable).
+`FUN_1404bc8e4`/`FUN_1404bc9a0` (`toVarInplace`, reader vtable) →
+vtable `+0x28` = `FUN_14482c2e0` → section dispatcher `FUN_1404bd5dc`
+(errors cite `hkTagfileReadFormat.cpp`).
 
-Section roles: `TPTR` = zeroed type-pointer slots (filled by fixups
-at load), `TSTR` = type-name table, `FSTR` = member-name table,
-`TBDY` = packed type-descriptor bytecode, `THSH` = type hashes,
-`ITEM` = item index, `PTCH` = fixup offsets. The type vocabulary
-is fully self-describing — 111 types on the smallest file:
-`hkRootLevelContainer{NamedVariant}` → `hkaiNavMesh`,
+The type vocabulary is fully self-describing — 111 types on the
+smallest file: `hkRootLevelContainer{NamedVariant}` → `hkaiNavMesh`,
 `hkaiNavMesh::{Face,Edge}`, `hkaiAnnotatedStreamingSet`,
 `hkaiStreamingSet::{NavMesh,Graph,Volume}Connection`,
 `hkaiNavMeshClearanceCache*`, `hkaiNavMeshGenerationSettings*`,
@@ -82,6 +95,7 @@ customs `CHkStringTable`, `CHavokAIObstacleData{Array}`,
 
 ## Unknowns
 
-- Marker u16 semantics (per-tag span vs payload length).
-- TBDY bytecode encoding — the gate to a full object walker.
-- ITEM record shape; THSH hash function.
+- TBDY bytecode encoding — the gate to a full object walker (parsed
+  lazily by the type index, not in the TYPE dispatch loop).
+- ITEM record shape; THSH hash function; TCID/FRCT compendium
+  resolution (which library the u64 ids reference).
