@@ -72,10 +72,13 @@ Minas Ithil: 67,354 real points / 23,984 seq-flavoured records; the
 point cloud plots as the city's street map — CONFIRMED nav-surface
 semantics. Record stats (Andúril): `flag ∈ {0,1}` on real records;
 `seq = 0xFFFFFFFF` on most — the 2,141 real seqs span
-`25,250..33,607`, indexing the *first* vert partition (`n1`). `(a,b)`
-pairs span ~20–42 and repeat across records (a shared region window);
-the array addressed is OPEN — **not** the verts (`verts[a..b]` has
-no spatial compactness; `seq` never inside `[a,b)`). `rgba` runs the
+`25,250..33,607`, indexing the *first* vert partition (`n1`). The two
+vert partitions differ in kind: p1 is clean positional, p2 carries
+non-position data (−32768 sentinel lane, wider bounds) — `n2` is a
+**second 12-byte record array**, not points. `(a,b)` pairs are
+618 **disjoint windows** spanning `100..35,169 ⊂ [0, n2)` — they
+partition regions of that second array; records sharing a window are
+markups grouped under it (`a` mostly nondecreasing). `rgba` runs the
 rainbow spectrum — debug colours. Note: a no-seq `{rgba,a,b,flag,
 -1,-1}` pattern also matches between records but yields garbage flags
 — parser false positives, not a second record kind.
