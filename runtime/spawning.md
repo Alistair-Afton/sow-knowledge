@@ -64,6 +64,18 @@ pointers**. Raw q64 fingerprinting misses them — decode the container
 `PlayerBase_Barrows`, `MonsterHunter_Orc_Beastmaster`,
 `Tower_Golden_Uruk`, `Oasis_Uruk`.
 
+> **Andúril check:** the list exists as `Server/NPCBundle/Lists` with
+> **exactly 135 records** — count confirmed. `Server/NPCBundle` holds
+> 146 records incl. `Zog`, `Gondor`, `Shelob3_Orc_DefenderWarchief`,
+> `Easterlings_Base` ✓. However the four example list names above are
+> **not** static records (no such names anywhere in retail GADB —
+> `DLC4_Oasis` is the only Oasis-named list), and `Summon_OrcDefender`
+> doesn't exist (only `Summon_OrcDefenderTough`); they may be
+> runtime-created or mis-remembered names. The `Summon_*` family is
+> confirmed: 68 records in `AI/SpawnAmbient/AITypes`; `MarkedAsTarget_Ambush`
+> + `PC_SummonBodyguard_Ambush` in `Faction/Ambush/Definition`;
+> `GangType_SummonGroup_*` prefix family present.
+
 `sdk.spawn.bundles(listname)` -> `LoadNPCBundleList` pre-streams the
 bundle assets; `sdk.spawn.clearbundles(listname)` -> `ClearNPCBundles`.
 
