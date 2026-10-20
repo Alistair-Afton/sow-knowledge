@@ -38,6 +38,10 @@ Recovery/height curves for mantle/vault behaviors:
 +0x1c  blocks: {u32 n, u32 =2, u32, u32} + n-sample f32 data
 ```
 
+(Retail loader `FUN_146aa5200` — Ghidra decompile: `{RCVA, ver==2}`
+checked by exact equality, then the body is delegated to a dedicated
+curve parser `FUN_141b452f0`.)
+
 All block headers in a file share one `n` — the value at `+0x1c`
 (4..47 observed). 30/45 files carry this layout; the other 15 have a
 denser variant header (no markers) and expose `blocks = []`.

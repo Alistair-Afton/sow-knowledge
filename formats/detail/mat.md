@@ -36,6 +36,18 @@ record[count1 + count2]         // always ends exactly at EOF
 
 **`record`**: `u32 type | u16 nameLen | char[nameLen] name | u32 offset`.
 
+**Retail read path (Ghidra `FUN_140502230`, byte-verified):**
+versions **7–8** accepted (v7 carries an extra `u32`-sized blob after
+the data pool). `count1 + count2` is capped at **0x80**. Each record
+is read as `{u16 kind, u8 a, u8 b, u16 nameLen, name, u32}` — the
+"u32 type" is really `u16 kind + 2 flag bytes` (the `0x10001`
+texture type = kind `1` with flag byte `a=1`). The trailing u32 is
+stored truncated to `u16`. The **top nibble** of the kind word
+selects dispatch: nibble `1` = texture parameter (loader enforces
+*textures first* — it logs "Encountered non-texture parameter at
+front of material parameter list" otherwise), nibbles `0xd/0xe/0xf`
+= bindable parameters whose values are offsets into the data pool.
+
 ## Property types
 
 | type | value | size |
