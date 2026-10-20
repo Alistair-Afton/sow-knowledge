@@ -7,44 +7,31 @@ Every claim in this corpus is original prose. Findings derive from two
 hands-on projects plus published community work — all credited here
 and inline per doc.
 
-## Primary sources — who found what
+## Authorship
 
-Roughly speaking: **Andúril is the primary source for file-format and
-container structure; sow-rs is the primary source for gameplay/runtime
-semantics.** Where both projects examined the same artifact we
-validated against retail bytes; every overlap agreed, and corrections
-(declared `.inst` layout not being universal, f16 pad-lane variance,
-the LTAR 26-vs-30-byte entry stride) are noted inline.
-
-### Andúril (author: Alistair Afton)
-
-Clean-room open-source Rust engine reimplementation for *Middle-earth:
-Shadow of War*. Findings labeled **CONFIRMED** are verified by
-Andúril's own parsers, probes, and renders against a legally owned
-retail install — tests are `ANDURIL_GAME_DIR`-gated so nothing
+**Every document in this corpus is authored by Andúril (Alistair
+Afton).** The corpus is Andúril's evidence documentation: findings
+verified by its own parsers, probes, and renders against a legally
+owned retail install — tests are `ANDURIL_GAME_DIR`-gated so nothing
 proprietary is needed to read the code.
 
-Andúril-derived findings in this corpus include: the archive/container
-layer (LTAR v4 corrected entry stride, EMBB v5, SLVT v4, PCK), the
-GADB record format and GameDB structure, `.strdb` and the complete
-`name_hash` algorithm + FOLD LUT, `.wldclnt` placement records and the
-tail's region-index structure, `.terrain` quadtree node order and the
-level-aware tile layering rule, OBJR section map + CADB v3 full decode
-+ group-key derivation + world-space edge linking, `.scri` script
-data, `.save` save structure, and the structural specs for `.bvr`,
-`.bnk`, `.gfx`, `.uis/.uiwd`, `.veg*`, `.hkai`, `.subb`, `.vib`,
-`.vid`, `.pmo_rcv`, `.fx`, `.mat`, `.tex` — the per-format detail docs
-under `formats/` are Andúril's evidence docs mirrored verbatim.
+## Evidence sources
 
-### sow-rs (author: OnSight)
+### sow-rs / OnSight's shared field notes
 
-A parallel Rust/Bevy reimplementation in development by **OnSight**.
-His field notes are the primary source for gameplay and runtime
-semantics: combat formulas, the nemesis/captain systems, traversal
-markup semantics (CADB action sets/masks), Scaleform tag walks,
-material censuses, the wraith shader model, moveset record maps,
-skinned-mesh attributes, and exe-verified engine landmarks/loader
-addresses. Findings labeled **VERIFIED** are his, credited per claim.
+**OnSight** is the author of `sow-rs`, a parallel Rust/Bevy
+reimplementation in development. He shared a folder of his reverse-
+engineering field notes with this project — his *"OnSights Docs"*
+bundle (`combat.md`, `hud-map.md`, `moveset-map.md`, `formats/…`) —
+which we use as an *evidence source*. Where his notes inform a claim
+it is credited inline (e.g. moveset record chains, combat formulas,
+HUD map details, CADB traversal markup semantics, material censuses,
+exe-verified loader landmarks). Where our work overlapped we
+validated against retail bytes; every overlap agreed, and the
+corrections we made (declared `.inst` layout not being universal,
+f16 pad-lane variance, the LTAR 26-vs-30-byte entry stride) are noted
+inline. Findings labeled **VERIFIED** cite a named source and method;
+those sourced from his notes say so.
 
 > Both sow-rs and Andúril are works in progress and not yet publicly
 > released — citations name them as *sources of evidence*, not as

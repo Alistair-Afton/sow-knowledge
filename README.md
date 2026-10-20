@@ -38,16 +38,15 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 
 - **Andúril** (author: **Alistair Afton**): clean-room open-source
   Rust engine reimplementation
-  (in development, not yet publicly released); findings verified
-  against the install by its own parsers, probes, and renders.
-  Primary source for file-format and container structure — the
-  per-format spec docs under `formats/` are its evidence docs.
+  (in development, not yet publicly released). **Every doc in this
+  corpus is authored by Andúril** — findings verified against the
+  install by its own parsers, probes, and renders.
 - **sow-rs** (author: **OnSight**): a parallel Rust/Bevy
-  reimplementation, also in development — his field notes are the
-  primary source for gameplay and runtime semantics here (combat,
-  nemesis, traversal, materials/shaders, engine landmarks). Where the
-  two projects' work overlapped, claims were validated against retail
-  bytes; every overlap agreed. Credited per-file.
+  reimplementation, also in development. OnSight shared a folder of
+  his field notes which we use as an *evidence source* (moveset
+  record map, combat notes, HUD map, format notes) — credited inline
+  per claim. Where the two projects' work overlapped, claims were
+  validated against retail bytes; every overlap agreed.
 - Universal-modder field notes ("Goblins of War"), QuickBMS
   `shadow_of_mordor.bms` v0.4, SoW Modding Community ImHex-Patterns /
   MeshParser, LordMonstey's Mesh Publisher, WarpZephyr's
