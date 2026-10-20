@@ -32,6 +32,14 @@ section_base = 0x14 + 4*count
 Caveat: an older spec revision describes `{size, offset}` record
 pairs; retail v6 ships the bare u32-offset table described above.
 
+**Retail read path (Ghidra `FUN_140504c70`, byte-verified):**
+`{BNDL, ver==6}` exact, 0x14-byte header read in one shot. The
+loader bulk-reads the `u32[count]` size array and the whole string
+section, walks `count` offsets each **bounds-checked against the
+section size**, and copies a 16-byte record per offset. The
+`bundle_type` string is located by scanning the section for a
+`0x3a` (`:`) byte — bundle types are `Name:Variant` cstrings.
+
 ## `.embb`
 
 ```
