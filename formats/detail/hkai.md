@@ -98,9 +98,10 @@ customs `CHkStringTable`, `CHavokAIObstacleData{Array}`,
 Children `ITEM` + `PTCH`, read after TYPE populated the type-pointer
 array at `reader+8`:
 
-- **`ITEM`** — `n × 0xC` records `{u32 type_idx(flags|idx &0xffffff),
-  u32 data_offset, u32}`; record 0 is skipped (null item). Each binds
-  a type (via `TPTR[type_idx]`) to the object at `DATA + data_offset`.
+- **`ITEM`** — `n × 0xC` records `{u32 type_idx(&0xffffff) |
+  isPtr<<28, u32 data_offset, u32 count}`; record 0 is skipped
+  (null item). Binds `TPTR[type_idx]` to `count` objects at
+  `DATA + data_offset`, strided by the type's byte size.
 - **`PTCH`** — u32 stream of `{u32 type_idx, u32 n, n×u32 offsets}`
   groups, bounds-checked ("Corrupt patch index body at index {}").
   Each offset points into `DATA`; the u32 slot there holds either
@@ -110,31 +111,70 @@ array at `reader+8`:
 
 ## Unknowns
 
-- TBDY bytecode encoding — the gate to a full object walker (parsed
-  lazily by the type index, not in the TYPE dispatch loop).
-- ITEM record shape; THSH hash function; TCID/FRCT compendium
-  resolution (which library the u64 ids reference).
+- THSH hash function (u32 per type).
+- TCID/FRCT compendium resolution — which `TCM0` library blob the
+  u64 ids address.
 
-## TBDY / type descriptors (Ghidra-verified, `FUN_1413fc96c` et al.)
+## Packed integers
 
-Type descriptors are **not a flat bytecode** — they are a node pool
-of tagged records, pointer-linked after PTCH fixups:
+All TYPE/INDX metadata uses a 1–4 byte varint:
 
 ```text
-node = { u64 tag_bits, u64 next_sibling, u64 values[popcount(tag_bits)] }
+0xxxxxxx                            → value = b0
+10xxxxxx b1                         → value = (b0<<8 | b1) & 0x3fff
+110xxxxx b1 b2(>H)                  → value = (b0<<16 | H) & 0x1fffff
+111xxxxx b1 b2b3(>H)                → value = (b0<<24 | b1<<16 | H) & 0x7ffffff
 ```
 
-`FUN_1405a23f0(node, mask)` returns `values[popcount(tag_bits & (mask-1))]`
-— each bit position names a field; value slots are packed in bit
-order. `FUN_1405a222c` follows `next_sibling`, so fields can be spread
-across a sibling chain (inheritance flattening). `FUN_1405a37a4` reads
-tag `0x800000` as u16 = type byte size.
+## TYPE section grammar — decoded (verified on real files)
 
-Observed tag masks: `0x800000` = byte size, `0x1000000` = flags/kind
-word, `0x4000000` = parent-list block, `0x20000` = `{ptr, offset}`
-member-offset pairs, `0x100000` = member size contribution. Low bits:
-`&1` = chain terminator, `&0xf==8` = array/member kind, `&0x80` =
-offset-record node (walker appends `{offset,0}` patch targets).
+```text
+TPTR  zeroed u64 slots — per-type pointer array, patched at load
+TSTR  NUL-separated type-name pool
+TNAM/TNA1  packed: n_types (types[0] = null); per type:
+           name = TSTR[p], then n_templates × {name = TSTR[p], v = p}
+           (template name 't…' → v is a type index, 'v…' → literal)
+FSTR  NUL-separated member-name pool
+TBDY  packed record stream; loop until section end:
+        type_idx = p;  if 0 → skip (empty slot)
+        parent   = p (type index)
+        flags    = p   (TagFlag bitmask below)
+        if flags&0x01: subTypeFlags = p
+        if flags&0x02 and (subTypeFlags&0xf) >= 6: pointer = p (type idx)
+        if flags&0x04: version = p
+        if flags&0x08: byteSize = p; alignment = p
+        if flags&0x10: abstractValue = p
+        if flags&0x20: n = p;  n × {name = FSTR[p], flags = p,
+                                   byteOffset = p, type = p}
+        if flags&0x40: n = p;  n × {iface_type = p, offset = p}
+THSH  packed: n;  n × {type_idx = p, hash = u32le}
+TPAD  pad (optional)
+```
 
-`FUN_1413fc96c` is the recursive member-offset walker producing the
-list of serialized positions that hold member/pointer data.
+TagFlag: `0x01` SubType · `0x02` Pointer · `0x04` Version ·
+`0x08` ByteSize · `0x10` AbstractValue · `0x20` Members ·
+`0x40` Interfaces · `0x80` reserved.
+
+TagSubType (`subTypeFlags & 0xff`): `0` void · `1` invalid · `2` bool ·
+`3` string · `4` int · `5` float · `6` pointer · `7` class ·
+`8` array · `0x28` tuple (count = `subTypeFlags >> 8`).
+Int width flags: `0x2000` i8 `0x4000` i16 `0x8000` i32 `0x10000` i64;
+`0x200` signed.
+
+Verified end-to-end: the smallest `.hkai` decodes **180 types** —
+`hkaiNavMesh` (208 B; `faces, edges, vertices, streamingSets,
+faceData, edgeData, faceDataStriding, edgeDataStriding`),
+`Face` (16 B; `startEdgeIndex, startUserEdgeIndex, numEdges,
+numUserEdges, clusterIndex, padding`), `Edge` (20 B; `a, b,
+oppositeEdge, oppositeFace, flags, paddingByte, userEdgeCost`),
+`hkArray {m_data, m_size, m_capacityAndFlags}`, `hkVector4f`,
+`hkRefPtr`, `hkEnum`, plus Monolith `CHavokAI*` customs.
+
+### In-memory view (Ghidra)
+
+The loader expands TBDY into a pool of tagged records —
+`{u64 tag_bits, u64 next_sibling, u64 values[popcount(tag_bits)]}`,
+field n at `node+16+8·rank(bit)` — accessors `FUN_1405a23f0`,
+`FUN_1405a222c`/`FUN_1405a37c4` (sibling chain, `&1` terminator).
+The runtime type index is Havok `hkReflect` (assert path
+`hkReflectTypeDetail.cpp`).
