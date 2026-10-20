@@ -106,6 +106,8 @@ params, 0xDEADDEAD}` where `path` is e.g. a `.GPUCloth.cres` file —
 ## Footer — id `0xDCDCFF99`
 
 `u32 id | u32 version | "SKPY" magic | u32 field | byte[8] tail`.
+(Loader `FUN_1407966fc` — Ghidra decompile: `{SKPY, u32}` with
+`version==1` accepted exactly.)
 
 ## Coordinate frame — sow-rs verified
 
