@@ -157,26 +157,40 @@ groups each = `{vec3 min, vec3 max, u32 flag, u32 seq}` 32B AABB,
 covering `0..pl` — a per-region membership list.
 
 **Large worlds** (MI `{17,5,6}`, island `{8,5,1}`, desert `{16,6,2}`,
-baraddur `{3,5,1}`): `n_regions` AABBs verified (`seq` = `0..n-1`,
-`flag` ∈ {0,1}) followed by a packed blob (~64 KB on MI, ~137 KB on
-desert). The blob is a **bit-packed / variable-length stream**, not a
-word-aligned record table: byte motifs recur at shifted bit offsets,
-and no fixed-width framing (u32 `{idx,payload}` records, u16 lane
-pairs, `{u16 count, count×u16}` lists, LEB128 records, i16 quantized
-positions, `{src,dst}` edge pairs, 12/13/14-bit fixed symbols LSB- or
-MSB-first) tiles the stream cleanly. Byte-level census (MI): each u16
-lane reads as a `{u8 code, u8 small}` pair — the low byte is dominated
-by `{0, 0x44-0x48, 0xC4-0xCA}` (0, ~68±4, or ~68±4 | 0x80) and the
-high byte is a small int 0-9; ~46% of lanes carry code 0 and zero
-lanes alternate with data at gaps of 1-2, so two `{code, n}` elements
-may be packed per u32 with the first often empty. The `f2`/`f3`
-header counts for large files (5/6, 5/1, 6/2, 5/1) presumably size
-two further sub-tables inside or after the AABB block — record shapes
-undetermined. All earlier numeric-index readings
-(`(x>>19)<placement_count`, "51% valid u16 indices") are artifacts of
-the small integer range and should not be trusted. Payload is
-preserved raw as `tail`; the encoding is OPEN pending a bit-level
-decode or runtime evidence of how the engine consumes it.
+baraddur `{3,5,1}`): a **four-part** layout, verified by nonzero-run
+segmentation on all four files:
+
+```text
++0x0c  sparse region data — float-lead entries, length varies
+       (MI ~27 KB, island ~32 KB, desert ~52 KB, baraddur ~481 B).
+       Desert's block holds ~1,636 nonempty 32-byte entries; MI's
+       first bytes decode as world-space AABB floats.
++...   u32 triple {n, n, flag}    — MI n=140, island n=136, desert n=207
++...   packed block               — MI 36.6 KB, island 40.3 KB,
+       desert 84.5 KB; starts 0x0046ea60 (MI/desert) or
+       0x01471c40 (island) — the OPEN bit-packed stream below
++...   u32 n (repeat) + n sequential u32s 1..n (~+footer
+       {1,3,0,-1,-1,0}) — a per-group index/identity table
+```
+
+The third part is the unresolved piece: a **bit-packed /
+variable-length stream**, not a word-aligned record table — byte
+motifs recur at shifted bit offsets and no fixed-width framing (u32
+`{idx,payload}` records, u16 lane pairs, `{u16 count, count×u16}`
+lists, LEB128 records, i16 quantized positions, `{src,dst}` edge
+pairs, 12/13/14-bit fixed symbols LSB- or MSB-first) tiles it
+cleanly. Byte-level census (MI): each u16 lane reads as a
+`{u8 code, u8 small}` pair — the low byte is dominated by
+`{0, 0x44-0x48, 0xC4-0xCA}` (0, ~68±4, or ~68±4 | 0x80) and the high
+byte is a small int 0-9; ~46% of lanes carry code 0 and zero lanes
+alternate with data at gaps of 1-2, so two `{code, n}` elements may
+be packed per u32 with the first often empty. The `f2`/`f3` header
+counts for large files (5/6, 5/1, 6/2, 5/1) presumably size further
+sub-structure — record shapes undetermined. All earlier numeric-index
+readings (`(x>>19)<placement_count`, "51% valid u16 indices") are
+artifacts of the small integer range and should not be trusted.
+Payload is preserved raw as `tail`; the encoding is OPEN pending a
+bit-level decode or runtime evidence of how the engine consumes it.
 
 ## Verified
 
