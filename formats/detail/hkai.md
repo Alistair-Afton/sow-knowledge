@@ -93,6 +93,21 @@ customs `CHkStringTable`, `CHavokAIObstacleData{Array}`,
 `CHavokAIDynamicNavMeshPiece{Array}`, `CHavokAIUserEdgeData{Array}`,
 `CHavokAIContextActionInfo`.
 
+## INDX section (Ghidra-verified, `FUN_1405a2b54`)
+
+Children `ITEM` + `PTCH`, read after TYPE populated the type-pointer
+array at `reader+8`:
+
+- **`ITEM`** — `n × 0xC` records `{u32 type_idx(flags|idx &0xffffff),
+  u32 data_offset, u32}`; record 0 is skipped (null item). Each binds
+  a type (via `TPTR[type_idx]`) to the object at `DATA + data_offset`.
+- **`PTCH`** — u32 stream of `{u32 type_idx, u32 n, n×u32 offsets}`
+  groups, bounds-checked ("Corrupt patch index body at index {}").
+  Each offset points into `DATA`; the u32 slot there holds either
+  `0` (patch to null) or an **ITEM index** (`slot×0xC` into the item
+  table) resolved to that item's address — i.e. the pointer fixup
+  table linking the object graph.
+
 ## Unknowns
 
 - TBDY bytecode encoding — the gate to a full object walker (parsed
