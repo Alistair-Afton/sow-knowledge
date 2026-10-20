@@ -34,12 +34,12 @@ loader reads the 0x2C header in one shot, checks `GADB` +
 blob data and compares it against the literal `"gamedb_patch"` —
 patch gamedbs are recognized by *file path*, merged in-place by the
 same loader, and rejected when the patch's `+0x2c` field doesn't
-match the base DB's `+0x20` content hash. The header counts size the
-allocation as `(n1c + n14·2)·0x10 + n0c·0x58 + n10·0x28 + 0x88` and
-`n18·8 + 0x88` — i.e. the +0x0c "type count" drives a **0x58-stride**
-record array (schema descriptors), +0x10 a 0x28 array, +0x14 a
-paired-0x10 array, +0x18 a u64 array, and +0x1c a 0x10-stride table
-of `{u32, u32, u8, u8, u8, u16, u16}` descriptor records read first.
+match the base DB's `+0x20` content hash. A second consumer
+(`FUN_1417662b0`) is the **recursive patch-chain loader**: given any
+`.gamedb` path it synthesizes a `"gamedb_patch"` variant, opens it
+through the VFS, and calls *itself* — the result is a **linked list
+of DB layers**, so patches can themselves be patched and the chain
+resolves base→patch→patch-of-patch.
 
 ## Attribute names — PARTIAL, structural limitation
 
