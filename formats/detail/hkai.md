@@ -140,6 +140,34 @@ convex polygons (triangles in practice); `userEdgeCost` is `hkHalf`
 comes from `edge.oppositeFace`; user edges are a parallel lane via
 `startUserEdgeIndex`/`numUserEdges` into `CHavokAIUserEdgeData`.
 
+## Monolith custom objects (verified)
+
+Every `.hkai` carries an `hkRootLevelContainer` whose
+`namedVariants` bind names to objects: the `hkaiNavMesh`,
+`hkaiNavMeshGenerationSettings`, `CHkStringTable`, and four Monolith
+arrays — `CHavokAIObstacleDataArray`,
+`CHavokAIFireVolumeObjectObstacleDataArray`,
+`CHavokAIDynamicNavMeshPieceArray`, `CHavokAIUserEdgeDataArray`.
+
+- **`CHkStringTable`** (48 B) — `{desc, Data: hkArray<char*>}` of
+  asset/animator names observed: `OrcFe_24.AINMOB_00`,
+  `OrcTe_*.NMO`, `zipPo_06.OB1/OB2` (zipline endpoints).
+- **`CHavokAIUserEdgeDataArray::ContextActionInfo`** — array of
+  refs to `CHavokAIContextActionInfo` (80 B):
+  `u32 nGeneratorName` (dense index into the string table),
+  `hkVector4f vL0`, `vL1`, `vNorm` — a world-space segment +
+  surface normal anchored to the named AI object.
+- **`CHavokAIUserEdgeData`** (112 B) — `{vA1, vA2, vB1, vB2:
+  hkVector4f, fHalfHeight: hkReal}` — two world segments + a
+  height band; the geometric half of the user-edge pair.
+- **`CHavokAIObstacleData`** (64 B) — `{u32 nStringIndexName,
+  u32 uNameHash, hkVector4f vWorldPosition, hkArray Points}` —
+  named obstacle volumes.
+- **`CHavokAIDynamicNavMeshPiece`** (80 B) — same head
+  `{nStringIndexName, uNameHash, vWorldPosition, Points}` plus
+  `hkRefPtr hkaiNavMesh`: a placed dynamic navmesh piece carrying
+  its own mesh — destructible/moving cover gets real nav geometry.
+
 ## Unknowns
 
 - THSH hash function (u32 per type).
