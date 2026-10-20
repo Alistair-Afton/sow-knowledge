@@ -124,8 +124,12 @@ mission against the seated holder.
   **ord 1=Brutal** (`_4Brutal`/`Diff4+`), **ord 2=Easy** (`_1Easy`),
   **ord 3=Gravewalker** (binds the identical 36 var→`4Brutal`
   pairs as Brutal — differs systemically, not via variable remaps),
-  **ord 4=Normal** (`_2Normal`). So nemesis-mission lifespans run
-  {L3:3, L5:5} on Easy/Normal/Hard and {1,1} on Brutal/
+  **ord 4=Normal** (`_2Normal`). `DifficultyLists` independently
+  confirms the mapping: cell 0 links the *default* Settings
+  directly (rec4 = Normal — retail's default difficulty), cells
+  1-5 are indirection records `{cell0 → Settings}` ordered
+  Easy,Normal,Hard,Brutal,Gravewalker. So nemesis-mission lifespans
+  run {L3:3, L5:5} on Easy/Normal/Hard and {1,1} on Brutal/
   Gravewalker — the hardest tiers compress missions to one advance.
 
 ## `PL_*` attack-name grammar (INFERRED)
