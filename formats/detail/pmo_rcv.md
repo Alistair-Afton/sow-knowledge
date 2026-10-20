@@ -24,6 +24,10 @@ Parametric-transition tables (`player_el2_idle_to_walkstl_l_major`…):
 
 `len = 0x20 + frames × (4ch+8)` exactly on all 21 single-block files.
 
+(Retail loader `FUN_1418055e4` — Ghidra decompile: `{PARA, ver==1}`
+exact, body delegated to a dedicated parser `FUN_141b453fc` — the
+same parser family as RCVA's `FUN_141b452f0`.)
+
 ## `.rcv` — RCVA v2 (45 files)
 
 Recovery/height curves for mantle/vault behaviors:

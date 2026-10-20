@@ -28,6 +28,13 @@ in order:
 +..    trailing blob (empty in retail)
 ```
 
+**Retail read path (Ghidra `FUN_141d23228`, byte-verified):**
+`{SKDB, ver==9}` exact. The loader reads the two index sections as
+`u32`-pair arrays (`{key_hash, char_index}` — confirming both
+tables share one entry shape), the string space as
+`string_char_count*2` bytes (UTF-16), then the trailing blob —
+the doc layout above matches the loader field-for-field.
+
 Retail scale: the enus file in `HotChunk.Arch06` is ~7.8 MB with
 68,547 index entries and 0x374e8e string chars.
 

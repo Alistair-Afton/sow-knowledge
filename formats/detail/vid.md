@@ -24,6 +24,14 @@ format; treated as foreign stragglers).
 at off:  NUL-terminated path, len includes the NUL
 ```
 
+**Retail read path (Ghidra `FUN_1404bbd78`, byte-verified):**
+versions **10–12** accepted (`10`/`11` carry a simpler header:
+v10 adds a 0x20-byte name field). For v12 each entry is
+`{u8 stream_idx, u8 flag, u32 offset, u32 size}` with an explicit
+`offset+size <= file_size` bounds check — `stream_idx` selects
+which payload slot the pointer lands in (the `.vib`/`.vibuhd`
+distinction), `flag==0` entries get their size stored as well.
+
 Entry 0 is the standard `.vib` path (`cinematics\videos\…\name.vib`);
 entry 1, when present, is the same path with `uhd` appended
 (`name.vibuhd`) — the high-resolution variant. The u8 markers are

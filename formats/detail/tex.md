@@ -91,6 +91,11 @@ header — used by `.lso.*.tex` lightmap volumes and colorgrade LUTs.
 
 ```text
 "CPUT" u32 ver=1  u16 name_len  name  u32 w  u32 h  u32 bpp  pixels
+
+(Retail loader `FUN_1470bd900` — Ghidra decompile: `{CPUT, ver==1}`
+exact; reads the name as a fixed **0x104-byte** slot then
+`{u32, u32, u32}` with the last taken `>>3` — i.e. a bit-count
+field, not bytes: `pixels_bytes = field>>3`.)
 ```
 
 Raw uncompressed BGRA (0xff alpha + B,G,R observed). File size is
