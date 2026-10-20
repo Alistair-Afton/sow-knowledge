@@ -41,6 +41,19 @@ through the VFS, and calls *itself* — the result is a **linked list
 of DB layers**, so patches can themselves be patched and the chain
 resolves base→patch→patch-of-patch.
 
+The body layer (decoded via `FUN_1404b9b50` → `FUN_1404ba07c`):
+`{u32 schema_off, u32 n_tables}`, then per-table 0x18 headers
+`{name_off, 2×data_off, n_fields, n_records}` → 0x58-byte runtime
+descriptors. **Patch tables merge into base tables by name_hash** —
+matching names get extra records appended. Fields are
+`{u16 n_idx, u8 n_descs, u32 field_pool_idx, u8 flags}` + `n_idx×u32`
+index slots over a shared 0x10-stride field pool (`+0xA u8
+type&0x3f, +0xC u16 count, +0xE u16 start`); pointer-typed field
+slots are **rebased by the blob base at load**. Records are the same
+shape plus a leading `u32 name_off` (rebased + name-hash'd,
+flags `|2`), producing 0x28-byte runtime records.
+
+
 ## Attribute names — PARTIAL, structural limitation
 
 Attribute *names are not serialized* — each attribute slot is a hash.
