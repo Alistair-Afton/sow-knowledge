@@ -1,5 +1,5 @@
 # Nemesis memory — the CharacterEvent system
-> **Status:** **partial** — Project Nemesis source. Only the `AudioHooks/GameConditions` list's existence (2,188 records) is Andúril-verified; event vocabulary, memory layout, and the gutted-writer model are Nemesis-only evidence.
+> **Status:** **partial** — Project Nemesis source. Verified by Andúril: the `AudioHooks/GameConditions` list (2,188 records), **36/39 event-vocabulary names** present as strings inside `game.gamedb`, and **77 `CharEvent_*` condition names** (≥ the "57+" claim). Remaining Nemesis-only: the memory layout, the gutted-writer model, and the three `*TriggerEvents` names (Faction-sim family — probably list/group names, not CharacterEvent types).
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
@@ -55,8 +55,8 @@ absent from strdb, so the census isn't statically checkable). 57+
 condition records exist
 (`CharEvent_*`, `CharEventCount_*`, `TimesHumiliatedPlayer*`,
 `DLG_*`) — the *query* side is fully shipped and wired into dialog,
-music, and behavior. (Andúril confirms the list exists with 2,188
-records; the 57+ figure and the event-name strings are Nemesis-only.)
+music, and behavior. (Andúril: 2,188 GameCondition records and 77
+`CharEvent_*` names confirmed inside `game.gamedb`.)
 
 ## Event vocabulary (34 types, harvested from GameCondition records)
 
@@ -83,6 +83,9 @@ Faction sim: `BossKilled`, `BrotherKilledByPlayer`,
 `HenchmenKilled`, `IsPlayerFollowerApply/Remove`,
 `PromotePlayerKiller_To_WC`, `SimDeathThreatExpired`,
 `EventDeathThreat`, `BetrayalTriggerEvents`, `ShamedTriggerEvents`.
+*(Andúril: these three names don't appear in retail GADB — the rest of
+the vocabulary does; they may be list/group names rather than event
+types.)*
 
 Adjacent systems: `Combat.ScarType`/`Combat.ScarSetup` lists,
 `NemesisForge.FirebirdModelScarType`, `Trait_Quirk_Humiliator`,
