@@ -39,27 +39,31 @@ Loader addresses for the exe-verified formats are in `engine.md`.
 
 ## Detailed specs
 
-Full field-level specs per format (provenance: the Andúril
-implementation's evidence docs, mirrored here verbatim):
+Full field-level specs per format, in [`detail/`](detail/)
+(provenance: the Andúril implementation's evidence docs, mirrored
+here verbatim):
 
-- Archives/containers: [`arch06.md`](arch06.md) (LTAR),
-  [`embb.md`](embb.md) / [`bndl.md`](bndl.md), [`slvt.md`](slvt.md),
-  [`pck.md`](pck.md)
-- Records/DB: [`gamedb.md`](gamedb.md) (digest), [`bvr.md`](bvr.md),
-  [`scri.md`](scri.md), [`strdb.md`](strdb.md), [`save.md`](save.md),
-  [`subb.md`](subb.md)
-- Geometry/skeleton/animation: [`geometry.md`](geometry.md) (digest),
-  [`mesh.md`](mesh.md), [`inst.md`](inst.md), [`wldmsh.md`](wldmsh.md),
-  [`skel.md`](skel.md), [`anix.md`](anix.md), [`cres.md`](cres.md)
-- World/regions: [`world.md`](world.md) (digest),
-  [`wldclnt.md`](wldclnt.md), [`objres.md`](objres.md),
-  [`terrain.md`](terrain.md), [`veggrid_sndmap.md`](veggrid_sndmap.md),
-  [`vegtile.md`](vegtile.md), [`hkai.md`](hkai.md)
-- Materials/textures/UI/AV: [`materials.md`](materials.md) (digest),
-  [`mat.md`](mat.md), [`tex.md`](tex.md), [`gfx.md`](gfx.md),
-  [`uis.md`](uis.md), [`uiwd.md`](uiwd.md), [`vid.md`](vid.md),
-  [`vib.md`](vib.md), [`bnk.md`](bnk.md), [`pmo_rcv.md`](pmo_rcv.md),
-  [`fx.md`](fx.md)
+- Archives/containers: [`detail/arch06.md`](detail/arch06.md) (LTAR),
+  [`detail/embb.md`](detail/embb.md) / [`detail/bndl.md`](detail/bndl.md),
+  [`detail/slvt.md`](detail/slvt.md), [`detail/pck.md`](detail/pck.md)
+- Records/DB: [`detail/bvr.md`](detail/bvr.md),
+  [`detail/scri.md`](detail/scri.md), [`detail/strdb.md`](detail/strdb.md),
+  [`detail/save.md`](detail/save.md), [`detail/subb.md`](detail/subb.md)
+- Geometry/skeleton/animation: [`detail/mesh.md`](detail/mesh.md),
+  [`detail/inst.md`](detail/inst.md), [`detail/wldmsh.md`](detail/wldmsh.md),
+  [`detail/skel.md`](detail/skel.md), [`detail/anix.md`](detail/anix.md),
+  [`detail/cres.md`](detail/cres.md)
+- World/regions: [`detail/wldclnt.md`](detail/wldclnt.md),
+  [`detail/objres.md`](detail/objres.md),
+  [`detail/terrain.md`](detail/terrain.md),
+  [`detail/veggrid_sndmap.md`](detail/veggrid_sndmap.md),
+  [`detail/vegtile.md`](detail/vegtile.md), [`detail/hkai.md`](detail/hkai.md)
+- Materials/textures/UI/AV: [`detail/mat.md`](detail/mat.md),
+  [`detail/tex.md`](detail/tex.md), [`detail/gfx.md`](detail/gfx.md),
+  [`detail/uis.md`](detail/uis.md), [`detail/uiwd.md`](detail/uiwd.md),
+  [`detail/vid.md`](detail/vid.md), [`detail/vib.md`](detail/vib.md),
+  [`detail/bnk.md`](detail/bnk.md), [`detail/pmo_rcv.md`](detail/pmo_rcv.md),
+  [`detail/fx.md`](detail/fx.md)
 - Script reference (script classes, event surface, event subs):
   [`../reference/script-classes.md`](../reference/script-classes.md),
   [`../reference/script-surface.md`](../reference/script-surface.md),

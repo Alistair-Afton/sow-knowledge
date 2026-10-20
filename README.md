@@ -66,7 +66,8 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/materials.md` | LTMI `.mat`, TEXR/TEXA/SLVT `.tex*`, shaders, texture conventions |
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
-| `formats/<name>.md` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
+| `formats/detail/` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
+| `specs/` | Behavior specs — retail-observed behavior per subsystem (spawn, faction, moveset, combat, save, HUD, VFS, …); each carries its evidence tags and, where present, a labeled `## Andúril model` section |
 | `reference/` | Script classes, event surface, and event-subscription tables |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |
