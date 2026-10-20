@@ -173,24 +173,47 @@ segmentation on all four files:
        {1,3,0,-1,-1,0}) — a per-group index/identity table
 ```
 
-The third part is the unresolved piece: a **bit-packed /
-variable-length stream**, not a word-aligned record table — byte
-motifs recur at shifted bit offsets and no fixed-width framing (u32
-`{idx,payload}` records, u16 lane pairs, `{u16 count, count×u16}`
-lists, LEB128 records, i16 quantized positions, `{src,dst}` edge
-pairs, 12/13/14-bit fixed symbols LSB- or MSB-first) tiles it
-cleanly. Byte-level census (MI): each u16 lane reads as a
-`{u8 code, u8 small}` pair — the low byte is dominated by
-`{0, 0x44-0x48, 0xC4-0xCA}` (0, ~68±4, or ~68±4 | 0x80) and the high
-byte is a small int 0-9; ~46% of lanes carry code 0 and zero lanes
-alternate with data at gaps of 1-2, so two `{code, n}` elements may
-be packed per u32 with the first often empty. The `f2`/`f3` header
-counts for large files (5/6, 5/1, 6/2, 5/1) presumably size further
-sub-structure — record shapes undetermined. All earlier numeric-index
-readings (`(x>>19)<placement_count`, "51% valid u16 indices") are
-artifacts of the small integer range and should not be trusted.
-Payload is preserved raw as `tail`; the encoding is OPEN pending a
-bit-level decode or runtime evidence of how the engine consumes it.
+The third part is the unresolved piece — now bounded by the retail
+read path (see "Retail read path" below): the engine reads the tail
+as **count-prefixed variable records**, not a bit-packed stream. Each
+node record = `{f32, u32 n_vec3, u32 n_a, u32 n_b}` (20 B) followed
+by `n_vec3 × 12 B` vec3 positions + `n_a × 2 B` + `n_b × 2 B`
+arrays, and the loader computes a min/max bound over the vec3s via
+`minps`/`maxps` — i.e. the tail is a **bounding-volume hierarchy /
+spatial index** (the f32 is a node radius; 0x44-0x48 lanes seen in
+the byte census are ~700–900 unit radii). Earlier fixed-width
+readings (`(x>>19)<placement_count`, "51% valid u16 indices", the
+`{code,n}` byte-pair framing) are artifacts of reading this
+variable-length stream word-aligned — do not trust them. The exact
+field order within the 20-byte node header and which tail sub-table
+each of the three element readers consumes is still open; the packed
+block's first bytes (`0x0046ea60` / `0x01471c40`) do not yet tile as
+node headers, so a short per-section preamble likely precedes the
+records. Payload is preserved raw as `tail`.
+
+## Retail read path (Ghidra decompile, verified)
+
+`ShadowOfWar.exe` headless analysis (`C:\tools\ghidra-proj\sow`,
+331,366 functions) locates the loader via the `0x43534457` ("WDSC")
+immediate — exactly one hit:
+
+- `FUN_1406b3510` — file loader: checks `WDSC` + version 9, calls
+  `FUN_140423e70` (the **namehash**, already byte-confirmed) on the
+  file path, then `FUN_1406b3664` for the body.
+- `FUN_1406b3664` — body parser: reads a **13-u32 header** (9 used
+  fields + 4 zero-sentinels at positions 2, 5, 10, 12) into
+  `{f48,f44,f40,f3c,f38,f34,f30,f2c}`; allocates one buffer sized
+  `(f1c + f20*12 + f14 + f0c) × 8B + (f18 + (f10 + f08*4) × 2) ×
+  20B`; fills **three element arrays** of counts `f30/f48/f40` (=
+  `f20`/`f08`/`f10` — including `record_count`) via readers
+  `FUN_141cd4124` / `FUN_141cd3e54` / `FUN_141cd401c`; then
+  `param_1[7] = records + f44*0x48` and `param_1[8] = total − f44`
+  (the region record array is **72 B/record**, `f44` leading records
+  skipped — the section-header records); `f3c` sizes a final table.
+- `FUN_141cd4124` — node reader: one 20-byte header read
+  `{f32, u32, u32, u32, u32}` then `n×0x0C` vec3 bytes +
+  `n×2` + `n×2`, computing a `minps`/`maxps` bound — confirming the
+  bounding-volume-node shape above.
 
 ## Verified
 
