@@ -230,9 +230,24 @@ bands only under this reading).
   role pickers (e.g. `Reward_IronWill`'s `ExcludedRole` →
   `Special_Butterfly_Roles` — 29 defs granting `Picker_AudioMannerism_*`
   as a side effect).
+- `GlobalVarPredicate` refs resolve to `Quest/GlobalVarPredicates`
+  records of shape `{AndTest:int, IntTests:struct-link*,
+  BoolTests:struct-link*}`. Each `IntTests` target is an unnamed
+  `{Max, Min, Variable}` record and each `BoolTests` target an
+  unnamed `{RequiredValue, Variable}` record; `Variable` links a
+  `GameData/Variables` global. VERIFIED bounds: `Act1` =
+  `StoryState ∈ [0,199]` (a band — act-1-only, not a floor),
+  `Act2` = `StoryState ∈ [200,9999999]`; `WarchiefsUnlocked` =
+  OR over 4 bool vars (`WarchiefsUnlocked`, `InvasionModeActive`,
+  two more). 37 records gate on `Act1` (the `Act1_AdvancedClass_*`,
+  `DefaultAct1_*` defs and the bare `PowerStruggle`/`Hunting`
+  generation types), 55 on `Act2` — this is the mechanism behind
+  the `_Act{n}` table naming: gated JobLists and reward defs go
+  dead outside their band, they do not fall back.
 - Remaining undecoded def gates: `Included/ExcludedScarType`,
   `IncludedRowRank`, `IncludedAppearanceTags` (partially handled),
-  `GlobalVarPredicate`, `SetRoleFromFilter` semantics beyond the flag.
+  `SetRoleFromFilter` semantics beyond the flag, `FloatTests`
+  (schema attr exists; unused in the retail corpus).
 
 ## Live roster structure (verified in-game)
 
