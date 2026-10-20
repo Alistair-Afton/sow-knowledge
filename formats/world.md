@@ -75,8 +75,10 @@ semantics. Record stats (Andúril): `flag ∈ {0,1}` on real records;
 `25,250..33,607`, indexing the *first* vert partition (`n1`). The two
 vert partitions differ in kind: p1 is clean positional, p2 is
 **interleaved 24-byte cells** `{vec3 desc, vec3 pos}` (~17,593 cells —
-alternation confirmed); `pos` = nav-cell centres, `desc` = small
-repeating triple (<1000 — per-template data, e.g. half-extents). `(a,b)` pairs are
+alternation + even-parity desc slots confirmed). `pos` slots alone
+render as the city's nav-cell centres; `desc` is a small quantized
+triple (~10–300) that is mostly distinct per cell — per-cell extents
+or packed data, exact semantics OPEN. `(a,b)` pairs are
 618 **disjoint windows** spanning `100..35,169 ⊂ [0, n2)` — they
 partition regions of that second array; records sharing a window are
 markups grouped under it (`a` mostly nondecreasing). `rgba` runs the
