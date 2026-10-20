@@ -53,6 +53,12 @@ slots are **rebased by the blob base at load**. Records are the same
 shape plus a leading `u32 name_off` (rebased + name-hash'd,
 flags `|2`), producing 0x28-byte runtime records.
 
+Field `type&0x3f` selects pointer-typed kinds (`FUN_1404ba364`):
+**4–9 and 0xC–0x10** are rebased by the blob base. Links
+(`0x0A`/`0x0B`) are not rebased (record indices, not offsets);
+`0x07`/`0x08` are — confirming those cells are heap offsets to
+constant aggregates (FloatRange/vec3), not scalars.
+
 
 ## Attribute names — PARTIAL, structural limitation
 
