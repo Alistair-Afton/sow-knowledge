@@ -60,6 +60,16 @@ Field `type&0x3f` selects pointer-typed kinds (`FUN_1404ba364`):
 constant aggregates (FloatRange/vec3), not scalars.
 
 
+
+Byte-check vs real `patch04/game.gamedb` (58 MB): the blob spans
+`[0x2c, 0x2c+strsz)` exactly (ends on a NUL-terminated string), and
+its first bytes are the u16-length-prefixed self path
+`database\game\game.gamedb` + `GameDatabase`. Header counts map
+`+0x0c → n_tables(2,435)`, `+0x10 → n_records(233,110)`,
+`+0x14 → paired pool (354,979)`, `+0x18 → value-word slots
+(9,353,656)`, `+0x1c → field descriptors (395,395)` — allocation
+≈100 MB runtime, consistent with the documented section sizes.
+
 ## Attribute names — PARTIAL, structural limitation
 
 Attribute *names are not serialized* — each attribute slot is a hash.
