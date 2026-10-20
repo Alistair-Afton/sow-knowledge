@@ -118,8 +118,15 @@ mission against the seated holder.
   `_StructuresDifficultySimEventLifeSpan` rows `{int values…,
   DiffAdjust ref}` — each `Difficulty/Settings` record links one
   `{L3,L5}` pair: S0={3,5}, S1={1,1}, S2={3,[5,5]}, S3={1,1},
-  S4={3,5}. The Settings-ord→tier-name mapping is unresolved
-  (records are unnamed; tier ordering comes from `DifficultyLists`).
+  S4={3,5}. The records are unnamed but tier-identifiable by the
+  suffixed `FloatArray`s their `VariableFloatAdjust` rows bind
+  (VERIFIED fingerprint): **ord 0=Hard** (`_3Hard` dominant),
+  **ord 1=Brutal** (`_4Brutal`/`Diff4+`), **ord 2=Easy** (`_1Easy`),
+  **ord 3=Gravewalker** (binds the identical 36 var→`4Brutal`
+  pairs as Brutal — differs systemically, not via variable remaps),
+  **ord 4=Normal** (`_2Normal`). So nemesis-mission lifespans run
+  {L3:3, L5:5} on Easy/Normal/Hard and {1,1} on Brutal/
+  Gravewalker — the hardest tiers compress missions to one advance.
 
 ## `PL_*` attack-name grammar (INFERRED)
 
