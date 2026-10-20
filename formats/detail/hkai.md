@@ -114,3 +114,27 @@ array at `reader+8`:
   lazily by the type index, not in the TYPE dispatch loop).
 - ITEM record shape; THSH hash function; TCID/FRCT compendium
   resolution (which library the u64 ids reference).
+
+## TBDY / type descriptors (Ghidra-verified, `FUN_1413fc96c` et al.)
+
+Type descriptors are **not a flat bytecode** — they are a node pool
+of tagged records, pointer-linked after PTCH fixups:
+
+```text
+node = { u64 tag_bits, u64 next_sibling, u64 values[popcount(tag_bits)] }
+```
+
+`FUN_1405a23f0(node, mask)` returns `values[popcount(tag_bits & (mask-1))]`
+— each bit position names a field; value slots are packed in bit
+order. `FUN_1405a222c` follows `next_sibling`, so fields can be spread
+across a sibling chain (inheritance flattening). `FUN_1405a37a4` reads
+tag `0x800000` as u16 = type byte size.
+
+Observed tag masks: `0x800000` = byte size, `0x1000000` = flags/kind
+word, `0x4000000` = parent-list block, `0x20000` = `{ptr, offset}`
+member-offset pairs, `0x100000` = member size contribution. Low bits:
+`&1` = chain terminator, `&0xf==8` = array/member kind, `&0x80` =
+offset-record node (walker appends `{offset,0}` patch targets).
+
+`FUN_1413fc96c` is the recursive member-offset walker producing the
+list of serialized positions that hold member/pointer data.
