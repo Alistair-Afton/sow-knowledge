@@ -109,8 +109,17 @@ mission against the seated holder.
   PowerStruggle `[10,7,4,0]`→`[5,2,0,0]`, Hunting `[10,7,5,0]`→
   `[2,0,0,0]` — the hardest tier allows roughly one concurrent
   nemesis job per region. Below Brutal the inline `Weights` apply.
-- `Difficulty/SimEventLifeSpan` exists (cells empty in both records —
-  table-driven elsewhere) — corroborates missions having lifespans.
+- Mission lifespans (VERIFIED structure, values partially): SimEvent
+  records carry `LifeSpanGenerated`/`LifeSpanPlayerCreated` base
+  durations (Duel=3, FeastSingle=5/0; 0 = unset) plus a
+  `LifeSpanDifficulty` ref to a `Difficulty/SimEventLifeSpan`
+  selector (`SimEvent_LifeSpan3/5_DiffAdjust` — cell-less stubs).
+  The per-tier override lives in unnamed
+  `_StructuresDifficultySimEventLifeSpan` rows `{int values…,
+  DiffAdjust ref}` — each `Difficulty/Settings` record links one
+  `{L3,L5}` pair: S0={3,5}, S1={1,1}, S2={3,[5,5]}, S3={1,1},
+  S4={3,5}. The Settings-ord→tier-name mapping is unresolved
+  (records are unnamed; tier ordering comes from `DifficultyLists`).
 
 ## `PL_*` attack-name grammar (INFERRED)
 
