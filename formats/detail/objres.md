@@ -417,6 +417,15 @@ anim names + 3 f32s (likely region/position). Ordering across the
 table may be by registration order or a per-cluster component sort;
 the join remains open.
 
+## Retail read path (Ghidra decompile, verified)
+
+Loader `FUN_1407a75c8` + body parser `FUN_14048094c`: `version == 13`
+checked by equality; after the 0x10 header, `count` sections are read
+as `{u32 name_hash, u32 size, u8[size]}` exactly as documented — and
+each payload is dispatched through a **hash→vtable-handler registry**
+(`FUN_14115c2c0`), which is why every payload tag (`KEYF`, `SFXS`,
+`CADB`, …) maps to a dedicated sub-parser.
+
 ## Unknowns
 
 - OBJL `key0`/`key1` (per-record u32s): `key1` is stable per instance

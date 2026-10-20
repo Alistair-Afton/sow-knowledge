@@ -287,6 +287,17 @@ There is **no** per-submesh material map verified beyond this path;
 `.mat` paths in `_StructuresMaterialSet` records exist but don't bind
 submeshes alone.
 
+## Retail read path (Ghidra decompile, verified)
+
+Loader `FUN_1404b7c08` (located via the `0x48534D4D` immediate):
+version check is `version − 16 < 2` → **16 and 17 accepted**. The
+`0x95DBDB69` DATA-section marker is a hard check in retail code
+(`local_5c == 0x95DBDB69` → load, else `FUN_1404b7800` fail path).
+Buffer regions are allocated with **0x80 alignment** for vertex
+streams and **0x10** for index/other streams, and each stream is
+conditionally read vs skipped by a per-element flag — matching the
+sparse-LOD layout.
+
 ## Open questions
 
 - `unk7`/`unk8` float fields in MeshInfo (bounds? thresholds?)

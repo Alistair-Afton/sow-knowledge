@@ -63,6 +63,66 @@ payloadSize, u32 metadataOff, u32 metadataSize, u32 1, u32 1.
 all groups; clip tracks reference channels by index. Shared library-
 wide by every clip.
 
+## Retail read path (Ghidra decompile, verified)
+
+Loader `FUN_140480aec` (found via the `0x58494E41` immediate) matches
+the spec exactly: one 0x30-byte header read, `ver == 0x2c` checked by
+equality, then **absolute-offset seeks** — `channelTableOff`,
+`payloadOff/payloadSize`, `metadataOff/metadataSize` are file
+offsets, not relative. The channel table is consumed as
+`{u32 typeHash, u32 n, n×u32 trackId}` groups whose ids sum to
+`channelCount` (each `{trackId, typeHash}` pair lands in one 8-byte
+runtime record). Loader errors `"Failed to consume the full file"`
+unless the stream ends exactly at EOF — there is no unmodeled tail.
+
+### Clip descriptor
+
+| off | type | field |
+|---|---|---|
+| 0 | char[48] | clip name |
+| 48 | u16 | header size = `124 + 16*segments + 8*extras` — does **not** bound the codec/track tables below |
+| 50 | u16 | flags; bit 0 picks the bind-fallback buffer |
+| 52 | u16 | segment count |
+| 54 | u16 | extra count (KeyString etc.) |
+| 56 | u16 | codec count |
+| 58 | u16 | track count |
+| 60 | f32[7] | `Null` TRS at clip start (pos xyz, quat xyzw) |
+| 88 | f32[7] | `Null` TRS at clip end (total root motion) |
+| 116 | u32 | unknown (0 on ~97% of clips; else a 30 fps tick) |
+| 120 | u32 | duration, ticks |
+| 124 | char[4]×ncodec | codec FourCCs |
+| … | u8×ntrack | codec index per track |
+| pad4 | u16×ntrack | channel index per track (unsorted ok) |
+| pad4 | 16B×nseg | segment table `{payloadOff, len, firstTick, lastTick}` |
+| … | 8B×nextra | extras table `{hash, offset from descriptor start}` |
+| … | | extra data (KeyString strings) |
+| pad16 | | |
+
+Segments are tick-contiguous (`first[i+1] == last[i]`).
+
+### Segment (payload, 16-aligned)
+
+```
+u32  extraBlockCount E        (natives: 1 = LITH, or 0)
+u16  codecBlockOff[ncodec]    (segment-relative)
+u16  extraBlockOff[E]
+pad  to 4 bytes               (required even with even codec count)
+u32  extraHash[E]             (0x2B99DBC1 = LITH)
+codec blocks in descriptor order
+  AQ03/SQ03/SV01: 16-aligned;  UATR/STRI: 4-aligned
+LITH block (4-aligned): u32 S, u32 aux1, u32 aux2, u32 tick[S]
+pad  to 16
+```
+
+A codec block spans to the next offset; the last ends at the LITH
+offset. Segments stay under 64 KiB (u16 offsets) — long clips split
+into contiguous segments.
+
+
+
+
+
+
 ### Clip descriptor
 
 | off | type | field |

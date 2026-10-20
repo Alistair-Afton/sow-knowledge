@@ -12,7 +12,7 @@ the CLI.
 
 ```text
 +0x00  char[4]  magic "SCRI"
-+0x04  u32      version — 1 in all observed files
++0x04  u32      version — 1 in all observed files (loader `FUN_1406ab1d4` requires `== 1` exactly, Ghidra-verified)
 +0x08  u32      packed: (payload_len << 8) | kind
                  high 24 bits = payload byte size (exact)
                  low 8 bits   = payload kind:
