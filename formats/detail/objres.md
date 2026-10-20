@@ -163,7 +163,8 @@ shape), expands to `count×0x28` runtime. `SFXS` v1 `FUN_1404bb9e4` —
 `count×0x10` records (f32 at +0xC **squared at load**) +
 `count×0x20`. `SWFX` v1 `FUN_1407c692c` — `n_pairs × {name_hash, u32,
 u32}` + `n2×0xC` + `n2×0x10`. `VOLM` `FUN_1407b83b8` — requires
-**ver > 7**. `SCRB` `FUN_1404b6e40` / `CAWR` `FUN_1407d47e4` —
+**ver > 7**; validators pin `+0xC==0x48`, `+0x14==0x30`,
+`+0x20==0x28`, `+0x2C==0xC`, `+0x10<0x40` (≤64 entries). `SCRB` `FUN_1404b6e40` / `CAWR` `FUN_1407d47e4` —
 `{tag, ver==1}` + a few u32s; header-only handlers.
 
 The remaining corpus tags (`BOLS`, `TEDJ`, `TSDJ`, `BSWA`, `TAOO`,
