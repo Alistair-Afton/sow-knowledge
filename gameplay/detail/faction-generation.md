@@ -1,6 +1,6 @@
 # Faction generation — captain build rules, event grammar, live roster
 
-> **Status:** **verified**** — verified against real-install `game.gamedb`
+> **Status:** **verified** — verified against real-install `game.gamedb`
 > records, a 534-captain save census, and the live in-game roster.
 > **Provenance:** real-install `game.gamedb` walks, endgame-save captain
 > census, live roster memory reads; Project Nemesis research notes

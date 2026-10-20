@@ -1,6 +1,6 @@
 # `.hkai` — HKAI v3 navmesh (Havok tagfile)
 
-> **Status:** **partial**** — tagfile structure decoded; query semantics open
+> **Status:** **partial** — tagfile structure decoded; query semantics open
 > **Provenance:** Havok tagfile structure decoded on all 444 real `.hkai` files.
 
 Navigation meshes per world/section. 444 files, 13 KB – 51 MB.

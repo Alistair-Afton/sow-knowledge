@@ -1,5 +1,5 @@
 # `0x141872800` — `+a4e70` bucket payload populator
-> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

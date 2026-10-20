@@ -1,6 +1,6 @@
 # `.bndl` + `.embb` — BNDL v6 bundles (asset packages)
 
-> **Status:** **verified**** — manifest + section decode verified
+> **Status:** **verified** — manifest + section decode verified
 > **Provenance:** manifest + section decode on the real `.bndl` corpus.
 
 Every packaged asset group is a `.bndl` manifest paired with a

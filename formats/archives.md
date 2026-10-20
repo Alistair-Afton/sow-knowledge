@@ -1,6 +1,6 @@
 # Archives and bundles
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** LTAR/EMBB/SLVT layout — Andúril + sow-rs.
 
 How assets are packaged and found at runtime.

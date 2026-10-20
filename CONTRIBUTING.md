@@ -1,6 +1,6 @@
 # Contributing
 
-> **Status:** **living****
+> **Status:** **living**
 > **Provenance:** contribution contract — the evidence rules this corpus runs on.
 
 This corpus is **evidence-reviewed documentation**, not a wiki. Every

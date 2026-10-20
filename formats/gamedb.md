@@ -1,6 +1,6 @@
 # GADB — the game database format
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** GADB record model probed on real game.gamedb — Andúril + sow-rs.
 
 `database/game/game.gamedb` (56.8 MB), every `.bvr` behavior DB, and

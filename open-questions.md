@@ -1,6 +1,6 @@
 # Open questions
 
-> **Status:** **living****
+> **Status:** **living**
 > **Provenance:** consolidated open questions across all docs.
 
 What we know we don't know, consolidated. Each item states what's

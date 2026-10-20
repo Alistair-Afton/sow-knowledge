@@ -1,6 +1,6 @@
 # `.fxo` / `.fxp` — shaders and effects
 
-> **Status:** **partial**** — bank structure decoded; shader payloads not recompiled
+> **Status:** **partial** — bank structure decoded; shader payloads not recompiled
 > **Provenance:** shader bank structure decoded on the real `.fx` corpus.
 
 ## `.fxo` — SRHR v2 compiled-shader bank

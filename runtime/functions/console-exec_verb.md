@@ -1,5 +1,5 @@
 # 0x1415cff44 — canonical console registry exec verb
-> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

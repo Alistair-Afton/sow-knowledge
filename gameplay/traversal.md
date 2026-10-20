@@ -1,6 +1,6 @@
 # Traversal and movement
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** CADB markup + movement records — sow-rs probes.
 
 VERIFIED by sow-rs (records + root-motion checks on `player_elf.bvr`

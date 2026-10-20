@@ -1,6 +1,6 @@
 # `.tex*` — TEXR/TEXA cooked textures + CPUT raw copies
 
-> **Status:** **proven**** — all ~32.5k textures decode; renders verified
+> **Status:** **proven** — all ~32.5k textures decode; renders verified
 > **Provenance:** all ~32.5k real `.tex*` resources decoded; rendered output verified.
 
 All ~32.5k texture resources are a small cooked header + tail wrapped

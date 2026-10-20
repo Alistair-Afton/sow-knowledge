@@ -1,5 +1,5 @@
 # GameDB intern-map structures — map / pool / name-element
-> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

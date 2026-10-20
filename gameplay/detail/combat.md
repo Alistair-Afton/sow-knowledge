@@ -1,6 +1,6 @@
 # Combat data model — formulas, attacks, fight circle
 
-> **Status:** **verified**** (record layouts + evaluation rules),
+> **Status:** **verified** (record layouts + evaluation rules),
 > semantics of damage predicates PARTIAL
 > **Provenance:** sow-rs/OnSight `formats/combat.md` + `combat.md`
 > (record walks + a working evaluator against real `game.gamedb`).

@@ -1,5 +1,5 @@
 # cvar adapters — bound-command executor family
-> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

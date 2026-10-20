@@ -1,6 +1,6 @@
 # `.skel` — SKEL v17 skeletons
 
-> **Status:** **verified**** — bone hierarchies decoded on real corpus
+> **Status:** **verified** — bone hierarchies decoded on real corpus
 > **Provenance:** bone hierarchies + rigs decoded on the real corpus.
 
 Named bone hierarchies, animation-controller rigs, LOD groups, and optional

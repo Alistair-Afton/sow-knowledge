@@ -1,6 +1,6 @@
 # `.bnk` — Wwise soundbanks
 
-> **Status:** **proven**** — Wwise bank structure verified on corpus
+> **Status:** **proven** — Wwise bank structure verified on corpus
 > **Provenance:** all 245,134 media entries extracted from real `.bnk` archives.
 
 Standard Audiokinetic Wwise bank format, version **118** across the

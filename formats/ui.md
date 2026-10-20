@@ -1,6 +1,6 @@
 # UI: Scaleform `.gfx` + HUD records
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** Scaleform tag walks + HUD gamedb records — sow-rs.
 
 ## `.gfx` — Scaleform movies — VERIFIED

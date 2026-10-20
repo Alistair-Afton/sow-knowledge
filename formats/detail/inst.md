@@ -1,6 +1,6 @@
 # `.inst` — PRFB v8 prefab instances
 
-> **Status:** **verified**** — declared mesh layout decoded; residual flavors documented
+> **Status:** **verified** — declared mesh layout decoded; residual flavors documented
 > **Provenance:** PRFB geometry layout cross-validated against sow-rs world
 > notes and confirmed byte-for-byte on retail samples (brokenbarrel02,
 > gate_stnbrk, minasithil, fishandguts).

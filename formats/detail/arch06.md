@@ -1,6 +1,6 @@
 # `.arch06` — LTAR v4 archive
 
-> **Status:** **proven**** — byte-identical extraction vs reference tooling on real archives
+> **Status:** **proven** — byte-identical extraction vs reference tooling on real archives
 > **Provenance:** every `.arch06` in a retail install; extraction diffed byte-identical vs reference tooling.
 
 Container used by Shadow of War for all packed game data. Verified against

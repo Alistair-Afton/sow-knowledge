@@ -1,6 +1,6 @@
 # `.vib` — Bink video (BIKi / KB2i / KB2j)
 
-> **Status:** **verified**** — Bink headers decoded; playback untouched
+> **Status:** **verified** — Bink headers decoded; playback untouched
 > **Provenance:** descriptors + Bink headers decoded on the real corpus.
 
 Cinematic videos referenced by [`vid.md`](vid.md) `VIDO` descriptors.

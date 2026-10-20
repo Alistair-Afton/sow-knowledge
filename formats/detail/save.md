@@ -1,6 +1,6 @@
 # Save files — `SOM3` / `SAVE` (M13 persistence)
 
-> **Status:** **verified**** — real endgame saves parse; captain census extracted; semantics still expanding
+> **Status:** **verified** — real endgame saves parse; captain census extracted; semantics still expanding
 > **Provenance:** real endgame saves parsed; 534-record captain census extracted.
 
 Externally sourced spec (Universal Modder knowledge base, MIT —

@@ -1,6 +1,6 @@
 # Engine fundamentals
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** engine frame, archives, VFS semantics — Andúril + sow-rs retail evidence.
 
 Frame, units, hashing, and the virtual filesystem — the facts every

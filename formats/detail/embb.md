@@ -1,6 +1,6 @@
 # `.embb` — embedded section bundle (v5)
 
-> **Status:** **partial**** — section layout decoded; consumers open
+> **Status:** **partial** — section layout decoded; consumers open
 > **Provenance:** embedded-section layout decoded on the real corpus.
 
 Sibling of each section's `.scripts` — e.g. `sotp_desert_06.embb` next to

@@ -1,6 +1,6 @@
 # `.bvr` — behavior shards (GADB v17)
 
-> **Status:** **verified**** — behavior graphs walk; node/edge semantics decoded
+> **Status:** **verified** — behavior graphs walk; node/edge semantics decoded
 > **Provenance:** real GADB `.bvr` object graphs walked; node/edge semantics decoded.
 
 Per-character AI/animation **behavior graphs** under `behaviors/`

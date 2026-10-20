@@ -1,6 +1,6 @@
 # `.pck` — AKPK v1 (Wwise file package)
 
-> **Status:** **proven**** — all 245,134 media entries extracted
+> **Status:** **proven** — all 245,134 media entries extracted
 > **Provenance:** all 245,134 media entries extracted from real `.pck` archives.
 
 Sound packages under `sound/<lang>/` (`external*.pck`, `vo*.pck`) and

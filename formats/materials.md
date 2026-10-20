@@ -1,6 +1,6 @@
 # Materials and textures: `.mat`, `.tex`, `.texa`
 
-> **Status:** **verified****
+> **Status:** **verified**
 > **Provenance:** LTMI properties, census, shader models — sow-rs + Andúril.
 
 ## LTMI — `.mat` — CONFIRMED structure

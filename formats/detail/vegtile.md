@@ -1,6 +1,6 @@
 # `.vegtile` — `VEGT` v3 vegetation tiles
 
-> **Status:** **verified**** — vegetation cells decoded
+> **Status:** **verified** — vegetation cells decoded
 > **Provenance:** vegetation cells decoded on the real corpus.
 
 One tile per streamed vegetation cell under `worlds/**/<world>_<n>v.vegtile`

@@ -1,6 +1,6 @@
 # `.veggrid` + `.sndmap` — small index formats
 
-> **Status:** **verified**** — index formats decoded
+> **Status:** **verified** — index formats decoded
 > **Provenance:** vegetation grid/sound-map cells decoded on the real corpus.
 
 ## `.veggrid` — VEGG v1 (4 files)

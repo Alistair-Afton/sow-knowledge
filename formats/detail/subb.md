@@ -1,6 +1,6 @@
 # `.subb` — `SUBB` v1 subtitle cue tables
 
-> **Status:** **verified**** — cue tables decoded on all 121 files
+> **Status:** **verified** — cue tables decoded on all 121 files
 > **Provenance:** cue tables decoded on all 121 real cinematic `.subb` files.
 
 One file per cinematic video under `cinematics/videos/**` (121 files).

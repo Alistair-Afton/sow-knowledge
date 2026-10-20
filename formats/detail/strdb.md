@@ -1,6 +1,6 @@
 # `string.strdb` — SKDB v9 string database
 
-> **Status:** **proven**** — full-corpus read + `.strdelta` merge
+> **Status:** **proven** — full-corpus read + `.strdelta` merge
 > **Provenance:** full `.strdb` corpus read + `.strdelta` merge on the real install.
 
 Per-locale table mapping `key_hash -> UTF-16LE text`, found at

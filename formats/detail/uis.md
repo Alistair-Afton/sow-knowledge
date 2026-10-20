@@ -1,6 +1,6 @@
 # `.uis` — UISH v3 (world-section UI descriptor)
 
-> **Status:** **verified**** — record decode; rendering semantics open
+> **Status:** **verified** — record decode; rendering semantics open
 > **Provenance:** paired record decode across the real `.uis` corpus.
 
 Paired with [`uiwd.md`](uiwd.md). Found under

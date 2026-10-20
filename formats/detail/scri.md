@@ -1,6 +1,6 @@
 # `.scripts` — SCRI script bundles
 
-> **Status:** **working**** — constants + opcodes decoded; VM runs; semantics evolving
+> **Status:** **working** — constants + opcodes decoded; VM runs; semantics evolving
 > **Provenance:** real `.scripts` chunks — constant pools + opcode streams decoded corpus-wide; VM runs scripts.
 
 World/section script state ships as `.scripts` files inside the LTAR

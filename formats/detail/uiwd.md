@@ -1,6 +1,6 @@
 # `.uiwd` — UIWD v4 (world-section UI data)
 
-> **Status:** **verified**** — record decode; rendering semantics open
+> **Status:** **verified** — record decode; rendering semantics open
 > **Provenance:** paired record decode across the real `.uiwd` corpus.
 
 Paired with [`uis.md`](uis.md) — same basename, same `@0x08` entry count.

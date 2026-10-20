@@ -1,6 +1,6 @@
 # `.mesh` — MMSH v17
 
-> **Status:** **proven**** — all 348 files decode; textured renders verified (minor INFO residue)
+> **Status:** **proven** — all 348 files decode; textured renders verified (minor INFO residue)
 > **Provenance:** all 348 real `.msh*` files decoded; textured renders verified.
 
 Cooked character/prop geometry. Verified against all **348** `.mesh`
