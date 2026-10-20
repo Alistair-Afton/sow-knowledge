@@ -150,11 +150,21 @@ count and `n2` the trailing-blob size.
   the flag 0/1 dichotomy, what interleaves between seq records.
 - CLI: `objres <path> pfdg`, `objres <path> pfdg-plot <out.png>`.
 
-Tags observed corpus-wide: `KEYF` (keyframes: `{u32 hash, u16 f16?}`
-pairs seen), `SFXS`, `SWFX`, `ONLS`, `BOLS`, `TEDJ`, `TSDJ`, `BSWA`,
-`BEWA`, `BBWA`, `TAOO`, `QSWA`, `QEWA`, `WAOO`, `PGOD`, `QSDJ`, `QEDJ`,
-`PELS`, `PMND`, `TAIO`, `WAIO`, `DOMN`, `AOMN`, `MNIA`, `SGOD`, `CFXS`,
-`TSED`, `SLOB`, `SCRB`.
+Tags observed corpus-wide: `KEYF`, `SFXS`, `SWFX`, `ONLS`, `BOLS`,
+`TEDJ`, `TSDJ`, `BSWA`, `BEWA`, `BBWA`, `TAOO`, `QSWA`, `QEWA`, `WAOO`,
+`PGOD`, `QSDJ`, `QEDJ`, `PELS`, `PMND`, `TAIO`, `WAIO`, `DOMN`, `AOMN`,
+`MNIA`, `SGOD`, `CFXS`, `TSED`, `SLOB`, `SCRB`.
+
+**Retail read paths for every located tag parser** (Ghidra,
+`ShadowOfWar.exe`): `KEYF` v1 `FUN_1404bb804` — `{count, table_size}`
++ `count×u64` index + 0x10-record blob (`first u32 == 5` = extended
+shape), expands to `count×0x28` runtime. `SFXS` v1 `FUN_1404bb9e4` —
+0x20 header enforcing `count == (table_end − blobA)>>4`; blob +
+`count×0x10` records (f32 at +0xC **squared at load**) +
+`count×0x20`. `SWFX` v1 `FUN_1407c692c` — `n_pairs × {name_hash, u32,
+u32}` + `n2×0xC` + `n2×0x10`. `VOLM` `FUN_1407b83b8` — requires
+**ver > 7**. `SCRB` `FUN_1404b6e40` / `CAWR` `FUN_1407d47e4` —
+`{tag, ver==1}` + a few u32s; header-only handlers.
 
 ## NLFE — ambient-life feature table — PARTIAL
 
