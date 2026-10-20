@@ -1,5 +1,5 @@
 # Nemesis memory — the CharacterEvent system
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Only the `AudioHooks/GameConditions` list's existence (2,188 records) is Andúril-verified; event vocabulary, memory layout, and the gutted-writer model are Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
@@ -50,17 +50,13 @@ event on demand for before/after log comparison. Its handler at
 for the per-character event list itself (VERIFIED-STATIC).
 
 `AudioHook.GameCondition` records bind to it declaratively: cell4 =
-event name, cell6 = `"CharacterEvent"`. 57+ condition records exist
+event name, cell6 = `"CharacterEvent"` (a native interned string —
+absent from strdb, so the census isn't statically checkable). 57+
+condition records exist
 (`CharEvent_*`, `CharEventCount_*`, `TimesHumiliatedPlayer*`,
 `DLG_*`) — the *query* side is fully shipped and wired into dialog,
-music, and behavior.
-
-> **Andúril check:** the `AudioHooks/GameConditions` list exists
-> (2,188 records in retail GADB), but `CharacterEvent` is a native
-> interned string — it appears in neither strdb nor as a raw hash in
-> record cells — so the "57+ condition records" census cannot be
-> confirmed from static data; event-name strings below are likewise
-> Nemesis-sourced.
+music, and behavior. (Andúril confirms the list exists with 2,188
+records; the 57+ figure and the event-name strings are Nemesis-only.)
 
 ## Event vocabulary (34 types, harvested from GameCondition records)
 

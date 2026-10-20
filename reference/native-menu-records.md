@@ -1,5 +1,5 @@
 # Menu record layouts — TreeBase / TreeNode / Predicate / Action
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Record contents (record existence, `BaseNodes` children, attribute keys) **verified by Andúril** via static archive decode; the live-memory entry/slot-table layout below is Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
@@ -9,14 +9,6 @@
 > surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
 > VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
-
-> **Andúril check:** record existence and `BaseNodes` contents are
-> independently confirmed by static archive decode — `FrontEndRoot`
-> (list `Interface/Menu/MenuTreeBase`) resolves to exactly the 7 stock
-> children listed below, and `Options_DetailTree_Display` resolves to
-> `Display_Mode`, `Display_Mode_UWP`, … with the same attribute keys.
-> The live-memory entry/slot-table layout below remains Nemesis-only
-> evidence.
 
 **Tag:** VERIFIED-LIVE (title + pause Options, build `0x5B7F5782`,
 2026-09-25..28)

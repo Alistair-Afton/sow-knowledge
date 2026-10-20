@@ -1,5 +1,5 @@
 # Console commands — the engine's `*.ConsolePrograms` system
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Cvar/command names **verified by Andúril** (all found verbatim in `ShadowOfWar.exe`); dispatch machinery is Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
@@ -14,15 +14,10 @@ Status: `VERIFIED-STATIC` except where noted. The dispatcher entry is
 **LOCATED (2026-09-30n)** — the registry object's `vt+0x58` verb —
 and program-record commands are invocable through it.
 
-> **Andúril check:** the cvar/command names cited in this doc are
-> independently confirmed as strings inside `ShadowOfWar.exe` — 22/23
-> sampled names hit (`AI.EnhancedFlee.Enabled`, `AI.InfoTrack.Subject`,
-> `Mob.AnimSampleRateMS`, `Render.*` families, `Faction.Dump`,
-> `Faction.TriggerAmbush`, `FactionMember.SetHealthPct`,
-> `PlayerInput.SetSimInput`, `Presentation.CharacterEvent`,
-> `PrintDeferred`, `FileExists`, `AIDebugSubjectMgr`, `AmbushDelay`,
-> `projectconsole.cfg`, `autoexec.cfg`, `render.cfg`, `userconfig`,
-> `cinematicconfig`). Dispatch machinery below remains Nemesis-only.
+> **Andúril check:** every cvar/command name cited here was found
+> verbatim inside `ShadowOfWar.exe` (22/23 sampled — the exception,
+> `Video.LaunchBenchmark`, is a GameDB record, not a cvar).
+> Dispatch machinery below remains Nemesis-only.
 
 ## Command-node table (extracted/native_console_commands.tsv)
 
