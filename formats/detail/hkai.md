@@ -57,10 +57,31 @@ proper (hkaiNavMesh serialization); inner decode is future work.
 444/444 files parse through the VFS. CLI: `hkai <path>` lists every
 section with offset/size; `hkai scan` → 444 ok, 0 failed.
 
+## Serialization layer (Ghidra-verified)
+
+The tagfile is **stock Havok 2016 serialization** — a leaked assert
+path names `External\hk2016_2_0_r1\Source\Common\Base\Serialize\
+hkSerialize.cpp` (`hkSerialize::Load::toVarInplace`). Chain:
+`FUN_14048427c` (HKAI header + `0xffffdead` tail) →
+`FUN_1404bc7f0` (blob read + decompress fallback) →
+`FUN_1404bc8e4`/`FUN_1404bc9a0` (`toVarInplace`, reader vtable).
+
+Section roles: `TPTR` = zeroed type-pointer slots (filled by fixups
+at load), `TSTR` = type-name table, `FSTR` = member-name table,
+`TBDY` = packed type-descriptor bytecode, `THSH` = type hashes,
+`ITEM` = item index, `PTCH` = fixup offsets. The type vocabulary
+is fully self-describing — 111 types on the smallest file:
+`hkRootLevelContainer{NamedVariant}` → `hkaiNavMesh`,
+`hkaiNavMesh::{Face,Edge}`, `hkaiAnnotatedStreamingSet`,
+`hkaiStreamingSet::{NavMesh,Graph,Volume}Connection`,
+`hkaiNavMeshClearanceCache*`, `hkaiNavMeshGenerationSettings*`,
+`hkaiCarver`, `hkaiMaterialPainter`, `hkaiVolume`, plus Monolith
+customs `CHkStringTable`, `CHavokAIObstacleData{Array}`,
+`CHavokAIDynamicNavMeshPiece{Array}`, `CHavokAIUserEdgeData{Array}`,
+`CHavokAIContextActionInfo`.
+
 ## Unknowns
 
 - Marker u16 semantics (per-tag span vs payload length).
-- DATA inner structure (Havok hkaiNavMesh objects — vertices/faces/
-  edges streaming sets; standard hk serialization, needs a full tagfile
-  object walker to resolve).
-- ITEM/PTCH fixup tables.
+- TBDY bytecode encoding — the gate to a full object walker.
+- ITEM record shape; THSH hash function.
