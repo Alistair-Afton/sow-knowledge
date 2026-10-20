@@ -123,6 +123,24 @@ and take bitangent handedness per-vertex.
   decoded.
 - 3 files (`camrig`, `param_head`, `torvin_desertt1shield`) use the alternate
   controller-table shape → stored in `rig_extra`.
+
+
+## Coordinate frame — sow-rs verified
+
+Game data is **left-handed**: +X right, +Y up, +Z forward, cm.
+Bind-pose evidence: Talion `R_Hand` x = +64 cm vs `L_Hand` −64;
+`R_Toe` z ahead of `R_Foot`; spine +Y. Quaternions are xyzw,
+Hamilton, active — shared by skel/MMSH/anix/PRFB/WDSC. Front faces
+wind clockwise (D3D). Right-handed consumers mirror X once at import
+and take bitangent handedness per-vertex.
+
+## Coverage
+
+- **All 381 `.skel` files** in the install parse cleanly — bone names,
+  transforms, quaternions, rigs, sockets, LOD thresholds, animation paths all
+  decoded.
+- 3 files (`camrig`, `param_head`, `torvin_desertt1shield`) use the alternate
+  controller-table shape → stored in `rig_extra`.
 - sow-rs's larger corpus scan (4,117 files incl. bundles) reports
   **8 failures we should expect on a wider scan**: 7 files whose first
   post-string-table bone-name pointer is `0x40f8d776` — outside the
@@ -142,7 +160,7 @@ and take bitangent handedness per-vertex.
 
 ## Unknowns
 
-- Rig-tail hash/offset pair semantics (the alt controller table).
+- The bound hash `0x40f8d776`'s channel name (name-hash inverse).
 - CLOTH payload internals beyond the `TAG0` blob start.
 - socket[8..40] payload fields.
 - unk1..unk12 / footerField semantics.
