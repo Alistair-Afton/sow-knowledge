@@ -73,9 +73,10 @@ point cloud plots as the city's street map — CONFIRMED nav-surface
 semantics. Record stats (Andúril): `flag ∈ {0,1}` on real records;
 `seq = 0xFFFFFFFF` on most — the 2,141 real seqs span
 `25,250..33,607`, indexing the *first* vert partition (`n1`). The two
-vert partitions differ in kind: p1 is clean positional, p2 carries
-non-position data (−32768 sentinel lane, wider bounds) — `n2` is a
-**second 12-byte record array**, not points. `(a,b)` pairs are
+vert partitions differ in kind: p1 is clean positional, p2 is
+**interleaved 24-byte cells** `{vec3 desc, vec3 pos}` (~17,593 cells —
+alternation confirmed); `pos` = nav-cell centres, `desc` = small
+repeating triple (<1000 — per-template data, e.g. half-extents). `(a,b)` pairs are
 618 **disjoint windows** spanning `100..35,169 ⊂ [0, n2)` — they
 partition regions of that second array; records sharing a window are
 markups grouped under it (`a` mostly nondecreasing). `rgba` runs the
