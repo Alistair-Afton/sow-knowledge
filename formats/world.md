@@ -52,7 +52,8 @@ always walk the declared frame. Minas Ithil's 14 sections:
 |---|---|---|
 | `KEYF` v1 | 15k | 9 key-frame tracks |
 | `SFXS`, `SWFX` | 62k, 40k | FX paths / world FX |
-| `ONLS`, `NLFE` | 488k, 39k | (undecoded) |
+| `ONLS` | 488k | socket names — decodable |
+| `NLFE` | 39k | ambient-life feature table: 1,097 spawn/feature names (`<none>`, `con_*`, `QT_Caragor_*.P.NLM_MF01`, `HideS_*.Day`, `OakAdult_*.Day`) — PARTIAL, element layout OPEN |
 | `PFDG` | 1.5M | nav surface points + markup records — PARTIAL, below |
 | (none) | 984k | clutter-prop `.mat` paths |
 | `SCRB` | 173k | (undecoded) |
