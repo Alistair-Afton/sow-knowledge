@@ -185,19 +185,25 @@ Section B — spatial tree   (FUN_1406b3664)
          — 207/207 leaves tile byte-exact on desert; radii are round
          draw/stream distances (20000–30000, −1 = unbounded)
   +...   field0 × interior node (FUN_141cd3e54, full decode):
-           {0x3C header: vec4 bound (0x20B), u32 flags (bit0 selects
-           node type 3 vs 7, >>1 → subtype), u32 region_idx
-           (0xffffffff = none) into the 0x48-stride region array,
-           u32 n_refs60, u32 n_chain160, u8 n_children}
+           {0x3C header: u32, u32, u32 flags (bit0 → type 3 vs 7,
+           >>1 → subtype), 8×f32 bound, u32 n_refs60, u32
+           n_chain160, u32 region_idx (0xffffffff = none) into the
+           0x48-stride region array, u8 n_children}
            + n_children × 16B child refs (→0x14 runtime records)
            + n_refs60 × u32 → indices into the 0x60-stride leaf array
            + n_chain160 × u32 → indices into the 0xA0-stride record
              array, linked as a chain via +0x90 next / +0x98 parent
-  +...   field3 × index node (FUN_141cd401c):
-           {20B header {u32 n,…}} + {u8 n, n×0xC} (FUN_141ccb0ec)
-           + n×u32 leaf refs + 2×u32 →40B recs
-         — the trailing "sequential u32 1..n" table seen in raw dumps
-           is this leaf-index array
+           — on main worlds this lane is the sequential 0..n-1 run
+             seen at tail end in raw dumps (desert: 207 = n_leaf)
+  +...   field3 × index node (FUN_141cd401c, full decode):
+           {u32 n, u32, u32, u32 ref28_a, u32 ref28_b}
+           + n × u32 → indices into the 0xA0-stride record array
+           — ref28_* index a 0x28-stride table (-1 = none); the
+           {1,3,0,-1,-1,0} "footer" is itself an index node with
+           n=1 and index {0}, i.e. exactly the last 24 bytes
+  +eof   — the runtime trailer (FUN_1406b381c, hdr[4] × u64) is
+           allocated at load but never serialized; the stream ends
+           with the last index node
 ```
 
 **Corpus coverage: 109/109 tails decode.** There is **one** tail
@@ -215,11 +221,10 @@ record-table boundary, not a different tail:
   every main world (desert 16, volcano 27, MI 17, mtnpass 10,
   island 8, bm_island 9); 0 on files without region AABBs.
 
-Index nodes decode best-effort (main worlds: `{20B header
-{0, n_leaf, 0,0,0}, u8 0, n_leaf×u32 sequential, 2×u32 {1,3}}`
-then a 16B `{0,-1,-1,0}` footer tail); uncovered bytes stay in
-`rest` — observed remainders are only the `{1,3,0,-1,-1,0}`
-footer family in 24/16/12-byte fragments.
+Every file decodes **byte-exact to EOF**, including the six main
+worlds. Tree-header field map (from `FUN_1406b3838`): `[0]`=interior
+count, `[1]`=region skip, `[3]`=index count, `[4]`=trailer alloc,
+`[8]`=leaf count; positions 2/5/10/12 are zero-sentinels.
 
 Semantics: Section B is a two-level bounding-volume / streaming
 index — one interior root over `n_leaf` leaves, each leaf covering a
