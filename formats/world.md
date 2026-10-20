@@ -39,11 +39,14 @@ after the table (`u32 17, 5, 6` + float data) are OPEN.
 Andúril's `wldclnt scene` CPU render confirms the placements compose
 a coherent city.
 
-## `.objres` — OBJR v13 — sectioned object resources — VERIFIED
+## `.objres` — OBJR v13 — sectioned object resources — CONFIRMED
 
 Header `"OBJR", u32 13, u32 hash, u32 section_count`; then
 `section_count × {u32 tag_hash, u32 size, size bytes}` ending exactly
-at EOF. Minas Ithil's 14 sections:
+at EOF (independently verified by Andúril's declared-section walk —
+tiles to EOF on `minasithil.objres`). **Note:** section tags are not
+4-aligned in the file, so byte-scan tag surveys miss most sections —
+always walk the declared frame. Minas Ithil's 14 sections:
 
 | Tag | Bytes | Content |
 |---|---|---|

@@ -33,7 +33,7 @@ only).
 6.40 · `PL_Sprint_Super` 11.66 · `PL_Sprint_Boost_City` 12.95 m/s.
 Blend selection (which point plays when) is native — PARTIAL.
 
-## Context-action edges — `CADB` — VERIFIED layout
+## Context-action edges — `CADB` — CONFIRMED layout
 
 Traversal is **authored edge markup**, not derived collision edges.
 `Character/Models/ContextActions` (124 records) are the tag
