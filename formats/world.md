@@ -109,6 +109,9 @@ per terrain: u32 4, u32 4 (4×4 top-level grid)
   all 24 permutations by 2-px border-strip continuity between
   same-level neighbours on the real MI tiles: row-major wins by >2.3×
   and renders as one coherent landmass (87 occupied cells).
+- Nodes may carry a group tile **and** children (CONFIRMED Andúril):
+  the parent's coarse tile underlays its finer children — paint
+  pre-order (parent first, children over).
 - Height tiles = R16 with 2-px border; `y = pos.y + raw/65535·extent.y`;
   `map_a` RGBA8 mask (black where terrain), `map_b` material weights.
 - MI's terrain is the *low ground outside the city* — plaza floors
