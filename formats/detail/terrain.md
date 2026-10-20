@@ -28,6 +28,14 @@ per terrain:
   u32 group_count × { str16 height, str16 map_a, str16 map_b, u32 }
 ```
 
+**Retail read path (Ghidra `FUN_1407ac0f4`, byte-verified):**
+`{TERR, ver==9}` checked exactly; per-terrain descriptors expand to
+0x2A8-byte runtime records. The `str16` fields are read as fixed
+**0x104-byte** buffers and name-hashed with seed `8`
+(`FUN_1401beaac`) — so "str16" strings live in 260-byte slots.
+The `flags & 0x20` skip is confirmed in code (empty cells read only
+the flag word); group records are 3 hashed strings + u32 each.
+
 - Nodes are a **quadtree**: low 4 bits = child mask (children
   pre-order), `0x10` = has height group, `0x20` = empty cell (no more
   fields), `0x40` = top-level. Minas Ithil: 107 nodes over a 4×4
