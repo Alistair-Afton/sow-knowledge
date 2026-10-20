@@ -1,5 +1,5 @@
 # GameDB — canonical model
-> **Status:** **partial** — ported from Project Nemesis (`Status: **MODEL**. Verified live on build `0x5B7F5782` unless tagged.`)
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 > **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
 
@@ -18,7 +18,7 @@ captains, quests, AI, loot, names, events.
 
 - **Lists** are named registries (`Faction/Builder`,
   `AI/SpawnAmbient/AITypes`) each bound to a schema type
-  (`AI.SpawnAmbientAIType`). Full census: `extracted/gamedb_lists.tsv`,
+  (`AI.SpawnAmbientAIType`). Full census: the extracted corpus,
   `nem db lists`.
 - **Records** are named entries in a list, hash-keyed
   (`OrcName_000_Akoth`). Strings are **interned objects**, not raw
@@ -36,10 +36,10 @@ captains, quests, AI, loot, names, events.
   inline (`+68` ExcludedRowRanks×3, `+80` Results×5, `+a8`
   AmbushChance×4 — the `pklo=-1` attrs expand in place), then trailing
   refs (`+d8` CategoryList, `+e8` Buff). `attr.index` is the *declared
-  ordinal*, not the physical slot — `sdk.db.get`/`cells` therefore
+  ordinal*, not the physical slot — the Nemesis plugin API/`cells` therefore
   mis-type values for these types (`Job` reads the Event, `Retry*`
   reads the RowRanks). The file's own cell order (see
-  `extracted/gamedb_binary.jsonl`) matches the live block. The real
+  the extracted corpus) matches the live block. The real
   index→offset map is the record's **hash-accelerator**
   (`entry+0x08` → 0x10-stride rows — VERIFIED-INGAME 2026-09-30o,
   all 22 attrs namehash-matched):
@@ -77,8 +77,8 @@ captains, quests, AI, loot, names, events.
   `attr.index` fallback when the table is absent, the attr unkeyed,
   or the slot collides (ambiguous region — `AI.SpawnAmbientAIType`).
   kind==1 slots are read bit-wise (`get` returns `Int(bit)`); Lua
-  `sdk.db.setcell` read-modify-writes the single bit and journals the
-  logical 0/1 so reapply replays the same RMW. `sdk.db.cells` reports
+  the Nemesis plugin API read-modify-writes the single bit and journals the
+  logical 0/1 so reapply replays the same RMW. the Nemesis plugin API reports
   `slot`/`bit` per attr. Var-arrays resolve their accel (slot,count)
   as the inline element run; a pointer at the mapped slot must lead
   a homogeneous element run or the read falls through to the legacy
@@ -99,21 +99,17 @@ captains, quests, AI, loot, names, events.
   an `.idata` table (`0x1426621xx` region, `{name*}` entries whose
   names live in `.xtext`); attr linkage is the `type=E*` declared-
   type string in the prop descriptor — not the attr's `+0x18` label.
-  `tools/enum_tables.py` sweeps the motif across `.arch` →
-  `extracted/enums.tsv` (387 groups / 2,458 rows after the
+  the extracted corpus (387 groups / 2,458 rows after the
   slot-arithmetic pairing fix: `EAIWalkRun`, `ECommandType`,
   `EQuestDisplayType`, `FactionMember`…). A second corpus is the
-  engine-authoritative registry walk (`runtime/recon/enum_bind.lua` →
-  `extracted/enums_runtime.tsv`, 582 types / 2,650 rows) — correct
+  the extracted corpus, 582 types / 2,650 rows) — correct
   name↔table binding but ~12% read artifacts (non-enum prop tables
   like `Modifier.*`, foreign-table reads collapsing to one value).
-  `tools/merge_enums.py` merges both → `extracted/enums_merged.tsv`
   (948 types / 4,681 rows; per-row `src`: `runtime` |
   `runtime-suspect` | `static`). Runtime-clean rows win on name
   overlap (static table labels are proximity-paired and a few are
   wrong); static fills names runtime lacks; garbage runtime ords are
   never backfilled from static. `nem.py db enum` and
-  `tools/gen_enums.py` (`runtime/data/enums.lua`) consume the merged
   corpus; `enum_N` unnamed extraction groups stay queryable but are
   not baked into Lua.
 
@@ -121,15 +117,15 @@ captains, quests, AI, loot, names, events.
 
 | Op | Lua surface | Notes |
 |----|-------------|-------|
-| enumerate lists | `sdk.db.lists()` | world context ≈2,555 lists / 269k records |
-| find/get record | `sdk.db.find(list,name)`, `sdk.db.get(list,i,attr)` | returns scalar / string / `{ref}` / `{array}` / `{obj}` |
-| attr metadata | `sdk.db.attrs(list)`, `sdk.db.cells(list,i)` | name/index/tag/packed/default |
-| **setcell** | `sdk.db.setcell` | the safe mutation — single atomic cell write |
+| enumerate lists | the Nemesis plugin API()` | world context ≈2,555 lists / 269k records |
+| find/get record | the Nemesis plugin API(list,name)`, the Nemesis plugin API(list,i,attr)` | returns scalar / string / `{ref}` / `{array}` / `{obj}` |
+| attr metadata | the Nemesis plugin API(list)`, the Nemesis plugin API(list,i)` | name/index/tag/packed/default |
+| **setcell** | the Nemesis plugin API | the safe mutation — single atomic cell write |
 | DB* accessors | `DBFactionMemberBuilder:get("Captain")` | engine's own record lookup, parse-free |
 
 ## Unsafe operations (G41 — gated)
 
-`sdk.db.inject` / `sdk.db.append` splice raw strings into record
+the Nemesis plugin API / the Nemesis plugin API splice raw strings into record
 structures whose later resolution depends on the intern map. The engine
 expects *interned name objects*; unregistered strings resolve to null →
 deterministic crash at `ShadowOfWar.exe+0x189b79` on a worker thread.
@@ -430,7 +426,7 @@ Corrections to earlier claims:
   the pool owner.
 - Donor names for `+a4e70` probes must be `AudioHook.GameCondition`
   names (`SM`, `RoleCategory_*`, `OrcName_*`/`OlogName_*` — the
-  `sdk.names.add` schema). Faction.Event names like
+  the Nemesis plugin API schema). Faction.Event names like
   `Ambush_Presented` are legitimately absent — verified by a full
   census of all 14 maps (0 hits).
 - **vecA/vecB are parallel duplicate arrays, both 0x28-stride** —
@@ -454,7 +450,7 @@ Corrections to earlier claims:
   ref holding vecB elem pointers — the engine can't do it either,
   which is why interning is load-time-only (the 176 extras filled
   pre-allocated slack during world load).
-  **Consequence for `sdk.db.intern`**: name minting must happen on a
+  **Consequence for the Nemesis plugin API**: name minting must happen on a
   pool vec with spare capacity, or the intern route is moot — the
   resolver-guard already makes uninterned names resolve "missing",
   and `names.add` records are name-resolvable via `0x278540` bsearch
@@ -572,8 +568,8 @@ the token — it's a field fetch through a global arg-descriptor table
 value array, idx from `desc+0xe`), then `0x189898(+a4e70, elem)` +
 `0x189ec0` fill. There is no raw-string→elem bridge on this path —
 strings were interned by the parser when the token was built (VM'd
-loader). Consequence: `sdk.db.intern` must mint the pool elem
-directly (template via `sdk.debug.dbname`), not reuse this resolver.
+loader). Consequence: the Nemesis plugin API must mint the pool elem
+directly (template via the Nemesis plugin API), not reuse this resolver.
 
 **`0x141872800` = native payload populator** (VERIFIED-STATIC
 2026-09-28f): called as `0x141872800(ctx, elem)` where `ctx+0xb0` is
@@ -604,7 +600,7 @@ reference-target path):
    vecB (`+0x48`, stride 0x20, clear); fields per live template:
    `{+0x00 {hi,lo} id, +0x01 flag, +0x08/+0x10 links,
    +0x18 = pool back-ptr, +0x20 = .idata payload ptr}` — dump a
-   donor with `sdk.debug.dbname` before minting. The vec is
+   donor with the Nemesis plugin API before minting. The vec is
    load-sized — growth needs realloc **plus a bucket-key rebase**
    in every map on the pool (`bucket[i].key = new_base + i*stride`
    for i < count).
@@ -622,7 +618,7 @@ reference-target path):
    `0x140190cf0`, `[casted+0x428]` non-null); it is not intern-owned.
    Interning's contract ends at: elem exists in the right pool,
    `bucket.key=elem`, payload natively filled.
-   **Staged tooling (2026-09-30):** `sdk.debug.dbintern(name, opts)`
+   **Staged tooling (2026-09-30):** the Nemesis plugin API(name, opts)`
    transcribes this recipe — read-only preflight by default (map/pool
    snapshot, donor template, vec-model discriminators, shard-flag
    check), `{probe="Donor"}` re-runs `0x141872800` on a KNOWN-GOOD
@@ -631,7 +627,7 @@ reference-target path):
    ordering (elem → grow via engine alloc → key+zeroed payload →
    publish → native fill). Commit refuses on any unresolved field —
    vec headroom is not auto-detected, `vec_tail` comes from the
-   `dbpool` dump. Uses `sdk.debug.copymem` (kernel-validated bulk
+   `dbpool` dump. Uses the Nemesis plugin API (kernel-validated bulk
    copy) since the native resize `0x141873430` frees WITHOUT copying.
 5. `+a4de0` name→holder map (0x90 buckets, lookup `0x140d17110`) is
    consumed by a **parallel sweep** at `0x14018ec43` (also iterates
@@ -858,7 +854,7 @@ is fully specified:
   itself a pool** `{+0x28=count, +0x38=flag-set 0x28-vec}` and its
   elements are the `+a4e70` keys.
   - Same accessor-table shape shared by the `DB*` record accessors in
-    `extracted/db_accessors.tsv` (VERIFIED-STATIC 2026-09-29): e.g.
+    the extracted corpus (VERIFIED-STATIC 2026-09-29): e.g.
     `DBScenarioSetup` at `0x142702278` is a live object with
     `{+0x28=count, +0x38=0x28-stride record-entry vec}` —
     `0x140429708(obj)` returns `[+0x28]` (count) and list-binding code
@@ -883,10 +879,10 @@ at `idx=count`; (b) `0x141873430`-equivalent bucket grow, write
 `buckets[idx][0]=elem` + the `&bucket[8]` `0x15` payload; (c) bump
 `map+8`/`pool+0x28`; (d) `+a4de0` holder bind for name-lookup. The
 two grows (pool-vec and buckets) are the risky reallocs — safest is a
-dedicated `sdk.db.intern` that replicates `0x14187110c`'s writes for a
+dedicated the Nemesis plugin API that replicates `0x14187110c`'s writes for a
 single new element rather than invoking the whole bootstrap.
 
-**`sdk.db.intern` concrete plan** (gated `NEMESIS_UNSAFE_CALLS`, all
+**the Nemesis plugin API concrete plan** (gated `NEMESIS_UNSAFE_CALLS`, all
 engine calls via `call_va` on the game thread, structural writes under
 `quiesce_threads`):
 
@@ -947,14 +943,14 @@ coherence is the remaining unmapped primitive.
 `+a4e70` pool's next slot `pool38+count*0x28` (`0x3b396470`, mgr
 `0x36249798`) AND on the `+a4de0` pool's next slot `pool38+count*0x28`
 (`0x3bfa8f00`), then drove (a) a full save→world load and (b) a live
-`sdk.spawn.summon('Gondorian_Captain')`. **0 hits on both watchpoints**
+the Nemesis plugin API('Gondorian_Captain')`. **0 hits on both watchpoints**
 and both map counts stayed `+a4e70`=2188 / `+a4de0`=29709 throughout.
 Two consequences: (1) a spawned entity reuses its existing record — its
 generated *display* name is an entity property, NOT a `+a4de0` GameDB
 name-element, so summons don't intern; (2) `+a4e70`/`+a4de0` are
 **closed sets populated once at bootstrap/merge** — the engine has no
 runtime path that mints a fresh GameDB name-element. Therefore
-`sdk.db.intern` cannot reuse an engine mint (there is none); it must
+the Nemesis plugin API cannot reuse an engine mint (there is none); it must
 either hand-replicate the load-time materialise under `quiesce_threads`
 (grow pool-vec + write element + seed `buckets[idx][0]` + `0x15`
 payload + `+a4de0` holder), or register the new name as a pending delta
@@ -1005,7 +1001,7 @@ shared base), `+0x58`/`+0x60`/`+0x68` a `{begin,end,cap}` cstr vector of
 record-name strings (`"Combat/..."`), `+0x50`/`+0x70` sub-structs.
 `0x141873430` grows `map+0` (buckets); the **`pool+0x38` element-vec
 grow** is a distinct function still to be located — that's the single
-remaining engine call needed before a hand-materialised `sdk.db.intern`
+remaining engine call needed before a hand-materialised the Nemesis plugin API
 can be written safely. (Alternative: a chunked/reserved-arena append if
 the grow proves vec-buffered.)
 
@@ -1043,7 +1039,7 @@ during the load-time holder/descriptor construction (upstream), and
 2026-09-28): `0x141873430` is a generic `{+0:ptr,+8:count}` vector-grow
 (`imul n,0x70` for buckets) built from `0x14114cc98`→`0x140602d20`
 (engine malloc), `0x1401b0528` (copy), `0x14178c598`→`0x1401b08c4`
-(free), `0x14178ab84` (pre-op). So a hand-materialised `sdk.db.intern`
+(free), `0x14178ab84` (pre-op). So a hand-materialised the Nemesis plugin API
 can grow `pool38` itself: `callva(malloc,(count+1)*0x28)` → copy
 `count*0x28` → `pool+0x38`/`+0x48`=`newbuf` → `callva(free,old)` →
 re-seed `buckets[i][0]`/`payload[i]+0x00`=`newbuf+i*0x28` ∀i → append
@@ -1072,9 +1068,9 @@ the record's data-elems). `+a4de0` (hash map, harder insert) is a
 *separate* name→holder path used for string/display resolution — likely
 not required to stop `0x189b79`. `WBDBRecordLookup` itself resolves via
 name-hash bsearch over the list-array (no `+a4e70`), so a record whose
-only consumer is `sdk.db`/`WBDBRecordLookup` may never even need
+only consumer is the Nemesis plugin API/`WBDBRecordLookup` may never even need
 interning — the gate exists for the `0x189950` re-sweep case. This
-splits `sdk.db.intern` into a small `+a4e70`-seed stage (crash-safe)
+splits the Nemesis plugin API into a small `+a4e70`-seed stage (crash-safe)
 and a later `+a4de0`-holder stage (full name resolution).
 
 **Resolver-guard — the chosen near-term crash fix** (IMPLEMENTED
@@ -1085,7 +1081,7 @@ breaks an open-ended back-reference graph — `buckets[i][0]`,
 (the `0x189898` miss payload). `0x189950` already handles a false
 resolver return gracefully (`je 0x189b15` skip), so an uninterned
 injected name degrades to "unresolved" instead of the `+0x189b79`
-null-deref — with zero structural mutation. `sdk.db.inject`/`append`
+null-deref — with zero structural mutation. the Nemesis plugin API/`append`
 auto-arm it via `dbwatch::install()` after the `NEMESIS_UNSAFE_DB`
 gate and refuse if it can't arm (refused inject > dead process).
 **Caveat**: this guards only the *miss* path. A wrong-pool element
@@ -1095,7 +1091,7 @@ NOT cover it, so domain validation stays strict and the guard is not
 license to pass foreign elements.
 
 **Injected records ARE natively name-resolvable (VERIFIED-LIVE
-2026-09-28d)** — `sdk.db.lookup("Debug.FactionMember","NemesisProbe_G41")`
+2026-09-28d)** — the Nemesis plugin API("Debug.FactionMember","NemesisProbe_G41")`
 returned the record after `inject`. `lookup` reads the *live*
 `list+0x38` entry array that `inject` repoints, over `0x28`-stride
 entries keyed by `entry+0x04`=name_hash — byte-identical inputs to the
@@ -1106,7 +1102,7 @@ injected record **without** `+a4e70`/`+a4de0` interning. `0x189950`'s
 `+a4e70` sweep is a *separate* subsystem — record→record reference /
 eventmap registration, not the `DB*` lookup path. **Consequence for
 G41**: `inject`+resolver-guard is sufficient for name-driven `DB*`
-consumption (the primary spawn/factory query). `sdk.db.intern` is only
+consumption (the primary spawn/factory query). the Nemesis plugin API is only
 needed when an injected record must be a *reference target* inside
 `0x189950`-mediated resolution (another record's attr pointing at it)
 or otherwise participate in the intern map — a narrower case than
@@ -1126,7 +1122,7 @@ exists as elements in **two distinct pools** plus a holder binding —
      `0x4f2exxxx` opaque `{q0={id,0xa07}, +0x18=pool}` key elements;
      `0x189898` address-indexed lookup. `0x140d23e00` writes the
      `0x15` record payload at `&bucket[8]` via the stored domain index.
-A name is fully usable once all three exist; `sdk.db.inject` currently
+A name is fully usable once all three exist; the Nemesis plugin API currently
 does step 0 (list-array splice) only — the crash is step 3's missing
 `+a4e70` element when `0x189950` re-runs.
 
@@ -1176,7 +1172,7 @@ the path the loader uses per record:
    `0x14114bdcc` and re-run `0x140189950`/`0x140d1fe10` — i.e. the
    name fans out to every descriptor that claims it.
 
-So a correct `sdk.db.inject` needs: mint/find the name pool element,
+So a correct the Nemesis plugin API needs: mint/find the name pool element,
 bind `name→record` in `+a4e70`, and register into the owning
 descriptor's structures (the `0x4f8` element for its list).
 
@@ -1194,7 +1190,7 @@ Adding a name = mint gen record + display record + append to
 `GADB` magic, `u32 version=17`, string-table size/count header, strings
 at `+0x2c` (u16 len + path + data); `StringPtr` u32s are offsets from
 blob base `0x47`. Record refs are stored **by name string**. Extract:
-`python tools/nem.py arch extract <archive> game.gamedb <out>`.
+`python a corpus tool arch extract <archive> game.gamedb <out>`.
 
 ## Console commands worth knowing
 

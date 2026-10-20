@@ -34,13 +34,22 @@ plus its evidence**.
    the minimal record/byte excerpts needed as evidence.
 6. **Never distribute proprietary material.** No game files, no
    `oo2core` DLL, no `.arch06` contents. A reader must own the game.
-7. **Generalized knowledge only.** Docs describe *the game* — file
-   formats, runtime behavior, game systems. They are not the place
-   for session logs, method journals, project-specific implementation
-   notes, or any one engine's internals. Evidence pointers (tool +
+7. **Subject = the game, the engine, the install.** Docs describe
+   *Shadow of War* itself — the engine, every file format, runtime
+   behavior, game systems, and the retail installation layout. They
+   are never about a *project*: Andúril, Project Nemesis/nemesis.dll,
+   sow-rs, or any other tool's internals, APIs, plugins, or mod
+   machinery do not belong here, except as provenance citations.
+   They are also not the place for session logs, method journals, or
+   one tool's implementation notes. Evidence pointers (tool +
    command + location) belong in provenance; the doc body should read
    as the current best description of the system, not a history of
    how it was discovered.
+8. **Second-source claims carry their own confidence.** Material
+   ported from another project's notes (e.g. `runtime/` — Project
+   Nemesis) keeps its per-claim tags (VERIFIED-STATIC, VERIFIED-LIVE,
+   UNVERIFIED, MODEL, …) and is marked "not independently verified".
+   Do not upgrade those tags without reproducing the evidence.
 
 ## What to contribute
 

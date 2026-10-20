@@ -2,10 +2,10 @@
 
 > **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **verified** — ported from Project Nemesis
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
-> Audience: modders working at the engine level (`sdk.debug`, `sdk.db`,
-> `sdk.strings`, direct disasm). For the friendly Lua surface see
+> Audience: modders working at the engine level (the Nemesis plugin API, the Nemesis plugin API,
+> the Nemesis plugin API, direct disasm). For the friendly Lua surface see
 > the friendly Lua surface see Project Nemesis `docs/design/lua-api.md`.
 > Everything here is for
 > build `0x5B7F5782` (`Patch_09`, exe `2025-05-05 04:27`) unless noted —
@@ -19,10 +19,10 @@ Using the wrong one is the #1 source of "record not found" bugs.
 ### 1. `name_hash` — records, attrs, paths, .bvr names
 
 Used for: gamedb record names, attribute names, `.bvr` field names,
-loose-file index paths, `sdk.db` name lookups.
+loose-file index paths, the Nemesis plugin API name lookups.
 
 ```python
-# tools/namehash.py — reference implementation
+# a corpus tool — reference implementation
 def name_hash(s: str) -> int:
     h = 0
     for c in s:
@@ -31,7 +31,7 @@ def name_hash(s: str) -> int:
 ```
 
 - `FOLD` = 256-entry case/separator-folding table at exe `+0x1DB50D0`,
-  mirrored in `extracted/namehash_fold.txt`. It folds `'A'..'Z'`→`'a'..'z'`
+  mirrored in the extracted corpus. It folds `'A'..'Z'`→`'a'..'z'`
   (case-insensitive) — but **not** path separators: `FOLD['/']=0x34` vs
   `FOLD['\\']=0x2a`, so `'/'` and `'\\'` hash differently (checked against
   the extracted table; an earlier version of this doc claimed they fold).
@@ -43,7 +43,7 @@ Used for: Nemesis/event system ids (`SpectatorDepartedNode`,
 `SpawningComplete`, …). **Not** the same function as `name_hash`.
 
 - Algorithm not yet fully recovered; we ship a captured
-  **2,250-pair lookup table**: `extracted/event_hashes.tsv`
+  **2,250-pair lookup table**: the extracted corpus
   (`hash<TAB>name`). Match by table, not by recomputing.
 - Names also appear in script constants as
   `__global_<name>_Script_<hash8>` / `_<area>_<event>_Script_<hash8>`.
@@ -57,15 +57,15 @@ label).
   `h = h*0x397 + fold[c]` (verified live 2026-09-24:
   `namehash("UI_Frontend_Benchmark") = 0xa0014283` = the "RUN BENCHMARK"
   entry; `UI_Menu_Quit`→"QUIT", `UI_MainMenu_Start`→"START NEW GAME").
-- `sdk.strings.{set,get,unset}` accept a key **name** directly —
-  `sdk.strings.set("UI_Frontend_Benchmark", "MOD MENU")`.
-- `sdk.strings.register_named("UI_MyMod_Label", text)` stages an entry
+- the Nemesis plugin API{set,get,unset}` accept a key **name** directly —
+  the Nemesis plugin API("UI_Frontend_Benchmark", "MOD MENU")`.
+- the Nemesis plugin API("UI_MyMod_Label", text)` stages an entry
   the engine's own name→hash path resolves — records referencing that
   name see `text`.
 
-### 4. Nemesis-minted hashes — `sdk.strings.register`
+### 4. Nemesis-minted hashes — the Nemesis plugin API
 
-`sdk.strings.register(text)` → `u32`. We generate a fresh hash ourselves:
+the Nemesis plugin API(text)` → `u32`. We generate a fresh hash ourselves:
 
 ```text
 hash = fnv1a_32("nemesis:" + utf16le(text))   then linear-scan
@@ -82,7 +82,7 @@ hash = fnv1a_32("nemesis:" + utf16le(text))   then linear-scan
 ### Intern-map hash
 
 `0x1898e8` — hashes interned name objects for the gamedb name map. Only
-relevant when registering new names (G41); `sdk.db.inject`/`append` are
+relevant when registering new names (G41); the Nemesis plugin API/`append` are
 gated on this.
 
 ## `.strdb` — string database format
@@ -102,8 +102,8 @@ strbuf: UTF-16LE chars; str = strbuf + char_idx*2. NO flag bits —
 
 - Loader `0x141d23228`; lookup `0x140472104` = `strbuf + off*2`;
   manager `0x140472090` walks the db list newest-first.
-- `tools/strdb.py` — load/build; `tools/strdb_dump.py` — TSV dump;
-  `tools/strdb_patch.py` — `.strdelta` → merged strdb (all verified
+- a corpus tool — load/build; a corpus tool — TSV dump;
+  a corpus tool — `.strdelta` → merged strdb (all verified
   live: dumped → rebuilt → booted → text renders).
 
 ### `.strdelta` — mod-friendly delta format
@@ -115,7 +115,7 @@ keyhash=0x0123abcd
 ""="brand new string"          # add (hash auto-minted)
 ```
 
-`sdk.strings.set/unset/apply/get/clear/register` is the live runtime
+the Nemesis plugin API/unset/apply/get/clear/register` is the live runtime
 equivalent (no file write — a synthetic db object spliced into the
 manager's list; newest db wins lookups).
 
@@ -130,7 +130,7 @@ strings: u8 len-prefixed, indexed from the field table
 ```
 
 Field→object mapping is per-object `u64` bitmask into the field table;
-`tools/bvr.py` decodes it. Names use `name_hash` (#1).
+a corpus tool decodes it. Names use `name_hash` (#1).
 Layouts: `docs/evidence/formats/bvr.md`, `docs/model/gamedb/schemas.md`.
 
 ## `ShadowOfWar.exe` — image layout (repacked)
@@ -151,7 +151,7 @@ xrefs **and** for strings.
 
 > Earlier "scan .text for xref/imm" results were void — rescan over
 > `.arch`+`.xtext`. File on disk is packed; runtime bytes differ —
-> `sdk.db.dumpmem` pulls unpacked code from the live image.
+> the Nemesis plugin API pulls unpacked code from the live image.
 
 ### Known registration sites (build `0x5B7F5782`)
 
@@ -165,18 +165,18 @@ xrefs **and** for strings.
 
 ## `.arch06` / `LTA` — archives
 
-- `tools/ltar.py` — `l`/`x`/`xh` list/extract members.
-- `tools/archcfg.py` — the real mount list (`default.archcfg`); loose
+- a corpus tool — `l`/`x`/`xh` list/extract members.
+- a corpus tool — the real mount list (`default.archcfg`); loose
   `Mods/` dir must be an archcfg line (auto-added by `deploy.ps1`).
-- `tools/looseidx.py` — loose-file index (`.loosefiles`) format.
+- a corpus tool — loose-file index (`.loosefiles`) format.
 
 ## `.scripts` — HavokScript bundles
 
 - `SCRI` header → `luaq` bytecode (HavokScript 5.1) or text prototypes.
 - Function header has `instrCount`/`unk` swapped vs stock hksc;
   op = `raw>>25` (7-bit opcode), `A = raw&0xff`, B/C in middle bits.
-- Disasm: `tools/hks_disasm.py` (SoW-aware), strings:
-  `tools/hks_mine.py`. Deep dive: `docs/evidence/scriptvm/havokscript.md`.
+- Disasm: a corpus tool (SoW-aware), strings:
+  a corpus tool. Deep dive: `docs/evidence/scriptvm/havokscript.md`.
 
 ## Engine VM ABI (verified)
 
@@ -194,9 +194,3 @@ xrefs **and** for strings.
   `docs/evidence/scriptvm/api-map.md` (~1400 binding stubs documented),
   `api-signatures.md`.
 
-## Machine-readable symbol DB
-
-`docs/evidence/engine/kb.h` — every verified VA/struct in a format the
-headless-Ghidra pipeline (`tools/ghidra/`, `ghidra_analyze.ps1` +
-`ApplyKb.py` + `DecompileAt.py`) applies automatically, so decompiles
-come out pre-named. Additions go there first.

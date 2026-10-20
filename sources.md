@@ -52,7 +52,11 @@ those sourced from his notes say so.
 - **Adobe SWF File Format Specification v19** (public) — the standard
   SWF tags under `.gfx`.
 - **Project Nemesis** — the native modding framework + knowledge base
-  sibling to this repo; engine API surface and live-game memory reads.
+  sibling to this repo; the `runtime/` department and `reference/native-*`
+  docs are ported from its model/function/struct notes. Those docs keep
+  Project Nemesis' own per-claim confidence tags and are marked "not
+  independently verified" — treat UNVERIFIED/MODEL entries as leads,
+  not settled fact.
 - **`ShadowOfWarDllLoader.dll`** — the community plugin loader (a
   generic `dll_loader` build): enumerates `x64/plugins/*.dll` and
   `LoadLibrary`s each at startup; the entry point for all native mods.

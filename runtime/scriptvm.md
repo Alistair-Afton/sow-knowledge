@@ -1,5 +1,5 @@
 # Script VM — canonical model
-> **Status:** **verified** — ported from Project Nemesis (`Status: **MODEL**. Everything here is `VERIFIED-LIVE` on build`)
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 > **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
 
@@ -21,7 +21,7 @@ ship as **precompiled bytecode**, not text.
 nemesis.dll                          ShadowOfWar.exe
 ┌─────────────────┐                  ┌──────────────────────┐
 │ plugin VM (mlua)│  \\.\pipe\nemesis │ game VM (HavokScript)│
-│  sdk.* surface  │◄──── commands ───►│  System:*, DB*, Faction│
+│  plugin API surface  │◄──── commands ───►│  System:*, DB*, Faction│
 │  runtime/, mods │                  └──────────┬───────────┘
 └─────────────────┘                             │ game thread
                                        gamethread queue (wndproc)
@@ -30,7 +30,7 @@ nemesis.dll                          ShadowOfWar.exe
 - **Plugin VM** — our own `mlua` state inside `nemesis.dll`. Runs
   `runtime/` + `Mods/*.lua` freely, any thread, stock semantics.
 - **Game VM** — the engine's `lua_State`. Reached *only* through
-  `sdk.exec.*`, which marshals work onto the script thread and never
+  the Nemesis plugin API*`, which marshals work onto the script thread and never
   parses foreign text.
 
 ## The three safety laws (each cost us a crash)
@@ -61,7 +61,7 @@ L + 0x48 / +0x50            → stack top / base
 L + 0x70                    → globals table TValue
 ```
 
-Rust: `scriptvm::state()`. Lua: `sdk.exec.state()`, `sdk.exec.depth()`.
+Rust: `scriptvm::state()`. Lua: the Nemesis plugin API()`, the Nemesis plugin API()`.
 
 **Manager privacy (VERIFIED-STATIC 2026-09-30m):** a full `.arch`+`.xtext`
 sweep finds **six** `world+0x6ce8` accesses — zero-init, three
@@ -74,12 +74,12 @@ pointer, so the manager singleton is effectively private.
 
 ## Working in the game VM
 
-- `sdk.exec.call("System:GetPlayer")` — resolves via chained
+- the Nemesis plugin API("System:GetPlayer")` — resolves via chained
   `lua_getfield` (O(1), follows `__index`), invokes `lua_pcall`.
-- `sdk.exec.callm(recv, method, ...)` — receiver can be a returned
+- the Nemesis plugin API(recv, method, ...)` — receiver can be a returned
   `{tag,val}` handle → chained calls stay parse-free.
-- `sdk.exec.fields(obj)` — enumeration for struct/table handles.
-- Lua-side, `sdk.call`/`sdk.resolve` wrap results in `GameObj` —
+- the Nemesis plugin API(obj)` — enumeration for struct/table handles.
+- Lua-side, the Nemesis plugin API/the Nemesis plugin API wrap results in `GameObj` —
   `obj:Method()` / `obj:get()` / `obj:fields()` (see
   `runtime/sdk/obj.lua`).
 - `DB*` accessors are `WBDBRecordLookup` tables: `DBFactionMemberBuilder`

@@ -2,7 +2,7 @@
 
 > **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **verified** — ported from Project Nemesis
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 **Tag:** VERIFIED-STATIC + VERIFIED-LIVE (null-guard detour live
 2026-09-28; 551K+ hits clean)

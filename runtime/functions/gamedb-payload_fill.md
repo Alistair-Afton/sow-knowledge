@@ -2,7 +2,7 @@
 
 > **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **verified** — ported from Project Nemesis
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 **Tag:** VERIFIED-STATIC (2026-09-28f)
 **Addr:** `ShadowOfWar.exe+0x141872800`
@@ -51,4 +51,4 @@ engine derives every payload field itself.
 - `0x141872b4c` span-push growth semantics (realloc? fixed cap?).
 - `0x14018bdb0` / the `0x141870xxx` accessors' internal elem fields
   (elem layout beyond `+0x00/+0x01/+0x18/+0x20` — live template via
-  `sdk.debug.dbname` pending).
+  the Nemesis plugin API pending).

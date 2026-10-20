@@ -2,7 +2,7 @@
 
 > **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **verified** — ported from Project Nemesis
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 **Tag:** VERIFIED-STATIC
 **Addr:** `ShadowOfWar.exe+0x1415cfe88`   **Evidence:** disasm

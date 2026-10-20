@@ -66,9 +66,9 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
 | `formats/detail/` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
-| `gameplay/detail/` | Retail-behavior specs for game systems (faction lifecycle/pickers/spawn/XP rewards, moveset, combat, traversal, HUD map, nemesis data) |
+| `gameplay/detail/` | Retail-behavior specs for game systems (faction generation/lifecycle/pickers/spawn/XP rewards, moveset, combat, traversal, HUD map, nemesis data) |
 | `engine/detail/` | Retail engine/runtime specs (VFS mount order, spawn pipeline, apply-event write path) |
-| `runtime/` | Live-game runtime model: nemesis memory/event log, spawning pipeline, console commands, script VM, UI runtime, VFS, gamedb runtime, engine/injection model (from Project Nemesis forensics) |
+| `runtime/` | Live-game runtime model ported from Project Nemesis forensics: nemesis memory/event log, spawning, console commands, script VM, UI, VFS, gamedb, engine map, native function decodes — per-claim tags preserved; **not independently verified** |
 | `reference/` | Script classes, event surface, event-subscription tables, native schema/registry + gamedb intern maps |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |

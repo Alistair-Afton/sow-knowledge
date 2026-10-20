@@ -1,5 +1,5 @@
 # VFS & Asset Loading — canonical model
-> **Status:** **partial** — ported from Project Nemesis (`Status: **MODEL** — canonical current knowledge. Claims carry per-line`)
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 > **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
 
@@ -9,20 +9,8 @@
 > Raw findings and code archaeology live in `docs/evidence/formats/` and
 > `docs/evidence/engine/exe-xrefs.md`; this doc records what they *mean*.
 
-Requirement (user, 2026-09-23): *mods — including assets — should load
 without being packed or converted into ungodly formats.* This doc is the
 strategy and the evidence ledger for it.
-
-## Delivery tiers (preference order)
-
-| Tier | Mechanism | Status |
-|------|-----------|--------|
-| 1. Loose files | Engine VFS picks up a file under a watched source — **`default.archcfg` directory entries are mountable loose roots; adding `..\Mods` at the bottom makes `Mods/` the strongest source** | **VERIFIED-INGAME** 2026-09-24 (see "archcfg dir-source experiment" below) |
-| 2. Loose archives | Drop a `.arch06` into the root or `Mods/` — still no conversion step for the author, but files must be inside a container | **VERIFIED-INGAME** for root (existing `.arch06` mods mount); `Mods/` wildcard behavior `UNVERIFIED` |
-| 3. Packed/converted | Repack stock archives or convert assets to engine-private formats | **Last resort** — used only where tiers 1–2 are proven impossible |
-
-A mod should never require tier 3 unless a doc here records *why* (with
-the experiment that proved it).
 
 ## Compatibility requirement (user, 2026-09-24)
 
@@ -39,9 +27,9 @@ delivery model splits by granularity:
   functions): mods ship **deltas**, not file copies — e.g.
   `Mods/<name>/db/<list>.toml`, `strings/<lang>.strdelta`. The
   framework merges them post-load through the native mutation paths
-  (`sdk.db.setcell`, runtime strdb patch, script VM injection) with a
+  (the Nemesis plugin API, runtime strdb patch, script VM injection) with a
   defined conflict policy (explicit priority, warn on overlap).
-  **Strings are working today**: `tools/strdb_patch.py` merges
+  **Strings are working today**: a corpus tool merges
   `.strdelta` files (`set`/`replace`/`del`) into a rebuilt strdb and
   `Mods/` serves it — verified in-game 2026-09-24.
 
@@ -83,7 +71,7 @@ Lookup at open time:
                          table at [src+0x40], count at [src+0x48]
 ```
 
-`VERIFIED-STATIC` (`tools/disasm_va.py`, `tools/xref.py`) — this is the
+`VERIFIED-STATIC` (a corpus tool, a corpus tool) — this is the
 **per-archive** index lookup, not the dir-source path. The full
 resolution model is decoded below.
 
@@ -113,7 +101,7 @@ this boot), circular-bucket hash map, 2048 buckets × 24 B, head at
 `node+0x28`/`+0x30`/`+0x52`; `node+0x38` = per-node stream/reader
 descriptor (vtable `0x141e6d910`). It **grows on demand**: 11,660
 entries post-boot → 27,025 after one benchmark + one save load
-(walk with `tools/vfsidx.py`; terminator is `node == bucket`, not
+(walk with a corpus tool; terminator is `node == bucket`, not
 null — the lists are circular).
 
 **Loose probing is NOT index-gated** — the earlier claim was wrong:
@@ -153,7 +141,7 @@ file-API tracer, `NEMESIS_VFS_TRACE=1`, log `x64/plugins/vfs_trace.log`):
   `plugins\nemesis\files` (90) before `..\Mods` (89) before the `Game`
   dir sources — matching archcfg "bottom-up wins" semantics, extended
   to runtime registrations: **later-registered sources take precedence,
-  so `sdk.vfs.add_source` roots outrank every archcfg source.**
+  so the Nemesis plugin API roots outrank every archcfg source.**
 - `src+0x108`/`+0x110` on a dir source is a **child-archive vector**,
   filled once at boot by the wildcard glob pass `0x1411972c9` (per-source
   pattern build at `0x141197304`, dedup `0x141197150`). `..\Mods` holds
@@ -190,7 +178,7 @@ source registry   0x142a55cb8   — TLS-init'd singleton (getter 0x141197084),
 **`-arch <name>` mounts an extra source from the command line; `-archcfg
 <file>` picks a different manifest.** `VERIFIED-STATIC`.
 
-`sdk.vfs.add_source(path)` wraps `0x141197464` on the game thread —
+the Nemesis plugin API(path)` wraps `0x141197464` on the game thread —
 resolved via `signatures::VFS_MOUNT_LINE` (unique on 0x5B7F5782), so an
 exe update degrades to an "unresolved" error, never a wild call. The
 exact same call the parser makes per archcfg line, so relative paths
@@ -210,7 +198,7 @@ stopped at first hit). `VERIFIED-INGAME`.
 
 ### Loose-index census (2026-09-24)
 
-Extracted every archive's index (`tools/looseidx.py` + `ltar.py`):
+Extracted every archive's index (a corpus tool + `ltar.py`):
 
 - 43 archives carry an index; **73,940 indexed paths total, 31,031
   unique** — essentially all content: `bundles\` (~25k), `.scripts`
@@ -291,7 +279,7 @@ u32  count            (= number of paths)
 - `hash` = the game's record-name hash `h = h*0x397 + fold[c]` over the
   path bytes as stored (backslashes, lowercase corpus paths hash
   identically as-is or lowered). `VERIFIED-STATIC` — reproduced all
-  entries in the Patch_04 index (`tools/looseidx.py --verify`).
+  entries in the Patch_04 index (a corpus tool --verify`).
 - `blob_offset` indexes into the path blob (offset of the path's first
   byte), so the index is a hash→string bsearch table: the engine hashes
   the requested VFS path and resolves loose hits in O(log n).
@@ -299,7 +287,7 @@ u32  count            (= number of paths)
   **compiled/asset types are loose-resolvable**, not just text. The
   index lists which of the archive's own members may be shadowed by a
   file on disk.
-- Parser/tool: `tools/looseidx.py` (dump + `--verify` hash check).
+- Parser/tool: a corpus tool (dump + `--verify` hash check).
 - Extra `.arch06` files in the install root mount without being listed
   in `default.archcfg` (existing mods like `Patch_IncreasedCap.arch06`
   work). `VERIFIED-INGAME` (they function) / `INFERRED` (wildcard-mount
@@ -341,7 +329,7 @@ u32  count            (= number of paths)
    observed firing against runtime sources in the 2026-09-28 trace.
 5. **Marker visual confirmation** — superseded by a stronger result:
    a **writer-produced** merged strdb (68,547 entries via
-   `tools/strdb_patch.py` + a `.strdelta` file) was deployed to
+   a corpus tool + a `.strdelta` file) was deployed to
    `Mods/` and the game rendered all UI text perfectly (verified
    2026-09-24, WBPlay Newsletter + menus). Parser + writer + delta
    merge + loose override are all proven end-to-end. The
@@ -355,34 +343,25 @@ u32  count            (= number of paths)
 | `.lua` (our mods) | yes — `Mods/` flat tree, our loader | n/a | Our own mechanism, `VERIFIED-INGAME` |
 | `.cfg` / `.txt` | likely — `game/` ships loose cfgs | yes | `game/` is read for engine config |
 | `.mat` / `.fxo` / `.tex0` | **yes** — indexed by `archivepatchloosefiles.txt` | yes | `VERIFIED-STATIC` (Patch_04 index); loose root on disk `UNVERIFIED` |
-| `.bndl` (bundles) | **yes** — probed against runtime sources live | yes (extractor exists: `tools/ltar.py`) | indexed (~25k paths); probe firing `VERIFIED-INGAME` 2026-09-28 |
+| `.bndl` (bundles) | **yes** — probed against runtime sources live | yes (extractor exists: a corpus tool) | indexed (~25k paths); probe firing `VERIFIED-INGAME` 2026-09-28 |
 | `.vib` (video) | **yes** — served from `plugins\nemesis\files` | yes | `VERIFIED-INGAME` 2026-09-28 — full probe→hit→open chain in Options→Sound |
-| `.bvr` (behavior) | UNVERIFIED | yes (`tools/bvr.py`) | 305 indexed |
-| `.strdb` (strings) | **yes** — `Mods/` mounted via archcfg | yes (`tools/strdb_dump.py`, `tools/strdb.py`, `tools/strdb_patch.py`) | `VERIFIED-INGAME` 2026-09-24 — read **and write** proven in-game; prefer `.strdelta` merges over whole-file copies |
-| `.gamedb` | UNVERIFIED | yes | Runtime mutations go through `sdk.db`, not file overrides |
+| `.bvr` (behavior) | UNVERIFIED | yes (a corpus tool) | 305 indexed |
+| `.strdb` (strings) | **yes** — `Mods/` mounted via archcfg | yes (a corpus tool, a corpus tool, a corpus tool) | `VERIFIED-INGAME` 2026-09-24 — read **and write** proven in-game; prefer `.strdelta` merges over whole-file copies |
+| `.gamedb` | UNVERIFIED | yes | Runtime mutations go through the Nemesis plugin API, not file overrides |
 | textures/models | UNVERIFIED | container-internal | `.tex0`/`.mat` already indexed loose — promising |
 
 ## Investigation tooling
 
-- `tools/ltar.py` — `.arch06` list/extract (for reproducing what a loose
+- a corpus tool — `.arch06` list/extract (for reproducing what a loose
   override would need to shadow).
-- `tools/looseidx.py` — parse/verify `archivepatchloosefiles.txt`
+- a corpus tool — parse/verify `archivepatchloosefiles.txt`
   (`--verify` reproduces the index hashes).
-- `tools/archive_census.py` — inventory of install archives.
-- `tools/vfsidx.py` — external `ReadProcessMemory` walk of the live
+- a corpus tool — inventory of install archives.
+- a corpus tool — external `ReadProcessMemory` walk of the live
   global index map (2048-bucket circular lists; dump paths/node fields).
-- `tools/vfsapis.py` — locate runtime file-API slots/call sites (the
+- a corpus tool — locate runtime file-API slots/call sites (the
   `.xtext` bound table at `0x141d9xxxx`, NOT the `.idata` IAT).
-- `tools/vfsroot.py` — summarize `vfs_trace.log` by root/API/extension.
-- `vfswatch` (`NEMESIS_VFS_TRACE=1`) — patches every qword slot in the
-  exe holding a resolved file-API address (covers `.xtext` bound table +
-  late-bound slots via ~500 ms rescan window); logs `C`/`A`/`P`/`F`/`N`
-  + ok/err + tid + path to `x64/plugins/vfs_trace.log`. Diagnostic,
-  off by default.
-- Recon scripts: `runtime/recon/` (deploy with `deploy.ps1 -Recon`).
-- The exe is metadata-rich — grep `extracted/` corpora and the
-  `docs/evidence/reference/exe-*.txt` lists for VFS/archive symbols
-  before disassembling blind.
+- a corpus tool — summarize `vfs_trace.log` by root/API/extension.
 
 ## Guardrails
 

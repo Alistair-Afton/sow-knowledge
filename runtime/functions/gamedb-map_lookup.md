@@ -2,13 +2,13 @@
 
 > **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **verified** — ported from Project Nemesis
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 **Tag:** VERIFIED-STATIC + VERIFIED-LIVE (callva-proven index math,
 2026-09-28)
 **Addr:** `ShadowOfWar.exe+0x189898` (0x70-stride variant); siblings
 below. **Evidence:** `docs/model/gamedb.md` intern-map section;
-`runtime/recon/intern_probe.lua`.
+a live probe.
 
 ## Signature
 

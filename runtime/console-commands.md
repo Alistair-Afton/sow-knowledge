@@ -1,5 +1,5 @@
 # Console commands — the engine's `*.ConsolePrograms` system
-> **Status:** **partial** — ported from Project Nemesis (`MODEL`)
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 > **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
 
@@ -8,11 +8,10 @@ Status: `VERIFIED-STATIC` except where noted. The dispatcher entry is
 **LOCATED (2026-09-30n)** — the registry object's `vt+0x58` verb —
 and program-record commands are invocable through it.
 
-## Command-node table (extracted/native_console_commands.tsv)
+## Command-node table (the extracted corpus)
 
 ~590 static nodes in the exe image, VA range `0x14262a340..0x142683250`
 (this build's `.idata` region; non-ASLR base `0x140000000`). Enumerated by
-`tools/console_cmds.py` via the `C:\P4\...\*ConsolePrograms.cpp` source-path
 pointers. Layout:
 
 | off | field |
@@ -55,7 +54,7 @@ Presentation.CharacterEvent @0x1469d47e0: reads zero arg regs (argc-agnostic)
 
 So the ctx **adapters are only string→argv tokenizers**. Calling the
 handler directly with `(argc, argv)` reproduces dispatch *without* the
-unlocated parser — that's the `sdk.console.exec` path.
+unlocated parser — that's the the Nemesis plugin API path.
 Name→object resolution for args goes through singleton `0x1426ff058`
 (vtable +0x68), so args are cstr names, not pointers.
 
@@ -182,7 +181,7 @@ from the title screen.
 Sibling tails for **uint** (`%s = %u`, "expecting unsigned input")
 and **float** (`%s = %f`) exist with the same signature — the fmt/warn
 strings cluster at `0x1422b57e0..` and each cvar's ctx program points
-at its own adapter → own tail. So `sdk.console.exec` doesn't hardcode
+at its own adapter → own tail. So the Nemesis plugin API doesn't hardcode
 a tail: it decodes the `E9 rel32` at the node's adapter+20 and calls
 that — typed-tail selection is per-command and exe-update resilient.
 The engine singleton `0x1407cbc20()`
@@ -205,16 +204,6 @@ then `0x14117cf30` — the console-subsystem constructor: singleton mgr at
 `0x1426ff050`, sub-objects at `+0xa98`/`+0xab8`, a 0x1188-byte "shell"
 object at `+0xac0`. The actual per-line exec lives inside this machinery.
 
-## Dead ends (do not re-chase)
-
-- `CheatConsoleString` — registered script fn, impl is `xor al,al; ret`
-  (stubbed in shipping build). `0x14287ae00` = its registry table.
-- Remote console (`CONSOLECOMMANDS`/`CONSOLEOUTPUTv2`) — Hydra websocket
-  routed through WB cloud services; handler region is Themida-
-  virtualized. Not usable offline.
-- `GameConsole` script global — output only (Print*/Channel*/SetDebugText).
-- No `exec`/`source`/`run`-file command exists in the table.
-
 ## File-exec path (decoded 2026-09-30r)
 
 `0x14077f614(obj, str, flag)` returns **0 when `str` is an existing
@@ -226,31 +215,6 @@ arg-vectors, `{vec begin,end}` × `argc = (q[1]-q[0])>>3`) through a
 per-line executor callback `[ctx]+8`. The cfg-file loader that
 builds R objects from file text lives in the `0x14117cf30`
 console-subsystem init machinery (shell object at `mgr+0xac0`).
-
-## sdk.console (v1 — direct-handler path) — VERIFIED-INGAME 2026-09-25
-
-`runtime/sdk/console.lua`: `scan()` walks the node range validating
-`+0x18` dotted-name + `+0x28` drive-letter path — 565/590 on first
-live pass; the 25 misses traced to a `0x142000000` string-pointer cap
-(tail-region names live at `0x14200xxxx`) and the `< HI` bound
-dropping the node AT `NODE_HI` — both fixed, full coverage expected.
-`info(name)` dumps fields; `exec(name, ...)`
-calls `handler(argc, argv)` via `sdk.debug.callargv`;
-`run("Name arg arg")` splits a typed line.
-
-Live-verified: `Presentation.CharacterEvent` invoked directly →
-`ret=1` (first end-to-end bridge call). Census: 359 code + 89 cvar +
-117 stub. `h==0` is a *valid varid* under cvar ctxs, not a stub —
-family routing must precede the stub check.
-
-Works for every code-handler command (args included — the argv ABI is
-universal) and for cvar-family commands (per-node typed tail decoded
-from the adapter's `E9`, runtime record resolved via node+0x38).
-
-`sdk.debug.callva(addr [,a1..a4])` / `sdk.debug.callargv(addr, {s..})`
-— `NEMESIS_UNSAFE_CALLS=1` gated, exec-page+image validated,
-game-thread marshaled (`rawcall.rs`). Arg buffers intentionally leak
-(handlers may stash pointers).
 
 ## Presentation.CharacterEvent (the G49 lever)
 
@@ -320,7 +284,7 @@ a notify/callback wrapper — program-side registration). The
 dispatcher's `a` object (adapter-A calls `[a+0x38](argc,argv)`) is a
 **runtime record R built here** — R+0x38 holds the resolved code
 pointer (node's handler, or the program fn for the small id). R
-records live in the registry's containers — `recon/console.lua`
+records live in the registry's containers — a live probe
 dumps the singleton's fields live to find them. The small-id→program
 map is **runtime-built inside register()** — the +0x10 arg is a
 builder thunk, not an (id,fn) pair, so it isn't statically
@@ -364,7 +328,7 @@ index-bounded element accessors vs `[obj+0x18]`.
 "Faction.Ambush.PrintDeferred", 0, 0)` and
 `("Faction.TriggerAmbush", 1, {"MarkedAsTarget_Ambush"})` and
 `("Faction.Ambush.AlwaysPassChance", 1, {...})` all returned result
-objects with no crash. `sdk.console.exec` routes program-record
+objects with no crash. the Nemesis plugin API routes program-record
 nodes through this verb (`registry_exec`); code handlers still use
 the direct argv call. Caveat: `0x1407f9xxx` handlers are a `ret 0`
 stub farm — check for a second registration (`Faction.Dump`'s real
@@ -373,54 +337,9 @@ impl is `0x141c5c048`).
 `Faction:TriggerAmbush` is also a script method (colon, ONE explicit
 arg — the `Faction/Ambush/Definition` record):
 `Faction:TriggerAmbush(DBFactionAmbushDef.MarkedAsTarget_Ambush)` —
-VERIFIED-INGAME via `sdk.exec.eval` (pcall returned true). Ambushes
+VERIFIED-INGAME via the Nemesis plugin API (pcall returned true). Ambushes
 defer on `AmbushDelay`/chance/conditions — `PrintDeferred`'s real
 impl is a stub; trigger ≠ immediate spawn.
-
-## Console output capture (VERIFIED-INGAME 2026-09-30o)
-
-The emit chokepoint is `0x1406aac14`: after formatting a line it
-loads a global sink from `[0x1427c45c8]` and — when non-null — calls
-`sink(cstr)` with the finished text (`mov rax,[rip+X]; test; je; mov
-rcx,rbx; call rax`). A second flag at `[0x1427c45d1]` gates an extra
-route into the in-game console UI object (`[0x141d92758]` →
-`0x141183820`). The slot is the engine's own pluggable hook: null in
-normal play, installed by the dev console when opened.
-`sdk.console.tap()` writes our sink there (saved-original chain — a
-foreign sink is captured-and-forwarded), no code patch.
-Live-verified: `callva(0x14117f4a8, x, 0, cstr)` round-trips
-"synthetic" lines through the real emit path into `tap_drain()`.
-
-**Channel prints are dead code (VERIFIED-STATIC 2026-09-30o):** the
-universal channel-print `0x1419c83ac(channel, fmt, args…)` — the
-`"[FACTION|AMBUSH]: "` / `"Ambush = %s; IsDone = True"` call sites —
-is a 3-instruction no-op (`mov [rsp+0x18],r8; mov [rsp+0x20],r9;
-ret`). All `[CHANNEL|TAG]` logging is compiled out in the retail
-build; those strings never reach any sink. Engine diagnostics for
-Ambush/WTF/event evaluation must therefore be read from memory
-(task/manager state), not captured from a console channel. The tap
-still captures the real emit path (cvar echoes, command output, the
-in-game console's own text).
-
-### Faction event-job script APIs (VERIFIED-STATIC signatures)
-
-From corpus call sites (`fagameplay.scripts`, `island.scripts`,
-`desert.scripts`):
-
-```lua
-Faction:AddFactionEventJobSourceAndOther(event, sourceJob, otherJob)
-  -- e.g. (DBFactionEvent.Debug_KillSelf, DBQuestJob.GP_Bruz, DBQuestJob.None)
-Faction:AddFactionEventJobSourceAndOtherForFaction(faction, event, sourceJob, otherJob)
-Faction:DEBUG_AddFactionEventPos(event, row, col)          -- roster grid
-Faction:DEBUG_AddFactionEventSubjectAndOtherRowCol(event, row, col, r2, c2)
-```
-
-`DEBUG_AddFactionEventPos(DBFactionEvent.Ambush_Presented, 2, 0)`
-returned `true` live — event applied to a real grid member, but no
-materialization (presentation ≠ spawn). `AddFactionEventJobSourceAnd
-Other(DBFactionEvent.Ambush_Presented, DBQuestJob.PC_MarkedTarget_
-AmbushJob, DBQuestJob.None)` returned `false` — no roster member
-carries that quest job; job-match fails closed.
 
 ## Open
 - The engine setter's per-varid semantics (`vt+0x28` on the

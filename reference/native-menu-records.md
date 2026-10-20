@@ -1,12 +1,12 @@
 # Menu record layouts — TreeBase / TreeNode / Predicate / Action
-> **Status:** **verified** — ported from Project Nemesis (`**Tag:** VERIFIED-LIVE (title + pause Options, build `0x5B7F5782`,`)
+> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
 
 > **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
 
 
 **Tag:** VERIFIED-LIVE (title + pause Options, build `0x5B7F5782`,
 2026-09-25..28)
-**Evidence:** `runtime/recon/fe_bench*.lua`, `fe_tree*.lua`, `fe_ga.lua`;
+**Evidence:** live menu-tree probes, `fe_tree*.lua`, `fe_ga.lua`;
 `runtime/sdk/menu.lua` builders.
 
 Consolidated layout of the menu-records we mutate. All are GameDB
@@ -28,7 +28,7 @@ Declared schema index ≠ live cell index — resolve via the slot table.
 ## TreeBase (e.g. `FrontEndRoot`, `Options_DetailTree_*`)
 
 - `BaseNodes` = **inline** array in the data block (elements are node
-  entry pointers). Grows via `sdk.db.arrinsert` (relocates data +
+  entry pointers). Grows via the Nemesis plugin API (relocates data +
   slot table into the leak pool; journaled).
 - `FrontEndRoot.BaseNodes` stock children (7): `FrontEnd_Start`,
   `FrontEnd_Social_RestoreSave`, `FrontEnd_StartDemo`,
@@ -84,7 +84,7 @@ generic data-driven push pair used by GenericAction items.
 | 5 | `MenuLayerList` entry — the pushed screen chain |
 
 Pushed screen = `Action.Menu → MenuLayerList → {count, layer…} →
-MenuLayer → tree attr → TreeBase`. `sdk.menu.add_screen` assembles
+MenuLayer → tree attr → TreeBase`. the Nemesis plugin API assembles
 this whole chain around a private cloned tree.
 
 ## MenuSelection.Prompt
@@ -100,7 +100,7 @@ this whole chain around a private cloned tree.
   not record-carried and not name-keyed. Any clone — even same-name —
   renders label `"Option"` and crashes teardown at
   `ShadowOfWar.exe+0x698e8c` on category switch. Gated behind
-  `opts.experimental` in `sdk.menu.build_checkbox_node`. Repair needs
+  `opts.experimental` in the Nemesis plugin API. Repair needs
   the binding-map insert path decoded (D006 seam).
 
 ## TreeNode.GenericAction (frontend title items)
