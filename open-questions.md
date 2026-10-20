@@ -35,8 +35,8 @@ kept.
   body; `.objres` section-12 id space.
 - **TERR**: whether non-region terrain exists; world origin of the
   quadtree grid; `0x60` header word; group tail u32s; `tile_size`.
-- **`.wldclnt`** tail sections after the placement table
-  (`u32 17, 5, 6` + floats).
+- **`.wldclnt`** tail: the packed index data after the 17 region
+  AABBs (list framing; u16 lanes are ~51% valid placement indices).
 - **CADB**: group tail fields; edge action/mask semantics;
   `PFDG` record meanings (`n1`/`n2` split, `a`/`b` index space).
 - **`.mat`** GPU resource-binding tokens' runtime semantics; `.fxo`

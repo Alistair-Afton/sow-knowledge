@@ -34,8 +34,11 @@ trailing name fits 1,104:8 and 6,263/6,556 records agree within 3 m):
 
 11 type hashes share the layout (MI): `0xD238B9DD` 6,233 static
 prefabs, `0xD238B9DE` 225 terrain pieces, `0x00003249` 32 lanterns/
-torches/props, eight more prop hashes 1–20 records each. Sections
-after the table (`u32 17, 5, 6` + float data) are OPEN.
+torches/props, eight more prop hashes 1–20 records each. The tail
+after the table is PARTIAL: `{u32 17, u32 5, u32 6}` + `17 × 32B
+{vec3 min, vec3 max, u32 flag(0/1), u32 seq}` region AABBs, then
+~64KB packed data whose u16 lanes are ~51% valid placement indices
+(likely per-region membership lists; list framing OPEN).
 Andúril's CPU scene render confirms the placements compose a
 coherent city.
 
