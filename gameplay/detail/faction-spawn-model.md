@@ -5,7 +5,7 @@
 > board, 562-member endgame board), `Faction/PlayerBasedXPLevel/*`
 > records (166 `XPLevelInit` Delta recs, 12 EventAwards, 1
 > InitialXPLevelClampSetup), sim `sim nemesis` scorecards.
-> Date: 2026-10-19.
+>
 
 ## Member levels (VERIFIED)
 
@@ -80,12 +80,3 @@
   this).
 - Whether flag=1 band rows evaluate eligibility on *current* level
   (GELO) or *all* rows always (ALLBAND) — see xp-rewards spec.
-
-## Andúril model
-
-`anduril-sim` uses a uniform spawn-level distribution for generated
-captains — a placeholder pending the OPEN distribution question
-(coupled to faction-xp-rewards). Experimental env knobs
-(`ANDURIL_XPROW_*` in `crates/anduril-sim/src/nemesis.rs`) switch draw
-models for parity experiments only; they are not production behavior
-and must not be documented as retail semantics.

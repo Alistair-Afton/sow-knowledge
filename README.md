@@ -66,8 +66,8 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
 | `formats/detail/` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
-| `gameplay/detail/` | Behavior specs for game systems (nemesis/faction set, moveset, combat, traversal, HUD map); each keeps evidence tags + a labeled `## Andúril model` section where present |
-| `engine/detail/` | Engine/runtime specs (VFS mount order, spawn pipeline, event path, gamedb overlay merge, Lua host surface, mod load order, anim oracle) |
+| `gameplay/detail/` | Retail-behavior specs for game systems (faction lifecycle/pickers/spawn/XP rewards, moveset, combat, traversal, HUD map, nemesis data) |
+| `engine/detail/` | Retail engine/runtime specs (VFS mount order, spawn pipeline, apply-event write path) |
 | `reference/` | Script classes, event surface, and event-subscription tables |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |

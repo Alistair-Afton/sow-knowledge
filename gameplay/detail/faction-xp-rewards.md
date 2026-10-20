@@ -8,7 +8,8 @@
 > n=391 lv≥70, captured via nemesis.dll memory walks), sim runs
 > (`anduril sim nemesis`), `tools/nemesis_parity.py` scorecards.
 > String/registration RVAs read from `x64/ShadowOfWar.exe` directly.
-> Date: 2026-10-18/19. The native interpreter function itself is
+>
+ The native interpreter function itself is
 > **undecoded** — this spec records the data model and the measured
 > accumulation behavior.
 
@@ -81,7 +82,6 @@ Status-effect presence fits a **constant per-level rate q≈0.022**
 (`1-(1-q)^L`: 0.27@L≈14 → 0.61@L≈40). Σ of the bundle's four band
 weights is exactly 0.022 — the strongest single clue for the native
 rule.
-
 
 ## Post-spawn level-up draws (VERIFIED cadence, implemented)
 
@@ -200,14 +200,3 @@ mount ~22 vs ~28; lv28 curse ~22 vs ~17, gang ~35 still hot.
 `fire_resist` (~66-76 vs live 94-99) and epictrait/unbreakable
 shortfalls remain attributed to missing grant paths (event/purpose
 bundles, scar/downgrade member-aging), not draw frequency.
-
-## Andúril model
-
-`anduril-sim` implements the proven data chain (level bands, weights,
-pool yield). The flag=1 draw rule defaults to **FINAL**: each ranged
-`flag=1` row with `lo <= level` draws once per lived level
-(`spawn+1..=level`), `hi` ignored. Env experiments:
-`ANDURIL_XPROW_BAND` (band-cap+backfill `lo..=min(hi,level)`),
-`ANDURIL_XPROW_GELO`, `ANDURIL_XPROW_ALLBAND`, `ANDURIL_XPROW_MULT`
-(probability scale). All are models — none is canonical until the
-interpreter is decoded; the OPEN stays open.

@@ -5,7 +5,7 @@
 > xref/sigscan tools + Ghidra 12.1.4 project `C:\Tools\ghidra-proj\sow`),
 > live in-game verification via nemesis.dll `callva` probes
 > (journal 2026-09-28..10-04, `Project Nemesis/docs/model/
-> nemesis-memory.md`). Addresses are build-8874 VAs. Date: 2026-10-19.
+> nemesis-memory.md`). Addresses are build-8874 VAs.
 > This spec names functions/addresses as *evidence anchors* — no
 > decompiled code is reproduced here.
 

@@ -353,11 +353,3 @@ pointers; at least one populated. 562/562 live members pass.
   bitfield + relation sets (bodyguard links both directions).
 - Mission state is a queryable byte on the quest system —
   our `mission_busy` flag already exists; keep it readable.
-
-## Andúril model
-
-`anduril-sim` reproduces the materialization pipeline as a request
-queue drained before tick listeners (promote/duel modes, seat
-occupancy) — semantics only, not addresses. Rank/seat casting comes
-from `Faction/RowRanks` refs on builders. Parity: hierarchy shape
-checked in faction-parity census.

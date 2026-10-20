@@ -47,12 +47,3 @@ strongest to weakest; the first source containing the path wins.
 - `anduril mounts` prints the resolved order for sanity checks.
 - Game assets stay read-only at runtime; the VFS never writes into
   sources.
-
-## Andúril model
-
-`anduril-vfs` reproduces the engine order exactly (steps 1–4), then
-appends layer 5 (packaged mods) — the only deliberate extension, and
-it is purely additive. No toggle needed: with no `Mods/` content the
-behavior is stock. `anduril mounts` prints the resolved order;
-`anduril info` verifies install discovery. Parity: byte-identical
-extracts on all 80 stock archives (proven).

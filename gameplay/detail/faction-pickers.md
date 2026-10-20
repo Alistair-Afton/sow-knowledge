@@ -5,7 +5,7 @@
 > `_StructuresFactionMarkerPicker` / `Faction/PickerList*` records
 > read via `anduril db`; live `+0x1e0` picker-history census
 > (`Helper/live_pickers.txt` n=223) vs sim `PUSH via Picker_*` debug
-> counts (`Helper/sim_pickers.txt` n=200). Date: 2026-10-19.
+> counts (`Helper/sim_pickers.txt` n=200).
 
 ## Picker-row model (VERIFIED)
 
@@ -60,11 +60,3 @@
 - `gang`/`mount` ambient `PickerList_GangsPets` yield (~43%
   gang-or-pet alone) — verify its true invocation path (def-referenced
   only? gated?).
-
-## Andúril model
-
-`anduril-sim::nemesis` implements per-reference AND gating, group
-pools, and dedupe as specced. Creation-time pool draws are calibrated
-against live census (`tools/nemesis_parity.py`); most lv28 categories
-within ±5pt. Deviations: none intentional — residual category deltas
-trace to the OPEN spawn-level/XP-row questions, not picker logic.

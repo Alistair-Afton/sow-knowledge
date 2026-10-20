@@ -34,6 +34,13 @@ plus its evidence**.
    the minimal record/byte excerpts needed as evidence.
 6. **Never distribute proprietary material.** No game files, no
    `oo2core` DLL, no `.arch06` contents. A reader must own the game.
+7. **Generalized knowledge only.** Docs describe *the game* — file
+   formats, runtime behavior, game systems. They are not the place
+   for session logs, method journals, project-specific implementation
+   notes, or any one engine's internals. Evidence pointers (tool +
+   command + location) belong in provenance; the doc body should read
+   as the current best description of the system, not a history of
+   how it was discovered.
 
 ## What to contribute
 
