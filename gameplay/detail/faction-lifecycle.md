@@ -157,6 +157,44 @@ but not rendered.
 Observed on runs: killer-memory `Hate/Terror_PowerfulEnemies` and
 scar-role traits on returnees.
 
+## Training Orders / Contracts (VERIFIED — GameDB + binary strings)
+
+`Faction/Contracts/*` is the **Training Orders** system: player-owned
+inventory items applied to captains (followers) from the hierarchy
+menu — not autonomous nemesis missions and not board jobs. Nothing
+in the event/generation tables references contract records because
+nothing schedules them; only the two `Faction/Contracts/List`
+records (`Training`, `Equipment`) enumerate them for the store/
+inventory UI.
+
+- `Contract` record (34 defs — `MountTraining`, `Epic_DireMount`,
+  `BattleTraining`, `Element_*`, `Gang_*`, `Epic_*`,
+  `ReassignmentOrders`…) carries: mirian cost (cell1 — 750 for
+  `MountTraining`, 3000 for `Epic_DireMount`), title/description
+  strings, `Contracts/Failure` condition list (`MountTraining` is
+  blocked by `HasMount`, `IsOlog`, `HasGang_Ologs`,
+  `UnsupportedPersonality`, `HasDecoys`, `CommandDisabled`),
+  world-item/icon/movie refs, `Contracts/UIGroup`, and a
+  `Faction/Events/Events` ref at cell 16 (`FactionEvent`) naming
+  the event that resolves the order (`MountTraining` →
+  `Contract_Mount`).
+- The `Contract_*` events are a uniform template: three
+  `Faction/Rewards/Lists` refs — cell15 `Contract_RemoveAnEpicTrait`,
+  cell16 the contract's own list (`Contract_Mount` → `GrantMount`),
+  cell17 `Upgrade_CommonOrcToEpic`. Applying an order strips an
+  epic trait, grants the contract reward, and upgrades the captain
+  common→epic.
+- Binary evidence that this is the player-inventory lane:
+  `ActionApplyContract`, `ContractApplyFromInventoryHeldAction`,
+  `OrdersContract_ApplyWithMirian`, `PurchaseContractPrompt`,
+  `ContractCostPrompt`, `Stash_TrainingOrderChest`,
+  `MenuLayerContractAssignment` ("Contract assignment for faction
+  members").
+- Corollary for AI-side trait drift: mounts/pets/elements/gangs on
+  enemy captains do NOT come from contracts — only spawn/level
+  reward rolls (e.g. `Default_HasMount` checkpoints) and event
+  reward pools apply. Orders are a player-only lane.
+
 ## OPEN
 
 - Member-aging promotion cadence (how often captains promote/upgrade
