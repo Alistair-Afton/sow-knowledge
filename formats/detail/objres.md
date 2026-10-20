@@ -438,6 +438,8 @@ each payload is dispatched through a **hash→vtable-handler registry**
 (`FUN_14115c2c0`), which is why every payload tag (`KEYF`, `SFXS`,
 `CADB`, …) maps to a dedicated sub-parser.
 
+Section parsing is **engine-tolerant**: the payload runs on a sub-stream bounded to `size`, the loader force-seeks to `section_start + size` afterwards, and a hash with no registered handler is skipped entirely. Section table entries are 0x20-stride `{hash, pad, handler*, result*}`.
+
 ## Unknowns
 
 - OBJL `key0`/`key1` (per-record u32s): `key1` is stable per instance
