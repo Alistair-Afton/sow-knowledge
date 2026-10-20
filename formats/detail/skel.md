@@ -146,17 +146,41 @@ and take bitangent handedness per-vertex.
   post-string-table bone-name pointer is `0x40f8d776` — outside the
   table (camera rigs, `param_head`, orc bone-armor skels, one Baranor
   crossbow), plus `torvin_desertt1shield.skel` whose rig records
-  don't fit the standard shape. **Re-read (Andúril):** `0x40f8d776`
-  is not a sentinel or pointer — the file tail carries an 8-byte
-  `{u32 index, u32 value}` table where the value column holds
-  hash-like constants (`0x40f8d776` dominant, also `0x5d47c7f2`,
-  …) bound to ascending index lanes (e.g. param_head `12,30,48,66,89,
-  112`). The community schema doesn't model this tail section, so it
-  reads a table value as a bone-name pointer and fails. The value
-  column's identity — property hash (no `name_hash` match on common
-  vocabulary) vs float constant (0x40f8d776 = 7.7763) — stays OPEN.
-  Both are input-true anomalies, not parser bugs — a robust reader
-  should surface them without failing the file.
+  don't fit the standard shape. **Resolved (Andúril + retail read
+  path):** the tail table is the file's **bone→hash binding list**
+  read by `FUN_1407bae98` (after the 0x38-stride bone array, before
+  the `FF01` marker): entries are `{u32 hash, u32 bone_index}`
+  (hash column first — param_head: `0x40f8d776` bound to bone
+  indices `30, 48, 66, 89, 112, 130, …`, 235 entries). The community
+  schema doesn't model the binding table, so it reads a hash value
+  as a bone-name pointer and fails. `0x40f8d776` is a name-hash
+  (channel/parameter name — on parametric rigs all entries share the
+  same hash); no `name_hash` match on common vocabulary yet, so the
+  exact channel name stays OPEN.
+
+## Retail read path (Ghidra decompile, verified)
+
+Loader located via the `0x4C454B53` ("SKEL") immediate:
+`FUN_140504420` — the **whole section map is confirmed in retail
+code**:
+
+- Version check is `version − 15 ≤ 2` → **15, 16, 17 accepted**.
+- Header: 16 u32s + 2×f32 + a 0x0C-byte field (matches the
+  documented header; fields are element counts + pool size).
+- Section markers verified: `0xDCDCFD00` (post-header/blob),
+  `0xDCDCFF01` (model/lod string offsets), `0xDCDCFF02` (anim u32s),
+  `0xDCDCFF03` (u8 bone-index table — `local_1e8` bytes),
+  `0xDCDCFF04` (cloth: `0x30`-byte records), `0xDCDCFF05` (tagged
+  resource refs of `{0xBEEFFEED, 0x104-byte record, …}`),
+  `0xDEADDEAD` terminators, `0xDCDCFF99` footer, then a `"SKPY"`
+  16-byte proxy record `{u32 ver, 12×0}`.
+- Bones are **0x38-stride runtime records** (`FUN_140410f80`), and
+  every record's `+8` field is validated against
+  `n_bones + n_?` — the structural check the community schema trips
+  on.
+- The `0x40f8d776` region is `FUN_1407bae98`'s `{u32 hash, u32
+  bone_idx}` table — a name-hash→bone binding (parametric/deform
+  channels), not a pointer table or sentinel.
 
 ## Unknowns
 
