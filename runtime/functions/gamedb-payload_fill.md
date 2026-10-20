@@ -1,5 +1,5 @@
 # `0x141872800` — `+a4e70` bucket payload populator
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Andúril byte-check: the cited function addresses begin with standard x64 prologues (consistent with real entries); instruction-level decode remains Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

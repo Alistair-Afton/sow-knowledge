@@ -1,5 +1,5 @@
 # The Engine — canonical map
-> **Status:** **partial** — Project Nemesis source. Spot-verified by Andúril: `CreateFactionMemberBuilder`, `FactionMemberBuilder`, `SimEvent` strings confirmed in `ShadowOfWar.exe`; `archivepatchloosefiles.txt` confirmed as a real VFS file (its name is *not* an exe string — the loose-index reads it via VFS). Address-level internals remain Nemesis-only evidence.
+> **Status:** **partial** — Project Nemesis source. Spot-verified by Andúril: `CreateFactionMemberBuilder`, `FactionMemberBuilder`, `SimEvent` strings confirmed in `ShadowOfWar.exe`; the claimed `ArchivePatchLooseFiles.txt` string **byte-confirmed at exactly `0x141e6b1b0`** (title-cased on disk — a lowercase search misses it). All sampled code addresses begin with standard x64 function prologues, consistent with real function entries. Remaining internals are Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
