@@ -19,13 +19,16 @@ community-side; Andúril has a reader, not yet a writer).
 
 ## 2. Plugin DLLs — CONFIRMED mechanism
 
-`ShadowOfWarDllLoader.dll` loads `x64/plugins/*.dll` at startup
-(each may carry `<name>.ini` / `<name>/`). The installed stack
-(Mod Menu, patches, RoamingCaptains, Elvenrun, nemesis.lua mods)
-proves the model: plugins patch code, add console commands, and run
-Lua against engine APIs (see Project Nemesis for the native API
-surface — engine functions/offsets are mapped there and in the
-Ghidra project).
+`x64/ShadowOfWarDllLoader.dll` is the community plugin loader (a
+generic `dll_loader` build from Nexus Mods): at startup it enumerates
+`x64/plugins/*.dll` and `LoadLibrary`s each; every plugin may carry
+a same-named `.ini` or `<name>/` folder beside it (CONFIRMED — the
+loader's own strings show `.\plugins` + `LoadLibraryA/LoadLibraryExW`
+only). The installed stack (Mod Menu, patches, RoamingCaptains,
+Elvenrun, nemesis.lua mods) proves the model: plugins patch code,
+add console commands, and run Lua against engine APIs (see Project
+Nemesis for the native API surface — engine functions/offsets are
+mapped there and in the Ghidra project).
 
 ## 3. Gamedb overlays — CONFIRMED data path
 
@@ -75,7 +78,8 @@ readers exist in both projects).
 ## Implementations to study
 
 Two independent Rust codebases implement readers for nearly
-everything documented here — crib from either:
+everything documented here (both works in progress, not yet publicly
+released — cited as evidence sources):
 
 - **Andúril** — clean-room Rust engine reimplementation:
   `anduril-vfs/-ltar/-bndl/-oodle` (asset loading),
@@ -85,6 +89,6 @@ everything documented here — crib from either:
   `-sim/-wcl/-terr` (world/simulation). Its CLI has per-format dump
   and render commands (`inst`, `mesh`, `anix`, `tex`, `mat`,
   `objres`, `wldclnt`, `sim view`).
-- **sow-rs** — Rust/Bevy reimplementation; its `docs/` are the
-  OnSight field notes this corpus draws on (all-codecs anix decode,
-  CADB traversal maps, material censuses, combat/movement records).
+- **sow-rs** — Rust/Bevy reimplementation by **OnSight**; his field
+  notes are what this corpus draws on (all-codecs anix decode, CADB
+  traversal maps, material censuses, combat/movement records).

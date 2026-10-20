@@ -18,16 +18,21 @@ verified by Andúril's own parsers, probes, and renders against a
 legally owned retail install — tests are `ANDURIL_GAME_DIR`-gated so
 nothing proprietary is needed to read the code.
 
-### sow-rs / "OnSight" docs
+### sow-rs (author: OnSight)
 
-A parallel Rust/Bevy reimplementation's field notes — the single
-largest source of verified semantics in this corpus (combat
-formulas, CADB traversal markup, Scaleform tag walks, material
-censuses, wraith shader model, moveset record maps, …). Where our
-work overlapped we validated against retail bytes; every overlap
-agreed, and the corrections we made (declared `.inst` layout not
-being universal, f16 pad-lane variance) are noted inline. Findings
-labeled **VERIFIED** are theirs, credited per claim.
+A parallel Rust/Bevy reimplementation in development by **OnSight** —
+his field notes are the single largest source of verified semantics
+in this corpus (combat formulas, CADB traversal markup, Scaleform
+tag walks, material censuses, wraith shader model, moveset record
+maps, …). Where our work overlapped we validated against retail
+bytes; every overlap agreed, and the corrections we made (declared
+`.inst` layout not being universal, f16 pad-lane variance) are
+noted inline. Findings labeled **VERIFIED** are his, credited per
+claim.
+
+> Both sow-rs and Andúril are works in progress and not yet publicly
+> released — citations name them as *sources of evidence*, not as
+> fetchable dependencies.
 
 ## Community documentation and tooling used as references
 
@@ -45,6 +50,9 @@ labeled **VERIFIED** are theirs, credited per claim.
   SWF tags under `.gfx`.
 - **Project Nemesis** — the native modding framework + knowledge base
   sibling to this repo; engine API surface and live-game memory reads.
+- **`ShadowOfWarDllLoader.dll`** — the community plugin loader (a
+  generic `dll_loader` build): enumerates `x64/plugins/*.dll` and
+  `LoadLibrary`s each at startup; the entry point for all native mods.
 - **Ghidra + REA (Reverse-Engineer-Anything)** — read-only executable
   analysis for loader addresses and format confirmation.
 

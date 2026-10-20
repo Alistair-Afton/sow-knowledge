@@ -36,13 +36,14 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 
 ## Sources
 
-- **Andúril**: clean-room open-source Rust engine reimplementation;
-  findings verified against the install by its own parsers, probes,
-  and renders.
-- **sow-rs "OnSight" docs**: a parallel Rust/Bevy reimplementation's
-  field notes — the single largest source of verified semantics here.
-  Where the two projects' work overlapped, claims were validated
-  against retail bytes; every overlap agreed. Credited per-file.
+- **Andúril**: clean-room open-source Rust engine reimplementation
+  (in development, not yet publicly released); findings verified
+  against the install by its own parsers, probes, and renders.
+- **sow-rs** (author: **OnSight**): a parallel Rust/Bevy
+  reimplementation, also in development — his field notes are the
+  single largest source of verified semantics here. Where the two
+  projects' work overlapped, claims were validated against retail
+  bytes; every overlap agreed. Credited per-file.
 - Universal-modder field notes ("Goblins of War"), QuickBMS
   `shadow_of_mordor.bms` v0.4, SoW Modding Community ImHex-Patterns /
   MeshParser, LordMonstey's Mesh Publisher, WarpZephyr's
