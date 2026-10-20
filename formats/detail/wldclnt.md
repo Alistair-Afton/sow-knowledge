@@ -1,6 +1,6 @@
 # `.wldclnt` — WDSC v9 world client descriptors
 
-> **Status:** **verified** — population descriptors decoded
+> **Status:** **verified**** — population descriptors decoded
 > **Provenance:** population descriptors decoded on real `.wldclnt` files.
 
 World/section population descriptors — one per world (`worlds/retail/<w>/`)

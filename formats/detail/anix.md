@@ -1,6 +1,6 @@
 # `.anix` — ANIX v44 animation libraries
 
-> **Status:** **verified** — full container + all five codecs decoded;
+> **Status:** **verified**** — full container + all five codecs decoded;
 > parse + sampling verified on all 1,666 extracted files; quat decode
 > is engine-exact (unclamped, NaN-producing like the retail assert).
 > **Provenance:** community spec (LordMonstey/sow-anix-format, MIT —

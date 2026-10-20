@@ -1,6 +1,6 @@
 # Evidence labels — definitions and examples
 
-> **Status:** **living**
+> **Status:** **living****
 > **Provenance:** the label vocabulary used across the whole corpus.
 
 Every claim in this corpus carries a label. The labels are strict on

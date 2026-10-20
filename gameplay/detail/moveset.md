@@ -1,6 +1,6 @@
 # Talion moveset — skills, meters, ranged, and move chains
 
-> **Status:** **verified** record chains for most M3/M4 moves;
+> **Status:** **verified**** record chains for most M3/M4 moves;
 > several M2 chains PARTIAL
 > **Provenance:** sow-rs/OnSight `moveset-map.md` (538-line record map:
 > every chain followed in `game.gamedb` + clip index over all `.anix`).

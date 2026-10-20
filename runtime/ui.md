@@ -1,7 +1,13 @@
 # UI model — Scaleform GFx + data-driven menus
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 *Verified 2026-09-24 against live game + `ingame.embb` assets.*
@@ -11,7 +17,7 @@
 SoW's UI is **Scaleform GFx 4.5** (`GFX\x08` header) driven by gamedb records.
 
 - Movies are `.gfx` files packed inside `interface\bundles\gfx\ingame.embb`
-  (in `UI_Assets.Arch06`). a corpus tool list|extract` handles the bundle.
+  (in `UI_Assets.Arch06`). `tools/embb.py list|extract` handles the bundle.
 - `interface\flash\sp.gfx` is the root movie; it imports widget libraries.
 - `interface\flash\widgets\componentlibrary.gfx` holds shared `LIB-*` widgets
   (menu list items, prompts, `LIB-Version` …).
@@ -28,13 +34,14 @@ SoW's UI is **Scaleform GFx 4.5** (`GFX\x08` header) driven by gamedb records.
 
 | Kind | Where the text lives | How to change it |
 |------|----------------------|------------------|
-| strdb-bound | `localisation*.strdb`, resolved by key hash | runtime text patch` |
+| strdb-bound | `localisation*.strdb`, resolved by key hash | `sdk.strings.set(hash, text)` |
 | gfx-baked | default text inside the `.gfx` tag stream | patch the movie file (loose override) |
 | programmatic | engine writes the field at runtime (e.g. `1.21`) | hook the writer / change source data |
 
-**Caveat (live-verified):** widgets fetch their text once at
-menu-build time and cache it — a runtime override only affects
-*new* lookups, so text must be patched before the frontend builds.
+**Caveat discovered 2026-09-24:** widgets fetch their text once at
+menu-build time and cache it. A runtime `sdk.strings.set` only affects
+*new* lookups — apply overrides at autoload (`Mods/<mod>/mod.lua` top
+level), before the frontend builds.
 
 ## Menu records (gamedb)
 
@@ -60,15 +67,15 @@ The menu is fully data-driven; no item positions live in the movie.
 
 Labels resolve name → strdb hash via the gamedb name hash
 (`h*0x397 + fold[c]` — verified: `namehash("UI_Frontend_Benchmark")`
-equals the "RUN BENCHMARK" key `0xa0014283`). So the Nemesis plugin API accepts
-key names directly: the Nemesis plugin API("UI_Frontend_Benchmark", "MOD MENU")`.
+equals the "RUN BENCHMARK" key `0xa0014283`). So `sdk.strings` accepts
+key names directly: `sdk.strings.set("UI_Frontend_Benchmark", "MOD MENU")`.
 
 ### Inline key-prompt tokens
 
 strdb text can embed input-glyph tokens: `{MenuEnter}`, `{MenuAux6}`,
 `{MenuEscape}`, `{CombatPrimary03}` etc. follow the `{TokenName}`
 format. **Substitution is renderer-dependent, NOT a string-layer
-feature** — verified 2026-09-24: the Nemesis plugin API(0xc86e43da,
+feature** — verified 2026-09-24: `sdk.strings.set(0xc86e43da,
 "…{MenuEnter}…")` renders the braces literally on the title screen.
 Real key icons in menus come from Prompt records (`Enabled=0xd` → a
 separate icon widget), not inline text. For plain text fields, copy
@@ -82,7 +89,7 @@ attr is an **inline record-entry-pointer array** — live cell layout is
 slot-indexed via the record's hash table (entry+0x08 → sorted
 `{key, meta}` pairs; `meta` bits 48+ = slot, bits 32–47 = element count
 for array attrs). Schema index ≠ live slot (`BaseNodes`: schema 4,
-slot 5; `Input`: schema 5, slot 20). the Nemesis plugin API handles the
+slot 5; `Input`: schema 5, slot 20). `sdk.db.arrinsert` handles the
 insert: relocates the data block, bumps post-array slots in a cloned
 hash table, repoints entry+0x10/+0x08 under thread quiesce, journals
 for re-apply on rebuild, and self-idempotents on existing elements.
@@ -110,18 +117,18 @@ Prompt — element array, 4-qword groups {flags, name-cstr, nil, ctx}
 Three independent text sources per row: **row label** =
 ComponentData element cell2, **footer prompt** = Prompt element0
 name, **help panel** = ComponentData element cell1. Cloning must
-deep-copy each (see the Nemesis plugin API/`add_button` in
+deep-copy each (see `sdk.menu.clone_record`/`add_button` in
 `runtime/sdk/menu.lua`) — the prompt's PromptID does NOT feed the row
 label, which is why the first clone kept showing the main-menu string.
 
 ### Live-verified override
 
 ```lua
-the Nemesis plugin API(0xa0014283, "MOD MENU")   -- "RUN BENCHMARK" label
-the Nemesis plugin API()                      -- link synthetic db (autoload!)
+sdk.strings.set(0xa0014283, "MOD MENU")   -- "RUN BENCHMARK" label
+sdk.strings.apply()                      -- link synthetic db (autoload!)
 ```
 
-Renders in the main menu after a restart. the Nemesis plugin API(hash)` reads
+Renders in the main menu after a restart. `sdk.strings.get(hash)` reads
 through the engine path (synthetic db wins, then locale-gated real dbs).
 
 ## Version label (`1.21`, title screen bottom-right)
@@ -142,15 +149,15 @@ through the engine path (synthetic db wins, then locale-gated real dbs).
 ## Mod-menu integration (MOD MENU entry)
 
 **Done (2026-09-24):** the main-menu benchmark slot now reads "MOD
-MENU" (the Nemesis plugin API("UI_Frontend_Benchmark", …)`) and benchmark
+MENU" (`sdk.strings.set("UI_Frontend_Benchmark", …)`) and benchmark
 access is preserved via a cloned "Run Benchmark" entry at the bottom of
 Options → Video (Advanced). The clone chain, styling, strings, and
-idempotence are implemented in `runtime/sdk/menu.lua` (live-verified through the game's own records)
+idempotence are implemented in `runtime/sdk/menu.lua` (`sdk.menu`)
 and applied by `runtime/nemesis_ui.lua` — framework code, not a mod.
 
 **Dispatch: solved 2026-09-24.** `nemesis-sdk::actionwatch` hooks the
 action-context builder (`exe+0x2775c0`) — every button activation queues
-its private `Action` record entry to Lua; the Nemesis plugin API(entry, fn)`
+its private `Action` record entry to Lua; `sdk.menu.on_action(entry, fn)`
 observes it (notification, not replacement — the native action still
 runs). For injected rows we bind `RefreshOptionsTree` (harmless) purely
 as a dispatch signal and do the real work in Lua. One physical press can
@@ -159,8 +166,8 @@ dispatch twice — handlers debounce (~500 ms window).
 **Label repaint model (verified live):** row text is resolved once at
 widget build; `RefreshOptionsTree`, focus changes, strdb writes, and
 element-name repoints do NOT repaint. Only a full tree rebuild
-re-resolves — driven by the Nemesis plugin API (posts RIGHT+LEFT via
-the Nemesis plugin API, ~360 ms/key; the tab-switch animation eats faster
+re-resolves — driven by `sdk.menu.repaint` (posts RIGHT+LEFT via
+`sdk.debug.postkey`, ~360 ms/key; the tab-switch animation eats faster
 input). `postkey` = in-process `PostMessageW` tap: keydown now, keyup
 flushed on the 33 ms wndproc timer (~60 ms hold — a same-tick down+up
 reads as "never pressed").
@@ -174,7 +181,7 @@ engine boot — before Lua init's `arrinsert` — so injected rows never
 appear in pause. The record-side row array `0x651eb390` (live, 2026-10-04d)
 already contains the injected `Display_RunInBackground` — only the
 render list is stale. Workarounds: push a custom tree/layer (its list
-builds at push time, post-insert — the the Nemesis plugin API recipe),
+builds at push time, post-insert — the `sdk.menu.add_screen` recipe),
 or repoint an existing pause row's dispatch binding — but NOT via the
 record: **VERIFIED-LIVE 2026-10-04d**, `Pause_Extras.DestinationLayer`
 repoint (data cell14 → mod layer clone) was ignored on press; no
@@ -197,17 +204,17 @@ attr 41, `QuestLogLayer` 14, `HierarchyLayer` 17, …). The native
 `MenuManager` object instantiates each slot at boot — that is the
 boot-snapshot origin. The GFx registry `[0x1427017b0]` holds only ONE
 collection ("Shared" — movies); screen instances are NOT there.
-Locator staged: a live probe order-scores every heap array
+Locator staged: `recon/pause_snap.lua` order-scores every heap array
 that references Options_OverviewTree row identities (entry / label
 cstr / ComponentData refs) to find the live 0x28-stride node list.
 
 **Native schema registry (2026-10-01, VERIFIED-STATIC):** every
 schema class has a static registration record in `.idata`:
 `{attr_table VA, count, cppname, desc, schema_name, parent_reg}` —
-2157 classes enumerated by a corpus tool →
-the extracted corpus, with parent links resolving to the
+2157 classes enumerated by `tools/native_schema.py` →
+`extracted/native_classes.tsv`, with parent links resolving to the
 inheritance chain (e.g. `MenuLayerOptions` → `MenuLayer`). The attr
-tables are fixed-VA BSS populated at boot; a live probe
+tables are fixed-VA BSS populated at boot; `recon/native_schema.lua`
 (`_G.schemadump()`) dumps them all in one live pass → the complete
 native field map per class.
 
@@ -246,13 +253,13 @@ for mod management until native layers are safe.
 
 **Resolved 2026-09-24:** the action-context builder at `exe+0x2775c0`
 is hooked (`actionwatch`) — it queues each dispatched action's private
-record entry; the Nemesis plugin API delivers it to Lua. Checkbox/cycle
+record entry; `sdk.menu.on_action` delivers it to Lua. Checkbox/cycle
 rows go through a different element-activation path (hook at
 `exe+0x1951708`, `menupoll`/`on_activate`) — `element+0x10` is the bound
 field object whose vtable teardown calls unconditionally, which is why
 cloned checkboxes AV on teardown (datasource must stay shared/valid).
 
-**the Nemesis plugin API (built, awaiting first live verify):** clones
+**`sdk.menu.add_checkbox` (built, awaiting first live verify):** clones
 a `TreeNode.ComponentCheckbox` (`Video_DOF` default template) — node
 cells 6/7 are the Checked/UncheckedComponentData variants (row label +
 tick icon live inside), cells 10/11 the Pane* help-panel record entries
@@ -261,7 +268,7 @@ datasource (kept shared → teardown-safe). The mark is driven by
 pointing BOTH compdata cells at one private variant — whichever branch
 the dead binding resolves shows our state. `on_toggle` runs Lua-side,
 the engine press is swallowed, and `nemesis_ui` uses it for the
-Display "Run in Background" row (persisted via the Nemesis plugin API). Full
+Display "Run in Background" row (persisted via `sdk.state`). Full
 native control vocabulary: `MenuComponent.{Button×78, Checkbox×25,
 Cycle×18, Slider×15, TextEntry×5}` — same clone recipe applies.
 
@@ -323,7 +330,7 @@ record's hash→slot table (entry+0x08), whose keys' lo32 = the attr
 namehash (`namehash("OverviewTree")` = 0x063ad377 = key lo32 → slot
 11; the value there is `TreeBase::QuestLog_OverviewTree`). Declared
 schema indices are NOT live cell offsets — always resolve through the
-slot table. the Nemesis plugin API does this via `live_slot()`.
+slot table. `sdk.menu.add_screen` does this via `live_slot()`.
 
 `MenuLayer.Options` subtype (**VERIFIED-INGAME**, ~60 cells):
 `Components`@18 → `TreeBase::FrontEnd_Options_OverviewTree`;
@@ -359,7 +366,7 @@ block, and schema attr names mislabel element slots.
 - Node rows are `TreeNode.Component{Button,Checkbox,Cycle,Slider,
   KeyRebind}` records.
 
-**Native mod menu recipe** (the Nemesis plugin API —
+**Native mod menu recipe** (`sdk.menu.add_screen` —
 **VERIFIED-INGAME** chain, 2026-09-25): clone `MenuLayer.
 QuestLog::QuestLog` → write the private tree entry into the
 `OverviewTree` live slot (11, via hash→slot) → clone
@@ -376,7 +383,7 @@ problem entirely). Templates are overridable via opts
 
 A pushed layer references its tree by **pointer**, so the tree needs
 no list registration — a leaked clone keeps mod rows out of every
-vanilla tree. the Nemesis plugin API(src, name)` clones entry+data
+vanilla tree. `sdk.menu.clone_tree(src, name)` clones entry+data
 verbatim; `tree_insert`/`tree_clear` replicate
 `array_insert_inline`'s semantics on the unregistered clone:
 
@@ -394,7 +401,7 @@ without touching a registered tree. `runtime/modmenu_screen.lua`
 consumes all of it: one toggle row per mod, a two-tap Reorder Mode
 (single-press semantics only — pick up, drop), Reload Mods.
 
-Assembly: the Nemesis plugin API{tree_ctx, layer_src, context, ...}`
+Assembly: `sdk.menu.add_screen{tree_ctx, layer_src, context, ...}`
 does the full recipe — clone layer → write tree-attr cell (live index
 via `cells()`, no marker math) → clone a MenuLayerList and write the
 layer clone into its `ValidInPauseMenu`/`ValidInMainMenu` cells
@@ -405,7 +412,7 @@ v1 fallback. Best layer templates: `MenuLayer.LanguageSelect`
 (`SelectionTree`@29) and `MenuLayer.GameModeSelect` (`Tree`@30 +
 `Node`@31) — simple single-tree list screens. Remaining unknowns =
 the MenuLayerList Layers element shape + template choice → G48,
-decoded by a live probe.
+decoded by `recon/menulayer.lua`.
 
 ## Frontend component dispatch (2026-09-24)
 
@@ -425,7 +432,7 @@ decoded by a live probe.
   frontend resolves its binding before/at dispatch differently than the
   options-tree path (the `exe+0x2775c0` ctx-builder hook only sees
   tree/predicate dispatches).
-- the Nemesis plugin API(pred, action_entry)` rewrites a
+- `sdk.menu.repoint_pred_action(pred, action_entry)` rewrites a
   Predicate.Node cell3 — the write target for MOD MENU. `pred` accepts
   a name (base `Predicate` list), `{data=}`/`{addr=}` table, or a raw
   record ENTRY addr (name-map node). `nemesis_ui` repoints
@@ -448,7 +455,7 @@ decoded by a live probe.
   `0x638a59f0` whose `+0x10` record has cell3 = the
   `Options_LaunchBenchmark` action entry.
 - Resolution path for unlisted records: follow a known referrer's ref
-  cell (live-verified through the game's own records), or `findrefs`. nemesis_ui's
+  cell (`sdk.menu.pred_entry_via_state`), or `findrefs`. nemesis_ui's
   MOD MENU wiring resolves `LaunchBenchmark` via
   `Component_LaunchBenchmark`.cell5 — `findrefs` shows that state is
   the pred's ONLY record consumer; the frontend slot resolves it by
@@ -458,7 +465,7 @@ decoded by a live probe.
   original chain.
 - Timing: frontend menu records (`TreeNode_State` et al) are NOT
   loaded at Lua init — `nemesis_ui` wiring runs as a retry-until-done
-  the Nemesis plugin API("ui")` pump; `modmenu.pred_entry` is persisted in the Nemesis plugin API
+  `sdk.on("ui")` pump; `modmenu.pred_entry` is persisted in sdk.state
   for F8-reload idempotence (clone detected by entry-name).
 - `MenuLayer::MM_Options` cells 19-30 = component ENTRY array
   (`MM_FrontScreen_Benchmark` @cell30); `MenuLayer.Options::
@@ -477,12 +484,12 @@ decoded by a live probe.
 - Every "input ignored while unfocused" observation this session was
   the **in-game console** (overlay::wndproc consumes keys while open,
   `~` toggles) or the GENETICZZ2K ImGui overlay — not a focus gate.
-- the Nemesis plugin API()` therefore only posts the fake-activation trio
+- `sdk.debug.focus()` therefore only posts the fake-activation trio
   (WM_NCACTIVATE/WM_ACTIVATE/WM_SETFOCUS) as insurance — it never calls
   real SetForegroundWindow/BringWindowToTop (user's desktop untouched).
   `postkey` auto-asserts it when another app owns the real foreground.
-- the Nemesis plugin API(msg,w,l)` = raw PostMessageW to the game window.
-- the Nemesis plugin API()` is the complementary guarantee: the wndproc
+- `sdk.debug.postmsg(msg,w,l)` = raw PostMessageW to the game window.
+- `sdk.background()` is the complementary guarantee: the wndproc
   swallows the deactivation message set so the engine never *drops* its
   believed-focused state — keeps synthetic input digestible AND stops
   auto-pause on alt-tab.
@@ -503,13 +510,13 @@ misattributed to the frontend. Real mechanism:
   earlier are toggle-intent/ImGui `p_open` bools, not the render gate).
 - With `SoW_ModMenu.dll` moved aside pre-launch, the SAME postkey drive
   (SPACE→ENTER→SPACE, 2 cycles) reaches in-world cold — verified twice
-  (a corpus tool, exit 0). No raw-input/XInput mystery: the
+  (`tools/session.py`, exit 0). No raw-input/XInput mystery: the
   frontend digests ordinary WM_KEYDOWN fine.
 - `PlayerInput.SetSimInput` was tested live (gated `console.exec`) and
   confirmed no-op at title — it requires an active player
   (`[mgr+0xe90]+0x40` index, `[arr[idx]+0x38]==3`), so it stays an
   in-world tool, not a title bridge.
-- a corpus tool now moves the overlay DLL aside for launches it
+- `tools/session.py` now moves the overlay DLL aside for launches it
   owns (restored after plugin enumeration) and warns on attach when
   `modbase('SoW_ModMenu.dll')` is loaded.
 
@@ -603,8 +610,8 @@ differs.
 | core | `*[impl+0x50]` | display-state worker (frame/pause flags) | `0x141db9340` | 129 (`0x00`–`0x400`) |
 
 Vtable dumps: `extracted/gfx_vt_{movieimpl,root,asroot,core}.tsv`
-(slot → target VA); classifier output via a corpus tool;
-call-site string harvest via a corpus tool.
+(slot → target VA); classifier output via `tools/gfx_classify.py`;
+call-site string harvest via `tools/gfx_callsites.py`.
 
 Method dispatch is layered: `impl` view-level slots mostly tail-call
 `[impl+0x50]` (core) for display state or `[impl+0x18]` (asroot) for
@@ -666,6 +673,39 @@ through arg objects); `asroot+0x008` and `asroot+0x068` AV at title
 `ShadowOfWar.exe+0x1215f32`/`+0x221fa6`/`+0x2abf56`-family sites —
 async, `pcall`-proof.
 
+### `sdk.gfx` — production API (VERIFIED-LIVE 2026-10-02)
+
+`crates/nemesis-sdk/src/gfx.rs` + `crates/nemesis-lua/src/api/gfx.rs`
+wrap the verified slots behind the vfs-style safe pattern:
+
+```lua
+sdk.gfx.getvar(path [, movie])          -> value | nil
+sdk.gfx.setvar(path, value [, movie])   -> true | false   -- bool/number/string/nil
+sdk.gfx.invoke(method, args? [, movie]) -> value | nil    -- scalar args ≤32
+sdk.gfx.getvarx(path [, movie])         -> value, ty, data -- raw triple
+sdk.gfx.probe([movie])                  -> asroot ptr | nil
+```
+
+`movie` = `"main"` (default, `ctx+0x378`) or `"nav"` (`ctx+0x380`).
+
+Safety: the accessors resolve via AOB signatures
+(`GFX_ROOT_ACCESSOR_MAIN`/`_NAV`), and the AS-root vtable slots are
+**content-pinned** to build-0x5B7F5782 function RVAs — any exe update
+fails closed with a descriptive error before any native call. An
+unloaded movie (NULL root — splash screen, transition) returns
+nil/false, never a call into nothing. All dispatches marshal through
+`gamethread::submit_mem`.
+
+Verified live at the title menu: `probe()` → asroot ptr (both movies);
+`setvar/getvar` round-trips for number (`42.5`), bool, and string
+(`'mordor'`); `invoke('Math.abs',{-5})` → `5`, `invoke('Math.max',{3,9})`
+→ `9`, `invoke('Math.random')` → real number; missing var → nil;
+opaque results (objects/clips) → nil; bad movie name → clean error.
+
+Residual: opaque `Value` (objects/arrays/clips) isn't decoded to Lua
+yet — `getvarx` exposes raw `ty`/`data` for those. `IsAvailable` slot
+unmapped (GetVariable's bool covers the use case).
+
 ## Texture/image path for thumbnails (2026-09-26, VERIFIED-STATIC)
 
 Native texture registry exists — `Marketplace.Icon` records are
@@ -711,10 +751,10 @@ the `TreeNode_State` ref seen in pane cells was `PrimaryState`
 (field 0), and the `Marketplace.Image` record the wrong cell
 resolved. `Marketplace.Image` records `{Texture, Bundle}` still
 exist as the *store's* icon registry — unrelated to node panes.
-the Nemesis plugin API{node, tex, bundle}` writes cstrs into the
+`sdk.menu.set_pane_image{node, tex, bundle}` writes cstrs into the
 node's live slots (namehash→slot-table); `SilverWarChest` ships
 `Bundle` empty — loose `.tex` over VFS is plausible without a .bndl.
-Live confirmation armed in a live probe §9 (`dump_strs`
+Live confirmation armed in `recon/menulayer.lua` §9 (`dump_strs`
 prints node cells whose values resolve to cstr paths).
 
 ### `.tex` format (VERIFIED-STATIC, orc_grenade_d.tex)
@@ -726,24 +766,27 @@ siblings are mip-tier alternates. So `.tex` = trivially craftable:
 fixed TEXR header + name cstr + DDS bytes — mods can ship real
 thumbnails (DDS source) via the VFS `files/` path.
 
-The dedicated mod-logo slot is the game's own
-`interface\textures\hud\mod\modlogo.tex` (128×128 DXT5); a crafted
-`.tex` keeps the same header + source-name layout, and DDS art must
-match the donor's dims/format.
+Canonical pack donor vendored at `tools/data/modlogo_donor.tex`
+(the game's own `interface\textures\hud\mod\modlogo.tex`, 128×128
+DXT5 — the dedicated mod-logo slot). Usage:
+`python tools/tex.py pack tools/data/modlogo_donor.tex x.dds out.tex
+--name interface\textures\mods\x.tex` — DDS must match donor
+dims/format, so thumbnail art should be authored 128×128 DXT5.
 
 A pane **`.bndl`** is a trivial manifest (`BNDL` v6): type
 `Bundles/Types:UI_QuestStartPoint` + resource path cstrs + their
-byte sizes (verified byte-identical round-trip against the game's
-own queststart bndls). Most retail bndls have no `.embb`
+byte sizes (`tools/bndl.py pack`, byte-identical round-trip vs the
+game's own queststart bndls). Most retail bndls have no `.embb`
 payload — the manifest resolves its resource paths through the VFS,
-so a loose `files/` `.tex` + authored `.bndl` pair is sufficient.
+so a loose `files/` `.tex` + authored `.bndl` pair is sufficient
+(`tools/data/modlogo.bndl` = the canonical example).
 
 **Thumbnail recipe (armed, live-verify pending)**: craft
 `.tex`(DDS) → `Mods/<mod>/files/interface/textures/mods/x.tex`;
 pack `x.bndl` → `files/interface/bundles/mods/<mod>/x.bndl`;
 declare `thumbs = {"x.bndl"}` in `manifest.lua` (or drop files in
 `Mods/<mod>/thumbs/`). `modmenu_screen` writes the first thumb into
-the mod row's `PaneBundle` cell via the Nemesis plugin API —
+the mod row's `PaneBundle` cell via `sdk.menu.set_pane_image` —
 `ComponentButton` rows carry `PaneBundle` (declared 8) but **no**
 `PaneImage`, so mod-row thumbs are bundle-only. Entries containing a
 path separator are used as VFS paths verbatim; bare filenames map to

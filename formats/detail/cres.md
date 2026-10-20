@@ -1,6 +1,6 @@
 # `.cres` — CRES v5 (typed resource container)
 
-> **Status:** **partial** — envelope decoded; payload semantics vary by type
+> **Status:** **partial**** — envelope decoded; payload semantics vary by type
 > **Provenance:** envelope decoded on the real `.cres` corpus.
 
 Generic cooked-resource envelope used for cloth physics, lighting, and

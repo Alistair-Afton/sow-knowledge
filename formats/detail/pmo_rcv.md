@@ -1,6 +1,6 @@
 # `.pmo` + `.rcv` — motion/behavior curves
 
-> **Status:** **verified** — motion-curve containers decoded
+> **Status:** **verified**** — motion-curve containers decoded
 > **Provenance:** motion-curve containers decoded on the real corpus.
 
 Per-character motion data under `anim/` and `behaviors/` (all

@@ -1,7 +1,13 @@
 # The Engine — canonical map
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 > Status: **MODEL**. Subsystem map of Kraken (the engine) on build
@@ -27,6 +33,7 @@ ShadowOfWar.exe
   `docs/evidence/gamedb/data-domains.md`.
 - Captains are *constructed*, not spawned: `FactionMemberBuilder`
   records + `CreateFactionMemberBuilder` → hierarchy placement.
+  Runtime path: `sdk.exec` + `DB*` lookups (see `runtime/sdk/spawn.lua`).
 - Events: `Faction.SimEvent*` generation + resolution pipeline; engine
   event surface catalogued in `docs/evidence/engine/events.md` and
   `nemesis-events.md`.
@@ -48,7 +55,7 @@ ShadowOfWar.exe
 
 - ~225k `.bndl` bundles, ~190k `.embb`, 3.3k `.anix`, 2.7k scripts,
   305 `.bvr` behavior graphs, 10 `.gamedb` across archives
-  (the extracted corpus).
+  (`extracted/archive_census.tsv`).
 - STRDB string tables (SKDB v9, hash-indexed UTF-16): 63k enus strings.
 - The exe is metadata-rich: 171 source paths, ~3.4k command strings,
   full schema names — mine it before disassembling blind

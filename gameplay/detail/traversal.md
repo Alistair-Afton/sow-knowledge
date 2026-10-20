@@ -1,6 +1,6 @@
 # Traversal — movement constants, CADB context actions, locomotion
 
-> **Status:** **verified** — constants + CADB layout; state-graph
+> **Status:** **verified**** — constants + CADB layout; state-graph
 > semantics PARTIAL
 > **Provenance:** sow-rs/OnSight `moveset-map.md` §M6 (record chains +
 > `sow_tool probe` validation of edge placement against our own scene

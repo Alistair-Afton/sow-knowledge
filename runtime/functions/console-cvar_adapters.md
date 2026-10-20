@@ -1,15 +1,21 @@
 # cvar adapters — bound-command executor family
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
+
 
 **Tag:** VERIFIED-STATIC (bool family VERIFIED-LIVE via console
 GET/SET round-trip)
 **Addr:** `0x14117d4cc` (bool tail), `0x141cb6554` (int variant,
 storage `node+0x3c`), `0x141cad994` (bool variant, storage `node+0x39`,
 forwards to `0x14117d4cc`), `0x141c8b704` (resolved-program variant)
-**Evidence:** disasm 2026-09-30; live GET/SET via the Nemesis plugin API.
+**Evidence:** disasm 2026-09-30; live GET/SET via `sdk.console`.
 
 ## Signature
 

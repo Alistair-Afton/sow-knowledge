@@ -1,17 +1,24 @@
 # Console commands — the engine's `*.ConsolePrograms` system
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 Status: `VERIFIED-STATIC` except where noted. The dispatcher entry is
 **LOCATED (2026-09-30n)** — the registry object's `vt+0x58` verb —
 and program-record commands are invocable through it.
 
-## Command-node table (the extracted corpus)
+## Command-node table (extracted/native_console_commands.tsv)
 
 ~590 static nodes in the exe image, VA range `0x14262a340..0x142683250`
 (this build's `.idata` region; non-ASLR base `0x140000000`). Enumerated by
+`tools/console_cmds.py` via the `C:\P4\...\*ConsolePrograms.cpp` source-path
 pointers. Layout:
 
 | off | field |
@@ -54,7 +61,7 @@ Presentation.CharacterEvent @0x1469d47e0: reads zero arg regs (argc-agnostic)
 
 So the ctx **adapters are only string→argv tokenizers**. Calling the
 handler directly with `(argc, argv)` reproduces dispatch *without* the
-unlocated parser — that's the the Nemesis plugin API path.
+unlocated parser — that's the `sdk.console.exec` path.
 Name→object resolution for args goes through singleton `0x1426ff058`
 (vtable +0x68), so args are cstr names, not pointers.
 
@@ -181,7 +188,7 @@ from the title screen.
 Sibling tails for **uint** (`%s = %u`, "expecting unsigned input")
 and **float** (`%s = %f`) exist with the same signature — the fmt/warn
 strings cluster at `0x1422b57e0..` and each cvar's ctx program points
-at its own adapter → own tail. So the Nemesis plugin API doesn't hardcode
+at its own adapter → own tail. So `sdk.console.exec` doesn't hardcode
 a tail: it decodes the `E9 rel32` at the node's adapter+20 and calls
 that — typed-tail selection is per-command and exe-update resilient.
 The engine singleton `0x1407cbc20()`
@@ -284,7 +291,7 @@ a notify/callback wrapper — program-side registration). The
 dispatcher's `a` object (adapter-A calls `[a+0x38](argc,argv)`) is a
 **runtime record R built here** — R+0x38 holds the resolved code
 pointer (node's handler, or the program fn for the small id). R
-records live in the registry's containers — a live probe
+records live in the registry's containers — `recon/console.lua`
 dumps the singleton's fields live to find them. The small-id→program
 map is **runtime-built inside register()** — the +0x10 arg is a
 builder thunk, not an (id,fn) pair, so it isn't statically
@@ -328,7 +335,7 @@ index-bounded element accessors vs `[obj+0x18]`.
 "Faction.Ambush.PrintDeferred", 0, 0)` and
 `("Faction.TriggerAmbush", 1, {"MarkedAsTarget_Ambush"})` and
 `("Faction.Ambush.AlwaysPassChance", 1, {...})` all returned result
-objects with no crash. the Nemesis plugin API routes program-record
+objects with no crash. `sdk.console.exec` routes program-record
 nodes through this verb (`registry_exec`); code handlers still use
 the direct argv call. Caveat: `0x1407f9xxx` handlers are a `ret 0`
 stub farm — check for a second registration (`Faction.Dump`'s real
@@ -337,7 +344,7 @@ impl is `0x141c5c048`).
 `Faction:TriggerAmbush` is also a script method (colon, ONE explicit
 arg — the `Faction/Ambush/Definition` record):
 `Faction:TriggerAmbush(DBFactionAmbushDef.MarkedAsTarget_Ambush)` —
-VERIFIED-INGAME via the Nemesis plugin API (pcall returned true). Ambushes
+VERIFIED-INGAME via `sdk.exec.eval` (pcall returned true). Ambushes
 defer on `AmbushDelay`/chance/conditions — `PrintDeferred`'s real
 impl is a stub; trigger ≠ immediate spawn.
 

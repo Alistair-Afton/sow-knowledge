@@ -1,6 +1,6 @@
 # Sources and credits
 
-> **Status:** **living**
+> **Status:** **living****
 > **Provenance:** canonical provenance page — who found what.
 
 Every claim in this corpus is original prose. Findings derive from two

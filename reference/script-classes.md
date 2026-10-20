@@ -1,6 +1,6 @@
 # Nemesis mission ScriptObject surface
 
-> **Status:** verified — extracted surface reference
+> **Status:** **verified** — extracted surface reference
 > **Provenance:** patch09 `.scripts` corpus via `anduril scri <f> dump` method attribution.
 
 Extracted from the patch09 `.scripts` corpus via `anduril scri <f> dump`

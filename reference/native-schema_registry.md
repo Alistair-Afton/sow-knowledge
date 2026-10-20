@@ -1,14 +1,20 @@
 # Native schema registry — registration record + attr-entry layouts
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 **Tag:** VERIFIED-STATIC (entry writer `0x140c6da00` + init-thunk drivers
 fully decoded; live `schemadump()` cross-check pending)
-**Evidence:** a corpus tool; the extracted corpus
-(2,157 classes); the extracted corpus (17,931 attrs);
-a live probe.
+**Evidence:** `tools/native_schema.py`; `extracted/native_classes.tsv`
+(2,157 classes); `extracted/native_attrs.tsv` (17,931 attrs);
+`recon/native_schema.lua`.
 
 ## Registration record (`.idata`, ~0x30 bytes)
 
@@ -134,15 +140,15 @@ entries from ancestors).
 
 `! _G.schemadump()` walked the live registry array — 2,156 class
 records self-described from `0x142a58cf0..f290`, full dump landed in
-the extracted corpus (22,866 ATTR rows; each ATTR row
+`extracted/native_schema_dump.txt` (22,866 ATTR rows; each ATTR row
 carries its entry VA so rows bucket to their owning table —
 `e − idx·0x48` — which is what separates the dual-family
 `Parameterization.*` registrations). Live vs static
-(a corpus tool → the extracted corpus):
+(`tools/schema_diff.py` → `extracted/schema_live_diff.tsv`):
 
 - **+0x20/+0x24 confirmed**: qword `0x0b'766ea39b` for
   `InitialAICount` = tag 11 over the canonical name-hash
-  (`h*0x397+fold[c]`, a corpus tool::name_hash`) — all sampled
+  (`h*0x397+fold[c]`, `tools/looseidx.py::name_hash`) — all sampled
   rows match.
 - **+0x30/+0x40/+0x38 revised** — see table: +0x30 is a leaf/marker
   class flag (2/0), +0x40 a per-segment leaf ordinal, +0x38 the
@@ -161,6 +167,10 @@ carries its entry VA so rows bucket to their owning table —
 - **The live dump is authoritative for count/name/order**; static
   adds tag/type/default/thunk the dump can't see (name-hash + tag now
   verifiable both ways via +0x20/+0x24).
-- **Merged corpus** (22,866 attrs, VERIFIED-LIVE): live rows keyed
-  per registration VA, including the 166 jump-stub classes and both
-  `Parameterization.*` families.
+- **Merged corpus** (`tools/merge_live_schema.py` →
+  `extracted/native_attrs_live.tsv`, 22,866 attrs, VERIFIED-LIVE
+  2026-10-01): live rows keyed per reg VA — the runtime blob
+  (`runtime/data/native_schema.lua`) is generated from this file when
+  present, so `sdk.schema.attrs` now returns live-accurate rows
+  incl. the 166 jump-stub classes and both `Parameterization.*`
+  families.

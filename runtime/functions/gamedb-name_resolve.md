@@ -1,8 +1,14 @@
 # `0x140d23a40` — public name→record resolver (parsed-token input)
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis function-decode documentation (native `nemesis.dll` forensics), mirrored into the corpus.
 
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
+
 
 **Tag:** VERIFIED-STATIC (2026-09-28f)
 **Addr:** `ShadowOfWar.exe+0x140d23a40`
@@ -28,9 +34,9 @@ name **token** (NOT a raw cstr), `r8`/`r9` = ctx/out.
 ## Why it matters
 
 No raw-string→elem bridge exists on this path — the elem is bound
-inside the token by the (VM'd) parser/loader. the Nemesis plugin API must
+inside the token by the (VM'd) parser/loader. `sdk.db.intern` must
 therefore mint pool elements directly (template via
-the Nemesis plugin API), not reuse this resolver.
+`sdk.debug.dbname`), not reuse this resolver.
 
 ## Callers / callees
 

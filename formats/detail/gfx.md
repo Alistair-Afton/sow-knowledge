@@ -1,6 +1,6 @@
 # `.gfx` — Scaleform GFx HUD movies
 
-> **Status:** **verified** — container + tag walk confirmed on the real corpus
+> **Status:** **verified**** — container + tag walk confirmed on the real corpus
 > **Provenance:** sow-rs/OnSight `formats/gfx.md` (exact tag walks over all
 > 19 installed files); standard tags per Adobe SWF spec v19. Andúril has
 > no GFX reader yet — this doc is the spec to implement against.

@@ -1,6 +1,6 @@
 # Animation: `.skel` + `.anix`
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** ANIX/SKEL decode on real corpus — Andúril + sow-rs.
 
 Skeletons, bind poses, and every animation codec. Source: sow-rs

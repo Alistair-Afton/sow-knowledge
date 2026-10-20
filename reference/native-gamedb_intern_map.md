@@ -1,13 +1,19 @@
 # GameDB intern-map structures — map / pool / name-element
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 **Tag:** VERIFIED-STATIC + partially VERIFIED-LIVE (elem fields
 `+0x18`/`+0x01`/vecA stride confirmed on `0x4ef93708`, 2026-09-28)
 **Evidence:** `docs/model/gamedb.md`; live dumps via
-the Nemesis plugin API/`dbname`.
+`sdk.debug.dbpool`/`dbname`.
 
 ## Map `{0x18 bytes}` at `manager + 0xa4d98 .. 0xa4f10`
 

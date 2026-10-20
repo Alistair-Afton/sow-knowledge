@@ -1,7 +1,13 @@
 # Nemesis memory — the CharacterEvent system
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 How Uruks "remember" encounters (G49). Evidence: extracted gamedb +
@@ -119,7 +125,7 @@ report from the other side.
 ## Relay bitmask (VERIFIED-STATIC, 2026-09-28)
 
 `Presentation.CharacterEvent` is decoded: the command's handler
-(`0x1469d47e0`, zero arg registers — safe for the Nemesis plugin API)
+(`0x1469d47e0`, zero arg registers — safe for `sdk.console.exec`)
 walks `[[0x1426ffa98]+0x888]+0x2fc0` and calls
 `0x140679480(obj, 0x14)` → `0x14067949c(target, 0x14)` which does
 `target->+0x6c |= 1<<0x14` (bit 0xC excluded). So the command sets a
@@ -129,7 +135,7 @@ the bit-setter has 27 writer call sites (ids 1,2,3,5,7,0x10,0x11+,0x14
 seen), and the "specified character" is the AIInfo-tracked subject
 (`AI.InfoTrack.Subject`, cvar-id command `0x101`). The mask consumer
 (who reads `+0x6c` to play scar/terror presentation) and the
-bit↔event-name map are undecoded — a live probe verifies the
+bit↔event-name map are undecoded — `recon/console.lua` verifies the
 chain live and tests whether the handler call flips bit 0x14.
 
 **Better writer levers (same decode pass)**: `Presentation.QueueEvent`
@@ -139,7 +145,7 @@ event on the same `+0x2fc0` object — firing
 `ActiveTerrorTriggered_Fire` on a named captain is directly testable.
 `Presentation.StartEvent` and `Presentation.ScriptRelay`
 (`relay + character` args) are siblings. All are invocable via
-the Nemesis plugin API (the universal `handler(argc, argv)` console ABI —
+`sdk.console.exec` (the universal `handler(argc, argv)` console ABI —
 docs/model/console-commands.md).
 
 ## `Faction.AddEvent` — the strongest writer candidate (VERIFIED-STATIC, 2026-09-25)
@@ -159,7 +165,7 @@ record to the current faction target"):
    **VERIFIED-INGAME 2026-09-29**: replicating that pair against the
    real `DBFactionEvent` accessor `[0x142701a20]` resolves
    `ActiveTerrorTriggered_All` → `0x435f2c38` == its
-   the Nemesis plugin API("Faction.Event")` `e.addr` — the pending-vector
+   `sdk.db.entries("Faction.Event")` `e.addr` — the pending-vector
    element pointer the writer expects. Pure-Lua repair resolve:
    `key = callva(0x140423e70, namep)`;
    `entry = callva(0x140278540, arr, &key, count)` — arg order is
@@ -194,7 +200,7 @@ members (with grid positions) to a file — the offline way to get
 real positions. `FactionMember.ProfileDump` dumps the selected
 member for before/after verification.
 
-Live test staged in a live probe: `Faction.Dump` →
+Live test staged in `recon/charevents.lua`: `Faction.Dump` →
 `Faction.SetTarget <row> <col> <slot>` → `FactionMember.ProfileDump`
 → `Faction.AddEvent ActiveTerrorTriggered_Fire` → re-probe counts.
 If counts move, the writer regression is NOT in this path — the
@@ -303,9 +309,9 @@ The earlier `exe+0x274afd` crash was **not** a record-subclass problem:
 the hand-rolled namehash+bsearch replication landed on an **empty
 zeroed slot** (`k0=0, items=0`) because `[0x142701c48]`'s bsearch array
 is not the list's element array. The engine's own resolver
-`0x141b090bc(name-cstr)` returns exactly the the Nemesis plugin API element
+`0x141b090bc(name-cstr)` returns exactly the `sdk.db.entries` element
 addr (proven live: `ResReward_Terror_Caragor` → `0x45df2160`).
-Resolution is now pure the Nemesis plugin API("Faction.Reward")` name lookup —
+Resolution is now pure `sdk.db.entries("Faction.Reward")` name lookup —
 no native calls needed.
 
 The canonical write is `callva(0x1403511f4, member, element, x, y)` —
@@ -397,7 +403,7 @@ returns the winning element — the canonical event-factory.
 `subid = u32[body+0x168]`; `inner = [body+0x20]` (a
 `{vec@+0x18, end@+0x20}` container); **`member = vec[subid]`** —
 and every vec element is a member of that keyed group, so walking all
-inner vecs enumerates the full roster. a live probe walks it;
+inner vecs enumerates the full roster. `recon/roster.lua` walks it;
 `key==cap.val` would make cap→member O(1)-correct.
 
 Live-pass corrections (2026-09-30d, in-world `roster` run):
@@ -630,7 +636,7 @@ approach: watch the member's flee/terror state field during a scare
 (`charevents.lua` member-ptr probe already finds the member), then
 fire `0x1403511f4(member, ActiveTerrorTriggered_*, 0, 0)` through
 `exec.call` — or equivalently `Faction.SetTarget` + `Faction.AddEvent`
-console commands via the Nemesis plugin API.
+console commands via `sdk.console.exec`.
 
 **Stub-farm caveat** (VERIFIED-STATIC): `0x1407f8xxx` registrations
 are `ret 0` stubs (`Faction.AddEvent`#1, `Faction.Save`,
@@ -799,7 +805,7 @@ assert stub (`exe+0x819113`):
 ## Cause-specific terror events (2026-09-29c)
 
 `runtime/data/trait_events.lua` (`NEMESIS_TRAIT_EVENTS`, generated by
-the extracted corpus — 86 `Faction/Traits/Definitions` records
+`extracted/trait_events.tsv` — 86 `Faction/Traits/Definitions` records
 carry their memory-event ref inline as `{0x21b,ord}` cells):
 `Terror_Caragors`→`ActiveTerrorTriggered_Warg`, `Terror_Fire`→
 `ActiveTerrorTriggered_Fire`, `Fear_*`→`ActiveFearTriggered_*`,
@@ -828,7 +834,7 @@ The *stimulus* side is data-driven too: `AI/Morale/Modifiers` records
 (`Environment_Fire`, `AI_Troll_Visible`, `Wraith_OnFire`,
 `Player_WargRiding_Howl_Fear`, `Environment_HitByWasps`,
 `AI_PrimalRoar`, …) instantiate native class `AI.Morale.Modifier`
-(the extracted corpus):
+(`extracted/native_attrs.tsv`):
 
 - `Type` (tag 10) → `AI.Morale.ModifierType` — the stimulus taxonomy;
   the gamedb list `AI/Morale/ModifierTypes` holds only `Wraith` and
@@ -918,7 +924,7 @@ sub-4GB; live roster elements sit at `0x12A…`/`0x10A…`):
   - Registry layout (VERIFIED-STATIC 2026-09-29): `mgr = [vmctx+0x6c68]`,
     `base = mgr+0xf8`, `count = mgr+0x100`, `type = mgr+0x108`, entries
     `0x20`-stride `{key@0, val@8}` — directly iterable at runtime
-    (recon a live probe).
+    (recon `runtime/recon/so_registry.lua`).
   - Key hash `0x1401898e8`: `key+0x18` = type descriptor; flag bit
     `([td+1]>>1)&1` set → index = `(key − [td+0x38]) / 40` — i.e. keys
     are **0x28-stride pooled script objects** (`[td+0x38]` = the type's

@@ -1,6 +1,6 @@
 # Nemesis system data
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** faction categories + attribute hashing — sow-rs.
 
 What the gamedb holds for the Nemesis hierarchy, and what is and

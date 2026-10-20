@@ -1,6 +1,6 @@
 # Spec: Faction member lifecycle — rarity, promotion, resurrection, seating
 
-> **Status:** verified — rarity/promotion/resurrection vs live data
+> **Status:** **verified** — rarity/promotion/resurrection vs live data
 > **Provenance:** live roster census + picker/trait surface diffs
 > (`Helper/roster_live.tsv`, `live_traits*.txt`, 562-member endgame
 > board, 223-member lv20-43 board), gamedb record reads (`anduril db`),

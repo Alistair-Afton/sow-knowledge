@@ -1,6 +1,6 @@
 # Spec: Native member-reward application path (binary evidence)
 
-> **Status:** verified — member-reward write-path anchors located in binary
+> **Status:** **verified** — member-reward write-path anchors located in binary
 > **Provenance:** `x64/ShadowOfWar.exe` static analysis (custom
 > xref/sigscan tools + Ghidra 12.1.4 project `C:\Tools\ghidra-proj\sow`),
 > live in-game verification via nemesis.dll `callva` probes

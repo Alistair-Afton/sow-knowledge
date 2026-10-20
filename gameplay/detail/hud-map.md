@@ -1,6 +1,6 @@
 # HUD — gamedb records, Scaleform movies, widget map
 
-> **Status:** **verified** — record links + movie structure; runtime
+> **Status:** **verified**** — record links + movie structure; runtime
 > screen placement PARTIAL (engine-driven, not in the movies)
 > **Provenance:** sow-rs/OnSight `hud-map.md` (gamedb queries +
 > `sow_gfx` tree walks of `sphud.gfx`/`minimap.gfx`). Format spec:

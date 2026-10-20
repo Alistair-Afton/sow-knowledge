@@ -1,6 +1,6 @@
 # Combat system
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** combat records/formulas/clips — sow-rs evaluator + record walks.
 
 How stats, formulas, attacks, meters, and the fight circle actually

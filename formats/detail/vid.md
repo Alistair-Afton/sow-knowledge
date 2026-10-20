@@ -1,6 +1,6 @@
 # `.vid` — `VIDO` v12 video descriptors
 
-> **Status:** **verified** — descriptors decoded; playback untouched
+> **Status:** **verified**** — descriptors decoded; playback untouched
 > **Provenance:** descriptors + Bink headers decoded on the real corpus.
 
 Tiny sidecar files next to `cinematics/videos/**` and

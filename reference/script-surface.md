@@ -1,6 +1,6 @@
 # Script-side nemesis surface (string mining, patch09)
 
-> **Status:** verified — string-mined identifier reference
+> **Status:** **verified** — string-mined identifier reference
 > **Provenance:** 8,848 unique strings from 460 patch09 `.scripts` LuaQ constant pools (`anduril scri dump`).
 
 Identifiers recovered from the constant pools of all patch09 `.scripts`

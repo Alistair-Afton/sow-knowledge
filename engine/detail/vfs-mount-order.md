@@ -1,6 +1,6 @@
 # Spec: VFS mount order and precedence
 
-> **Status:** verified — engine-faithful order reproduced; extracts
+> **Status:** **verified** — engine-faithful order reproduced; extracts
 > **Provenance:** `x64/default.archcfg` header comment + file search
 > order on the real install; `anduril-vfs` (`Vfs::mount_install`,
 > `crates/anduril-vfs/src/lib.rs`); `docs/MODDING.md` precedence rules.

@@ -1,6 +1,6 @@
 # World data: `.wldclnt`, `.objres`, `.terrain`, `.wldmsh`, `.veggrid`
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** region assembly evidence on Minas Ithil + desert — sow-rs + Andúril.
 
 How a region is assembled. All VERIFIED by sow-rs on Minas Ithil

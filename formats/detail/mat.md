@@ -1,6 +1,6 @@
 # `.mat` — LTMI v8 material instances
 
-> **Status:** **verified** — shader/texture binding decoded; lighting params partial
+> **Status:** **verified**** — shader/texture binding decoded; lighting params partial
 > **Provenance:** shader-binding + texture refs decoded on the real corpus.
 
 A material binds a compiled shader (`shaders\shadertrees\...fxo`) to a flat

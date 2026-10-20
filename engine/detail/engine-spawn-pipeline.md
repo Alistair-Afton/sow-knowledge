@@ -1,6 +1,6 @@
 # Engine spawn/lifecycle model — evidence from helper plugins
 
-> **Status:** verified — plugin forensics + our own exe disassembly (see "Binary verification pass")
+> **Status:** **verified** — plugin forensics + our own exe disassembly (see "Binary verification pass")
 > **Provenance:** third-party `Helper/` plugin DLL forensics (RoamingCaptains/Elvenrun hooks in the
 > live game) cross-checked against our own `ShadowOfWar.exe` disassembly; Project Nemesis
 > signature maps (`extracted/roamingcaptains_sigs.tsv`). Compiled 2025; consolidated 2026-10-19.

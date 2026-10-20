@@ -1,6 +1,6 @@
 # `.terrain` — `TERR` v9 world terrain manifest
 
-> **Status:** **verified** — manifest + heightmap tiles decoded
+> **Status:** **verified**** — manifest + heightmap tiles decoded
 > **Provenance:** terrain manifest + heightmap tiles decoded on the real install.
 
 The desert world ships one file (`worlds/retail/desert/desert.terrain`,

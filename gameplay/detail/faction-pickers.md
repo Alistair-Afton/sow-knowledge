@@ -1,6 +1,6 @@
 # Spec: Faction picker system — gates, groups, dedupe
 
-> **Status:** verified — gates, groups, dedupe vs live data
+> **Status:** **verified** — gates, groups, dedupe vs live data
 > **Provenance:** `_StructuresFactionTraitPicker` /
 > `_StructuresFactionMarkerPicker` / `Faction/PickerList*` records
 > read via `anduril db`; live `+0x1e0` picker-history census

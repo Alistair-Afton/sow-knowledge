@@ -1,6 +1,6 @@
 # Format index
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** per-format status table — Andúril + sow-rs.
 
 Every identified file/container type, its magic, and decode status.

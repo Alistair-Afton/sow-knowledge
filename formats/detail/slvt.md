@@ -1,6 +1,6 @@
 # `SLVT` — multi-TEXR container inside `.tex`
 
-> **Status:** **verified** — confirmed on the full `.tex` corpus by sow-rs
+> **Status:** **verified**** — confirmed on the full `.tex` corpus by sow-rs
 > **Provenance:** OnSight `formats/slvt.md`; one file decoded + full
 > corpus scan (all 15 SLVT files). Andúril has no reader yet.
 

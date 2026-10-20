@@ -1,6 +1,6 @@
 # Geometry: `.mesh`, `.inst`, `.wldmsh`
 
-> **Status:** **verified**
+> **Status:** **verified****
 > **Provenance:** mesh/PRFB/world-mesh decode + renders — Andúril + sow-rs.
 
 Three mesh-carrying formats. Skinned characters/props use MMSH;

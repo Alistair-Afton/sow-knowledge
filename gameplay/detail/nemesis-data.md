@@ -1,6 +1,6 @@
 # Nemesis data layer — faction categories in `game.gamedb`
 
-> **Status:** **verified** (category census + attribute hashing);
+> **Status:** **verified**** (category census + attribute hashing);
 > captain-generation semantics PARTIAL
 > **Provenance:** sow-rs/OnSight `formats/nemesis-data.md` (record
 > walks over installed `game.gamedb`); cross-checked against

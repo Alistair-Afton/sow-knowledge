@@ -1,6 +1,6 @@
 # `.objres` — OBJR v13 object resources
 
-> **Status:** **verified** — sockets/keyframes decoded on real corpus
+> **Status:** **verified**** — sockets/keyframes decoded on real corpus
 > **Provenance:** sockets/keyframes decoded on the real corpus.
 
 Per-world/section object packages: sockets (attach points), keyframes,

@@ -1,6 +1,6 @@
 # `.wldmsh` — MESH v5 world meshes
 
-> **Status:** **proven** — world-mesh geometry renders verified
+> **Status:** **proven**** — world-mesh geometry renders verified
 > **Provenance:** real world-collision meshes; solid renders verified.
 
 Chunked world-space geometry — sparse vertex/edge data used for world

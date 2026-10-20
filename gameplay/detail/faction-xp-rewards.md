@@ -1,6 +1,6 @@
 # Spec: Faction XP reward system (`RewardXPLevelSetup` / `RewardXPLevel`)
 
-> **Status:** verified — data chain proven; flag=1 draw rule
+> **Status:** **verified** — data chain proven; flag=1 draw rule
 > decoded from the native interpreter (see below)
 > **Provenance:** real-install `database/game/game.gamedb` via `anduril
 > db` (patch04+IncreasedCap merged), two live in-game roster censuses

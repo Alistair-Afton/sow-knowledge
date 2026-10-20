@@ -1,11 +1,17 @@
 # Spawning, summon templates, and NPC asset bundles
-> **Status:** **partial** — Project Nemesis source doc; per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE / VERIFIED-INGAME / MODEL / UNVERIFIED) preserved inline. Not independently verified by Andúril.
+> **Status:** **partial**** — Project Nemesis source doc; not independently verified by Andúril.
 
-> **Provenance:** Project Nemesis runtime-model documentation (native `nemesis.dll` live-game forensics), mirrored and maintained in the corpus. Their `VERIFIED-STATIC`/`MODEL` tags carry over; unverified entries are marked inside each doc.
+
+> **Provenance:** Project Nemesis runtime-model documentation (native
+> `nemesis.dll` live-game forensics), ported into the corpus. `sdk.*`,
+> `Mods/`, `recon/`, and `tools/` names inside refer to that project's
+> plugin API and scripts — cited as evidence of the claims, not as game
+> surface. Per-claim confidence tags (VERIFIED-STATIC / VERIFIED-LIVE /
+> VERIFIED-INGAME / MODEL / UNVERIFIED / INFERRED) are theirs.
 
 
 How a spawn request becomes a materialized NPC — record classes, the
-bundle pipeline that streams assets, and what the Nemesis plugin API does with it.
+bundle pipeline that streams assets, and what `sdk.spawn` does with it.
 
 ## The one-native-factory fact (design axiom)
 
@@ -16,7 +22,7 @@ work should reach for that path — not hand-assemble entities.
 
 ## Template classes (what `SummonNPCs` can actually materialize)
 
-the Nemesis plugin API(name)` -> `DBAISpawnTemplate[name]`. Resolution
+`sdk.spawn.resolve(name)` -> `DBAISpawnTemplate[name]`. Resolution
 success does NOT imply summonability — the record's class decides:
 
 | Family | Example | Via `SummonNPCs` |
@@ -58,8 +64,8 @@ pointers**. Raw q64 fingerprinting misses them — decode the container
 `PlayerBase_Barrows`, `MonsterHunter_Orc_Beastmaster`,
 `Tower_Golden_Uruk`, `Oasis_Uruk`.
 
-the Nemesis plugin API(listname)` -> `LoadNPCBundleList` pre-streams the
-bundle assets; the Nemesis plugin API(listname)` -> `ClearNPCBundles`.
+`sdk.spawn.bundles(listname)` -> `LoadNPCBundleList` pre-streams the
+bundle assets; `sdk.spawn.clearbundles(listname)` -> `ClearNPCBundles`.
 
 ## The match problem (why `bundles_for` can't fingerprint)
 
@@ -279,9 +285,9 @@ the report means an injected record was consumed) -> `SummonNPCs`.
     **Canonical drives (VERIFIED-INGAME 2026-09-30n)**:
     (a) `Faction:TriggerAmbush(DBFactionAmbushDef.<def>)` — script
         method (colon → 1 explicit arg, a `Faction/Ambush/Definition`
-        record). Gate-free via the Nemesis plugin API.
+        record). Gate-free via `sdk.exec.eval`.
     (b) console `Faction.TriggerAmbush <def-name>` — program-record
-        node; the Nemesis plugin API routes it through the registry
+        node; `sdk.console.exec` routes it through the registry
         `vt+0x58` exec verb (`0x1415cff44`, see
         docs/model/console-commands.md). `Faction.Ambush.AlwaysPassChance
         <def>` forces the roll.
@@ -365,7 +371,7 @@ the report means an injected record was consumed) -> `SummonNPCs`.
       `Faction/FortUpgrade/Group` name, not a member name; corpus
       names: `Assault_Lvl_01..06`, `Defense_Lvl_01..05`,
       `Defense6_Battlefield1_PoisonMines`, …),
-    code-handler — the Nemesis plugin API-able) = the engine's own
+    code-handler — `sdk.console.exec`-able) = the engine's own
     "why isn't this member spawning" reporter: iterates a
     `0x1402774a8` candidate collection, per element resolves the
     current target via `0x14018de04` and runs gate evals

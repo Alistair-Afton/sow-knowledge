@@ -1,6 +1,6 @@
 # Spec: Faction member spawn / leveling model
 
-> **Status:** partial — accrual window verified; spawn distribution open
+> **Status:** **partial** — accrual window verified; spawn distribution open
 > **Provenance:** live census level distributions (223-member lv20-43
 > board, 562-member endgame board), `Faction/PlayerBasedXPLevel/*`
 > records (166 `XPLevelInit` Delta recs, 12 EventAwards, 1
