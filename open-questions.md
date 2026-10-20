@@ -72,9 +72,6 @@ kept.
 
 ## Engine
 
-- Precise name-hash algorithm (documented in upstream tooling; the
-  Shareable corpus describes its properties — publish an
-  implementation reference with care for clean-room).
 - Streaming/stamp system semantics (`minasithil.ss_*`, `StreamingStamp`
   objects), LOD switching to proxy meshes at distance.
 - Audio: `.bnk`/`.pck` formats barely mapped.

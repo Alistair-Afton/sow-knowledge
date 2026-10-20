@@ -46,6 +46,32 @@ stored (`prefabs\gameplay\props\questtrigger\qt_warcouncil.inst` →
 must be recovered by hashing candidate names (dictionary approach;
 sow-rs matched 34% of nemesis attribute occurrences this way).
 
+### Implementation reference — CONFIRMED (Andúril)
+
+`h = h*0x397 + FOLD[b]` over the UTF-8 bytes of the string,
+`h` starting at 0 (wrapping u32). `FOLD` is a 256-entry byte→symbol
+LUT recovered from `ShadowOfWar.exe` — a character fold+map table,
+derived data, not code. Nonzero entries (every other byte maps to 0):
+
+```text
+0x20:25 0x21:3a 0x22:33 0x23:3c 0x24:3d 0x25:3e 0x26:40 0x27:32
+0x28:42 0x29:43 0x2a:41 0x2b:28 0x2c:36 0x2d:27 0x2e:37 0x2f:34
+0x30:1b 0x31:1c 0x32:1d 0x33:1e 0x34:1f 0x35:20 0x36:21 0x37:22
+0x38:23 0x39:24 0x3a:31 0x3b:30 0x3c:38 0x3d:29 0x3e:39 0x3f:35
+0x40:3b 0x41..0x5a: 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
+10 11 12 13 14 15 16 17 18 19 1a   (A–Z fold to 1..26)
+0x5b:2c 0x5c:2a 0x5d:2d 0x5e:3f 0x5f:26 0x60:44
+0x61..0x7a: same as 0x41..0x5a   (a–z fold identically → case-insensitive)
+0x7b:2e 0x7c:2b 0x7d:2f 0x7e:45
+```
+
+Check vectors: `"Predicate.Not"` → `0x929DB77B`,
+`"WorldInitializer"` → `0x6B9D05D0`, `"Script"` → `0x2F61ECD3`.
+Bytes ≥0x80 and unlisted controls map to 0 (skipped in effect — they
+multiply the accumulator without adding). Path strings fold `/` and
+`\` to different symbols (`/`→0x34, `\`→0x2a): always hash the stored
+backslash form.
+
 ## Virtual filesystem / mount order — CONFIRMED
 
 - Loose files ship inside LTAR archives (`*.arch06` in the install
