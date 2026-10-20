@@ -1,5 +1,5 @@
 # Script VM — canonical model
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Script-engine identity **verified by Andúril**: `HavokScript`/`hks`, `lua_State`, `WBDBRecordLookup`, `DBFactionMemberBuilder` strings confirmed inside `ShadowOfWar.exe`, and standard `lua_*` C-API names are absent (consistent with the HavokScript VM). VM internals below are Nemesis-only evidence; the `.scripts`/SCRI container is independently specified in `formats/detail/scri.md`.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

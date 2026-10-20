@@ -1,5 +1,5 @@
 # VFS & Asset Loading — canonical model
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. VFS path claims **verified by Andúril**: `archivepatchloosefiles.txt`, `database\game\game.gamedb`, `database\string\*\string.strdb`, `soundoptions.vib` all resolve in the mounted archives (`modlogo.tex` is Nemesis's own injected test path, correctly absent from stock). Loose-file/overlay behavior and API internals are Nemesis-only evidence; archive format itself is specified in `formats/detail/arch06.md`.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

@@ -1,5 +1,5 @@
 # The Engine — canonical map
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Spot-verified by Andúril: `CreateFactionMemberBuilder`, `FactionMemberBuilder`, `SimEvent` strings confirmed in `ShadowOfWar.exe`; `archivepatchloosefiles.txt` confirmed as a real VFS file (its name is *not* an exe string — the loose-index reads it via VFS). Address-level internals remain Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

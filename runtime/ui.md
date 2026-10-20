@@ -1,5 +1,5 @@
 # UI model — Scaleform GFx + data-driven menus
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Menu-record names **verified by Andúril** (17/19 sampled records exist in retail GameDB — `FrontEnd_*`, `Display_Mode`, `CommunityChallenge`, `FactionMemberSave`, `Component_LaunchBenchmark`, `AddResurrectFactionEvent`, `Frontend_OptionsLayer`, `Credits_Single`; the two exceptions are expected: `Display_RunInBackground` is Nemesis's own injected record, and widget/action names like `BuildVersionWidget`/`AutoConfigAction` are native strings confirmed inside `ShadowOfWar.exe`). GFx file facts are independently established by Andúril's own `.gfx` scan (see `formats/ui.md` + `detail/gfx.md`). Native memory layout below is Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
