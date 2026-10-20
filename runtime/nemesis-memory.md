@@ -55,6 +55,13 @@ event name, cell6 = `"CharacterEvent"`. 57+ condition records exist
 `DLG_*`) — the *query* side is fully shipped and wired into dialog,
 music, and behavior.
 
+> **Andúril check:** the `AudioHooks/GameConditions` list exists
+> (2,188 records in retail GADB), but `CharacterEvent` is a native
+> interned string — it appears in neither strdb nor as a raw hash in
+> record cells — so the "57+ condition records" census cannot be
+> confirmed from static data; event-name strings below are likewise
+> Nemesis-sourced.
+
 ## Event vocabulary (34 types, harvested from GameCondition records)
 
 Encounter memory: `ActiveFlee`, `ActiveDespawnWhileFleeing`,

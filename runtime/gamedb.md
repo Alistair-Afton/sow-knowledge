@@ -20,6 +20,12 @@ v17) inside the `Patch_*.arch06` archives. At runtime it becomes ~1,884
 named lists / ~270k records — the entire content model: factions,
 captains, quests, AI, loot, names, events.
 
+> **Andúril check:** independent static-archive census gives 1,877
+> lists + 2,100 struct-array decls and 278,022 records — consistent
+> with "~1,884 lists / ~270k records" (the ~7-list delta is likely
+> build or counting-method noise). Format claims below remain
+> Nemesis-only evidence.
+
 ## The model
 
 - **Lists** are named registries (`Faction/Builder`,
