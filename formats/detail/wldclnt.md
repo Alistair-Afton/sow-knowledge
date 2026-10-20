@@ -159,23 +159,24 @@ covering `0..pl` — a per-region membership list.
 **Large worlds** (MI `{17,5,6}`, island `{8,5,1}`, desert `{16,6,2}`,
 baraddur `{3,5,1}`): `n_regions` AABBs verified (`seq` = `0..n-1`,
 `flag` ∈ {0,1}) followed by a packed blob (~64 KB on MI, ~137 KB on
-desert). In that blob every u32 lane satisfies `(x >> 19) <
-placement_count` on desert (100%) — the stream is a sequence of
-`{placement-index, 19-bit payload}` records grouped into sorted runs
-(longest run: 1099 records on MI, all sharing idx 2 first). Byte-level
-analysis (MI): the stream splits into u16 lanes whose low byte is
-dominated by `{0, 0x44-0x48, 0xC4-0xCA}` — i.e. 0, or ~0x44-0x48
-(68±4), or the same values | 0x80 — while the high byte is a small int
-0-7. That reads like per-lane `{u5+ aux, u8 quantized-direction}`
-pairs: a quantized signed component centred on ~68 (±4) with a sign/
-flag bit at 0x80, or 0 for "unset". The same 64-72/196-202 family
-appears at both even and odd u16 positions, so the record granularity
-is 2-byte, not 4-byte. Exact field layout and what the lanes index is
-still OPEN — the earlier `(x>>19)<pl` fit (94-100%) is likely an
-artifact of the small-int high bytes, not a real placement-index
-field. The `f2`/`f3` counts for large files
-(5/6, 5/1, 6/2, 5/1) presumably size two further sub-tables — record
-shapes undetermined. Preserved raw as `tail`.
+desert). The blob is a **bit-packed / variable-length stream**, not a
+word-aligned record table: byte motifs recur at shifted bit offsets,
+and no fixed-width framing (u32 `{idx,payload}` records, u16 lane
+pairs, `{u16 count, count×u16}` lists, LEB128 records, i16 quantized
+positions, `{src,dst}` edge pairs, 12/13/14-bit fixed symbols LSB- or
+MSB-first) tiles the stream cleanly. Byte-level census (MI): each u16
+lane reads as a `{u8 code, u8 small}` pair — the low byte is dominated
+by `{0, 0x44-0x48, 0xC4-0xCA}` (0, ~68±4, or ~68±4 | 0x80) and the
+high byte is a small int 0-9; ~46% of lanes carry code 0 and zero
+lanes alternate with data at gaps of 1-2, so two `{code, n}` elements
+may be packed per u32 with the first often empty. The `f2`/`f3`
+header counts for large files (5/6, 5/1, 6/2, 5/1) presumably size
+two further sub-tables inside or after the AABB block — record shapes
+undetermined. All earlier numeric-index readings
+(`(x>>19)<placement_count`, "51% valid u16 indices") are artifacts of
+the small integer range and should not be trusted. Payload is
+preserved raw as `tail`; the encoding is OPEN pending a bit-level
+decode or runtime evidence of how the engine consumes it.
 
 ## Verified
 

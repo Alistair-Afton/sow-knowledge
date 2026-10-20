@@ -42,12 +42,13 @@ store an `f3 × u32` permutation of `0..pl`, then `n_regions × 32B
 {vec3 min, vec3 max, u32 flag(0/1), u32 seq}` AABBs, then a 20B
 footer. Grouped files store per-region
 `{AABB32, u32 lo, u32 cnt, cnt × u32 idx}` membership lists covering
-`0..pl`. Large worlds (MI `{17,5,6}`) append a packed blob in which
-the u16 lanes carry low bytes dominated by `{0, 0x44-0x48, 0xC4-0xCA}`
-(0, ~68±4, or the same | 0x80 — a quantized signed component) with
-small-int high bytes — per-lane direction/aux pairs; the earlier
-`(x>>19)<pl` u32 reading is likely a small-int artifact. Exact
-record layout and what the lanes index is OPEN.
+`0..pl`. Large worlds (MI `{17,5,6}`) append a packed blob that is a
+bit-packed / variable-length stream, not a word-aligned record table:
+u16 lanes read as `{u8 code, u8 small}` pairs with low bytes dominated
+by `{0, 0x44-0x48, 0xC4-0xCA}` and high bytes 0-9, but no fixed-width
+framing tiles the stream cleanly — earlier numeric-index readings
+(`(x>>19)<pl`, "51% valid u16 indices") are small-int artifacts and
+should not be trusted. Encoding is OPEN (see `detail/wldclnt.md`).
 Andúril's CPU scene render confirms the placements compose a
 coherent city.
 
