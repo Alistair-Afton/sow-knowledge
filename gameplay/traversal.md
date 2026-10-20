@@ -77,7 +77,10 @@ is the lookup mirror: `{u32 count=569, count × {u32 key, u32 0,
 u32 key}}` sorted by key. To link a placed prefab's edges:
 `key = name_hash(objl_record.name)`, then `group.edges[..]` are in
 the prefab's local frame — transform by the OBJL record's
-pos/quat into world space.
+pos/quat into world space. Andúril implements this end-to-end
+(`objres cadb-world`): all 569 MI groups link to OBJL records and
+the union is exactly the 181,578-edge CADB total — every edge
+belongs to exactly one group.
 
 ## Player blend DB (`player_elf.bvr`) — VERIFIED records, PARTIAL
 
