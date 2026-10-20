@@ -166,6 +166,15 @@ u32}` + `n2×0xC` + `n2×0x10`. `VOLM` `FUN_1407b83b8` — requires
 **ver > 7**. `SCRB` `FUN_1404b6e40` / `CAWR` `FUN_1407d47e4` —
 `{tag, ver==1}` + a few u32s; header-only handlers.
 
+The remaining corpus tags (`BOLS`, `TEDJ`, `TSDJ`, `BSWA`, `TAOO`,
+`QSWA`, `QEWA`, `WAOO`, `PGOD`, `QSDJ`, `QEDJ`, `PELS`, `PMND`,
+`TAIO`, `WAIO`, `DOMN`, `AOMN`, `MNIA`, `SGOD`, `CFXS`, `TSED`,
+`SLOB`, `BEWA`, `BBWA`) produce **zero scalar-immediate matches** in
+the executable — retail never compares them as literals. They are
+consumed by generic handlers (as name hashes / bulk data), not by
+dedicated tag-switch code, so their semantics live one level deeper
+in shared parsers rather than per-tag functions.
+
 ## NLFE — ambient-life feature table — PARTIAL
 
 `NLFE u32 1` header then `u32 28, u32 1086, u32 41, u32 16882, u32 3`.
