@@ -34,8 +34,11 @@ what's missing and where to start.
   non-region terrain exists.
 - **`.wldclnt`** tail sections after the placement table
   (`u32 17, 5, 6` + floats).
-- **CADB group keys** for prefab-local groups — not any tested hash
-  of VFS paths/PRFB hashes/OBJR ids. Blocks prefab-edge linking.
+- ~~CADB group keys~~ **RESOLVED**: group key = engine `name_hash`
+  of the owning OBJL object name (`WorldInitializer`, `*.vc`
+  placements, `*.VC_Alive`/`.VC_Destroyed` variants). All 569 MI
+  keys resolve. Prefab-edge linking is unblocked — transform local
+  edges by the OBJL record's pos/quat.
 - **`.mat`** GPU resource-binding tokens' runtime semantics; `.fxo`
   shader container format (SRHR/DXBC blocks readable but
   undocumented here).

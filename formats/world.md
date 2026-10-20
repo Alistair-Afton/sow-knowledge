@@ -57,7 +57,7 @@ always walk the declared frame. Minas Ithil's 14 sections:
 | (none) | 984k | clutter-prop `.mat` paths |
 | `SCRB` | 173k | (undecoded) |
 | `VOLM` | 3.5M | volumes |
-| `CAWR` | 6.8k | CADB group keys mirror list |
+| `CAWR` | 6.8k | CADB group-key lookup mirror: `{count, count×{key,0,key}}` — keys = `name_hash` of OBJL object names (CONFIRMED, Andúril) |
 | `CADB` v3 | 9.5M | **context-action edge markup** — see traversal.md |
 | `GADB` | 800k | per-region gamedb (`ObjectDB` records; names `minasithil.ss_*` stamp bundles) |
 | (none) | 30.9M | object resource table: 740 `{u16 len, path}` (.inst/.fxp) each + `u32 id, f32 draw_dist, vec3 half_extent, vec3 centre` (bounds, not placements) |

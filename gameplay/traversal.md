@@ -62,10 +62,22 @@ groups; tag counts `Edge_Hang` 71k, `Edge_NoHang` 42k, `Edge_Pullup`
 Semantics: **`n` points onto the walkable top** (checked: surface
 0.3 m along n, ground lower on −n). 563 groups are prefab-local
 (origin-centred); world groups are the region key `0x6B9D05D0`
-(122k edges) and per-stamp keys. **The local-group key is OPEN** —
-not the name hash (nor CRC32/FNV/djb2) of any VFS path, PRFB
-self_hash, or OBJR id. This is the biggest gap in traversal:
-connecting authored edges to placed prefabs.
+(122k edges) and per-stamp keys.
+
+**Group-key derivation — CONFIRMED (Andúril):** every group key is
+the engine `name_hash` (`h = h*0x397 + FOLD[c]`, case-folded) of an
+**OBJL object name** — all 569 Minas Ithil keys resolve. `0x6B9D05D0`
+= `name_hash("WorldInitializer")` — the world group's edges belong
+to the `WorldInitializer` object. 405 keys are `*.vc` placement
+objects (prefabs with authored traversal markup); the rest include
+`*.VC_Alive`/`*.VC_Destroyed` state-dependent variants (e.g.
+`Carag_21.VC_Alive` vs `Carag_21.VC_Destroyed` — different markup
+per object state) and stamp keys like `SS_05`. The `CAWR` section
+is the lookup mirror: `{u32 count=569, count × {u32 key, u32 0,
+u32 key}}` sorted by key. To link a placed prefab's edges:
+`key = name_hash(objl_record.name)`, then `group.edges[..]` are in
+the prefab's local frame — transform by the OBJL record's
+pos/quat into world space.
 
 ## Player blend DB (`player_elf.bvr`) — VERIFIED records, PARTIAL
 
