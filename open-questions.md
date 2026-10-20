@@ -27,16 +27,22 @@ kept.
 - **Mesh→material binding field:** which record/field binds a mesh
   connection to a `MaterialSet` entry (the LOD-group material index
   path is proven, but is it *the* path?).
-- **SKEL**: the `0x40f8d776` sentinel in 7 files; Torvin shield's
-  alternate rig encoding.
+- **SKEL**: identity of the tail `{u32 index, u32 value}` table's
+  value column in 7 files (`0x40f8d776` dominant — property hash vs
+  float 7.7763, no `name_hash` match); Torvin shield's alternate rig
+  encoding.
 - **ANIX**: `param` track → facial-control/camera-property mapping;
   block-B packed fields; `0x210C8F5A` track type.
 - **OBJR sections** `ONLS`, `NLFE`, `SCRB`, `VOLM` detail; `.veggrid`
   body; `.objres` section-12 id space.
 - **TERR**: whether non-region terrain exists; world origin of the
   quadtree grid; `0x60` header word; group tail u32s; `tile_size`.
-- **`.wldclnt`** tail: the packed index data after the 17 region
-  AABBs (list framing; u16 lanes are ~51% valid placement indices).
+- **`.wldclnt`** tail: the packed blob after the `n_regions` AABBs is
+  a bit-packed/variable-length stream — `{u8 code, u8 small}` pairs
+  with low bytes in `{0, 0x44-0x48, 0xC4-0xCA}`; all fixed-width
+  framings rejected (earlier `(x>>19)<pl` and "51% valid u16"
+  readings were small-int artifacts). Start: the retail read path
+  past the AABB table, or entropy analysis of the packing scheme.
 - **CADB**: group tail fields; edge action/mask semantics;
   `PFDG` record meanings (`n1`/`n2` split, `a`/`b` index space).
 - **`.mat`** GPU resource-binding tokens' runtime semantics; `.fxo`
@@ -74,7 +80,10 @@ kept.
 
 - Streaming/stamp system semantics (`minasithil.ss_*`, `StreamingStamp`
   objects), LOD switching to proxy meshes at distance.
-- Audio: `.bnk`/`.pck` formats barely mapped.
+- Audio: `.bnk`/`.pck` containers proven (DIDX/DATA/HIRC/STID chunks,
+  AKPK v1 index — see `detail/bnk.md`, `detail/pck.md`); **HIRC
+  per-type payload layouts** still undecoded — the event → action →
+  sound wiring, switches/states, and RTPCs inside the hierarchy.
 - Networking/MP: none (single-player title).
 
 ## Residual decode / parity gaps

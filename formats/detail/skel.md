@@ -127,11 +127,18 @@ and take bitangent handedness per-vertex.
   **8 failures we should expect on a wider scan**: 7 files whose first
   post-string-table bone-name pointer is `0x40f8d776` — outside the
   table (camera rigs, `param_head`, orc bone-armor skels, one Baranor
-  crossbow; likely a hash/sentinel the community schema doesn't
-  cover — OPEN), plus `torvin_desertt1shield.skel` whose rig records
-  don't fit the standard shape. Both are input-true anomalies, not
-  parser bugs — a robust reader should surface them without failing
-  the file.
+  crossbow), plus `torvin_desertt1shield.skel` whose rig records
+  don't fit the standard shape. **Re-read (Andúril):** `0x40f8d776`
+  is not a sentinel or pointer — the file tail carries an 8-byte
+  `{u32 index, u32 value}` table where the value column holds
+  hash-like constants (`0x40f8d776` dominant, also `0x5d47c7f2`,
+  …) bound to ascending index lanes (e.g. param_head `12,30,48,66,89,
+  112`). The community schema doesn't model this tail section, so it
+  reads a table value as a bone-name pointer and fails. The value
+  column's identity — property hash (no `name_hash` match on common
+  vocabulary) vs float constant (0x40f8d776 = 7.7763) — stays OPEN.
+  Both are input-true anomalies, not parser bugs — a robust reader
+  should surface them without failing the file.
 
 ## Unknowns
 
