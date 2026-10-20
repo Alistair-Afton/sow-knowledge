@@ -30,8 +30,10 @@ what's missing and where to start.
   block-B packed fields; `0x210C8F5A` track type.
 - **OBJR sections** `ONLS`, `NLFE`, `SCRB`, `VOLM` detail; `.veggrid`
   body; `.objres` section-12 id space.
-- **TERR** quadtree child-mask bit order (patch placement); whether
-  non-region terrain exists.
+- ~~TERR quadtree child-mask bit order~~ **RESOLVED**: row-major —
+  bit0=NW(0,0), bit1=NE(1,0), bit2=SW(0,1), bit3=SE(1,1), proven by
+  2-px border-strip matching across all 24 permutations (Andúril,
+  MI tiles). Remaining: whether non-region terrain exists.
 - **`.wldclnt`** tail sections after the placement table
   (`u32 17, 5, 6` + floats).
 - ~~CADB group keys~~ **RESOLVED**: group key = engine `name_hash`

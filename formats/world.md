@@ -89,7 +89,7 @@ objres files use the same layout for `LightDirectional`,
 whose properties live in the section's own GADB `ObjectRec`s (hashed
 attribute names, recovered by dictionary).
 
-## `.terrain` — TERR v9 — VERIFIED structure, PARTIAL placement
+## `.terrain` — TERR v9 — CONFIRMED structure incl. quadtree order
 
 ```text
 "TERR" u32 9, u32 terrain_count
@@ -98,17 +98,22 @@ per terrain: u32 4, u32 4 (4×4 top-level grid)
   f32 400, u32 64, u32 128, u32 3, u32 32, f32 2.0, u32 1024, u32 10
   u32 node_count, u32 ?
   str16 material, str16 root height tile, u32 tile size
-  node_count × { u32 flags; if !(flags&0x20): u32, u32 packed, u32 group }
+  node_count × { u32 flags; if !(flags&0x20): f32 lo, f32 hi, u32 group }
   u32 group_count × { str16 height_path, str16 map_a, str16 map_b, u32 }
 ```
 
 - Nodes = quadtree: low 4 bits child mask (children pre-order),
   `0x10` has height group, `0x20` empty cell, `0x40` top-level.
+- **Child-mask bit order CONFIRMED (Andúril)**: row-major quadrants —
+  bit0=(0,0) NW, bit1=(1,0) NE, bit2=(0,1) SW, bit3=(1,1) SE. Scored
+  all 24 permutations by 2-px border-strip continuity between
+  same-level neighbours on the real MI tiles: row-major wins by >2.3×
+  and renders as one coherent landmass (87 occupied cells).
 - Height tiles = R16 with 2-px border; `y = pos.y + raw/65535·extent.y`;
   `map_a` RGBA8 mask (black where terrain), `map_b` material weights.
-- Child-patch placement (child-mask bit order) is OPEN; MI's terrain
-  is the *low ground outside the city* — plaza floors are prefab
-  geometry, not TERR (verified: no axis permutation fits objects).
+- MI's terrain is the *low ground outside the city* — plaza floors
+  are prefab geometry, not TERR (verified: no axis permutation fits
+  objects).
 
 ## `.veggrid` — VEGG v1 — PARTIAL
 
