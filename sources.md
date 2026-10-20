@@ -9,7 +9,7 @@ and inline per doc.
 
 ## Primary sources
 
-### Andúril (this project)
+### Andúril (author: Alistair Afton)
 
 Clean-room open-source Rust engine reimplementation for *Middle-earth:
 Shadow of War* (codebase: `crates/` Rust workspace; internal docs:

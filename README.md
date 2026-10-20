@@ -36,7 +36,8 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 
 ## Sources
 
-- **Andúril**: clean-room open-source Rust engine reimplementation
+- **Andúril** (author: **Alistair Afton**): clean-room open-source
+  Rust engine reimplementation
   (in development, not yet publicly released); findings verified
   against the install by its own parsers, probes, and renders.
 - **sow-rs** (author: **OnSight**): a parallel Rust/Bevy

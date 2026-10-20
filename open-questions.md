@@ -3,8 +3,11 @@
 > **Status:** **living**
 > **Provenance:** consolidated open questions across all docs.
 
-Everything we know we don't know, consolidated. Each item states
-what's missing and where to start.
+What we know we don't know, consolidated. Each item states what's
+missing and where to start. **This list is not exhaustive** — large
+areas of the game haven't been examined at all yet, so there is more
+unknown here than is written down. Resolved items are removed, not
+kept.
 
 ## Formats
 
@@ -30,17 +33,12 @@ what's missing and where to start.
   block-B packed fields; `0x210C8F5A` track type.
 - **OBJR sections** `ONLS`, `NLFE`, `SCRB`, `VOLM` detail; `.veggrid`
   body; `.objres` section-12 id space.
-- ~~TERR quadtree child-mask bit order~~ **RESOLVED**: row-major —
-  bit0=NW(0,0), bit1=NE(1,0), bit2=SW(0,1), bit3=SE(1,1), proven by
-  2-px border-strip matching across all 24 permutations (Andúril,
-  MI tiles). Remaining: whether non-region terrain exists.
+- **TERR**: whether non-region terrain exists; world origin of the
+  quadtree grid; `0x60` header word; group tail u32s; `tile_size`.
 - **`.wldclnt`** tail sections after the placement table
   (`u32 17, 5, 6` + floats).
-- ~~CADB group keys~~ **RESOLVED**: group key = engine `name_hash`
-  of the owning OBJL object name (`WorldInitializer`, `*.vc`
-  placements, `*.VC_Alive`/`.VC_Destroyed` variants). All 569 MI
-  keys resolve. Prefab-edge linking is unblocked — transform local
-  edges by the OBJL record's pos/quat.
+- **CADB**: group tail fields; edge action/mask semantics;
+  `PFDG` record meanings (`n1`/`n2` split, `a`/`b` index space).
 - **`.mat`** GPU resource-binding tokens' runtime semantics; `.fxo`
   shader container format (SRHR/DXBC blocks readable but
   undocumented here).
