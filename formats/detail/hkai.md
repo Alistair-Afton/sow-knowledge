@@ -119,11 +119,36 @@ array at `reader+8`:
   table) resolved to that item's address — i.e. the pointer fixup
   table linking the object graph.
 
+## `hkaiNavMesh` layout (verified on real objects)
+
+```text
+Face (16 B)  i32 startEdgeIndex | i32 startUserEdgeIndex |
+             i16 numEdges | i16 numUserEdges | i16 clusterIndex | u16 pad
+             → boundary edges = edges[start .. start+numEdges]
+Edge (20 B)  i32 a, b (vertex indices) | u32 oppositeEdge |
+             u32 oppositeFace | u8 flags | u8 pad | f16 userEdgeCost
+             → opposite* are hkaiPackedKey = plain indices in a
+               single-section mesh; 0xffffffff = boundary
+NavMesh      hkArray faces/edges/vertices/streamingSets/faceData/
+             edgeData + stridings + aabb (hkAabb) + flags +
+             clearanceCacheSeedingDataSet ref
+```
+
+`hkVector4f` stores xyz world position (Y-up) + unused w; faces are
+convex polygons (triangles in practice); `userEdgeCost` is `hkHalf`
+(f16, 0.0 in observed retail data). Face adjacency for path queries
+comes from `edge.oppositeFace`; user edges are a parallel lane via
+`startUserEdgeIndex`/`numUserEdges` into `CHavokAIUserEdgeData`.
+
 ## Unknowns
 
 - THSH hash function (u32 per type).
 - TCID/FRCT compendium resolution — which `TCM0` library blob the
   u64 ids address.
+- Retail's runtime query internals (which Havok hkai calls the game
+  issues, cost/shape filters, streaming-set traversal order) — the
+  decoded structure supports face-graph pathfinding, but the engine's
+  own query code path is unexplored.
 
 ## Packed integers
 
