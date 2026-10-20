@@ -31,3 +31,10 @@ Vegetation grid manifest; lives next to `.vegtile` content:
 
 `SndMap` in `anduril-bnk`. The id table is verified strictly monotonic
 — it exists for O(log n) event lookup.
+
+**Retail read path (Ghidra `FUN_141d2b488`, byte-verified):**
+`{SMAP, ver==1}` exact, then **three** u32 sizes (not two) —
+the loader bulk-reads `n1×u32`, `n2×u32`, and `n3×u64` arrays,
+so the "opaque delta/varint data" is a second u32 table plus a
+u64-element table (Wwise event id → event-ref pairs, consistent
+with the AKPK event-id domain).

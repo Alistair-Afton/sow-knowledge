@@ -33,7 +33,18 @@ Across the corpus: **927/927 parse exactly, ~1,708,046 instances**,
 `MtPsWlkOvRck`, `BeechAdult/Teen/Old`, `DES_Palm01/Eucalyptus01`,
 `AloeVera_Adult`, `DesGrassGreen01`, …).
 
-## 16-byte instance (opaque in v1)
+## 16-byte instance
+
+**Retail read path (Ghidra `FUN_140503a0c`, byte-verified):**
+versions **1–3** accepted. Species names are read as fixed
+**0x100-byte** slots (u16 len + bytes + pad) and interned.
+File instance records are **version-conditional**:
+`{u16×3, u8, [u8 if v≥3], u32, [u8×3 if v≥2], [u8 if v≥3]}` —
+16 B at v3, 14 B at v2, 10 B at v1 — expanding to **0x14-byte**
+runtime records. The recurring `7f 7f 00` runs are the loader's
+*defaults* for fields absent in old versions (`v<2 → {0,0x7f,0x7f}`,
+`v<3 → 0xff/0x00`), and a `u8` field picks between two f32
+constants (`0` → `-1000.0`, else a large float) — scale/fade flags. (opaque in v1)
 
 Packed per-placement data. Bytes like `75 24 53 18 e9 24 5c ff` +
 recurring `7f 7f 00` runs suggest quantized position + rotation/normal
