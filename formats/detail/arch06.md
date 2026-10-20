@@ -34,6 +34,15 @@ Implemented by `anduril-ltar`.
 +0x1d  u8    flags      (semantics unknown; identical behavior observed)
 ```
 
+**Retail read path (Ghidra `FUN_1411ae284`, byte-verified):** the
+loader checks `LTAR` + `version==4`, then reads each file entry as
+`{u32 name_off; u64 offset; u64 zsize; u64 size; u8; u8 flags}`
+into an 0x18-stride runtime record with the flag byte packed into
+the **top byte** of the stored u64 (`flags<<56 | size`) — so the
+runtime keeps sizes as 56-bit values and the flags live in the
+high byte of each u64. A second 0x30-stride folder table is read
+afterwards via `FUN_1411ae154`.
+
 ## Folder entry (16 bytes)
 
 ```text
