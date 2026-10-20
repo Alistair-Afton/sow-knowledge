@@ -29,12 +29,23 @@ top-level files plus thousands inside `.embb` bundles, 76 B – 14.7 MB.
 +0x38  …        node table, then sub-tables, mesh blob, strings
 ```
 
-Loader read order (from the exe's PRFB loader, corroborated by the
-sow-rs notes): `node_count + e` × 0x2C nodes → tables sized by
-b/c/f/g/h → `d` × 0x50 instance records → `k` bytes of `j`
-NUL-terminated child prefab paths. The mesh blob lives inside the
-region after the node records (our parser slices it as `tail` = the
-last `i` bytes).
+Loader read order (from the exe's PRFB loader `FUN_14058a26c` —
+Ghidra decompile, byte-verified): `version == 8` checked by
+equality; `node_count` × 0x2C records → `e` × 0x2C extra nodes →
+`b`-sized 0x18 record table → `d` × 0x50 instance records →
+`i` bytes raw mesh blob → `j` **length-prefixed** strings in `k`
+bytes (the loader steps by a read length, not NUL scans). One
+combined buffer `(nodes + b*8)·0x10 + d·0x68 + 0x18-table` is
+allocated up front — 0x2C file nodes expand to 0x20 runtime
+records and 0x50 file instances to **0x68 runtime records**: the
+loader computes `centre = (bbox_min+bbox_max)*0.5` and
+`half = (max−min)*0.5` at load and stores them at +0x58..+0x64 —
+centre/extent are derived fields, not stored data. Node `u16`
+fields form a parent chain (`0xffff` terminator walked at load);
+each instance's `{string_off, tag}` is interned via the name-intern
+map (`FUN_14058a928`) into the `u16` at runtime +0x1a. The mesh blob
+lives inside the region after the node records (our parser slices
+it as `tail` = the last `i` bytes).
 
 0x2C node record: `u32 name_hash, i32 parent(-1), u32 0, u32 0,
 i32 -1, u32 0, u32 0, f32 -1.0, u32 type, u32 ?, u32 ?`.
