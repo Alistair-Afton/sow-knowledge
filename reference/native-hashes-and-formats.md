@@ -1,5 +1,5 @@
 # Hash functions & engine data reference (for modders)
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Hash claims **verified by Andúril**: the FOLD table was independently located in `ShadowOfWar.exe` (unique candidate; `FOLD['/']=0x34`, `FOLD['\\']=0x2a`, A–Z/a–z→1–26, digits→27–36, 95 nonzero entries — identical to the table in `engine/engine.md`), and the check vector `namehash("UI_Frontend_Benchmark")=0xa0014283` resolves to `RUN BENCHMARK` in retail strdb. Addresses, the 2,250-pair event-hash table, and the intern-map hash are Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native

@@ -1,5 +1,5 @@
 # Native schema registry — registration record + attr-entry layouts
-> **Status:** **partial** — Project Nemesis source doc; not independently verified by Andúril.
+> **Status:** **partial** — Project Nemesis source. Spot-verified by Andúril: schema-name and C++ class strings (`Interface.Menu.MenuLayer.Options`, `AI.SpawnAmbientAIType`, `Faction.SimEvent`, `MenuLayerOptions`, `StateParameterization`) confirmed in `ShadowOfWar.exe`; our GADB decode sees 1,843 distinct schema classes bound to records — consistent with a 2,157-entry registry containing unused classes. Record-layout details are Nemesis-only evidence.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
