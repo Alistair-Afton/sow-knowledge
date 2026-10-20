@@ -73,8 +73,9 @@ point cloud plots as the city's street map — CONFIRMED nav-surface
 semantics. Record stats (Andúril): `flag ∈ {0,1}` on real records;
 `seq = 0xFFFFFFFF` on most — the 2,141 real seqs span
 `25,250..33,607`, indexing the *first* vert partition (`n1`). `(a,b)`
-pairs span ~20–42 and repeat across records (a shared region window,
-not per-record ranges); the array addressed is OPEN. `rgba` runs the
+pairs span ~20–42 and repeat across records (a shared region window);
+the array addressed is OPEN — **not** the verts (`verts[a..b]` has
+no spatial compactness; `seq` never inside `[a,b)`). `rgba` runs the
 rainbow spectrum — debug colours. Note: a no-seq `{rgba,a,b,flag,
 -1,-1}` pattern also matches between records but yields garbage flags
 — parser false positives, not a second record kind.
