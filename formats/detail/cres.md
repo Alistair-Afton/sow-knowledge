@@ -26,15 +26,20 @@ sector streaming data. 122 files.
   embedded `CRES` header (versions 1–4 inside SLVT).
 - v>=3: tag check is followed by a fixed **0x104-byte** type header;
   v>=4 adds a size-prefixed name blob; then `u32 record_count`.
-- Per record: `v<2 → {u32 size>>2, stride 4, kind 1}`;
-  `v2..4 → {u32 size, u32 count, u32 kind}`; `v5 → {u32 size,
-  u32 count, u32 typeHash}` where `typeHash` resolves through the
+- Per record: `v<2 → {u32 packed}` unpacked to `{count = v>>2,
+  stride = 4, kind = 1}`; `v2..4 → {u32 count, u32 stride,
+  u32 kind}`; `v5 → {u32 count, u32 stride, u32 typeHash}` where
+  `typeHash` resolves through the
   engine's vertex-element hash table: `Float32, UInt32, SInt32,
   UInt16x2, UInt8, UInt8x4, UNorm8, UNorm8x4, FloatR11G11B10,
   Float16x2, UNorm16x4, Float16x4, Float32x2, Float32x4,
   Structured` → kinds 0..13 (unknown hash → reject). The
   `0xa15bf781` "sentinel" in sentinel sections is one of these
   element-type hashes — not a marker.
+- Record payload = `count × stride` raw bytes; post-read dispatch:
+  kind `−1` (`Structured`) → raw init (0x10 align), `LOCT` →
+  loc-text path, else generic typed init. Runtime objects 0x98 B +
+  parallel `count × u32` size array.
 
 ## Type tags
 
