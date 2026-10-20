@@ -1,5 +1,5 @@
 # Nemesis memory — the CharacterEvent system
-> **Status:** **partial** — Project Nemesis source. Verified by Andúril: the `AudioHooks/GameConditions` list (2,188 records), **36/39 event-vocabulary names** present as strings inside `game.gamedb`, and **77 `CharEvent_*` condition names** (≥ the "57+" claim). Remaining Nemesis-only: the memory layout, the gutted-writer model, and the three `*TriggerEvents` names (Faction-sim family — probably list/group names, not CharacterEvent types).
+> **Status:** **partial** — Project Nemesis source. Verified by Andúril: the `AudioHooks/GameConditions` list (2,188 records), the **cell4/cell6 binding model** (event-name string + `"CharacterEvent"`/`"CharacterEventCount"` selector — confirmed by decoding live records), **36/39 event-vocabulary names** inside `game.gamedb`, and **77 `CharEvent_*` condition names** (≥ the "57+" claim). Remaining Nemesis-only: the native memory layout, the gutted-writer model, and the three `*TriggerEvents` names.
 
 
 > **Provenance:** Project Nemesis runtime-model documentation (native
@@ -50,13 +50,16 @@ event on demand for before/after log comparison. Its handler at
 for the per-character event list itself (VERIFIED-STATIC).
 
 `AudioHook.GameCondition` records bind to it declaratively: cell4 =
-event name, cell6 = `"CharacterEvent"` (a native interned string —
-absent from strdb, so the census isn't statically checkable). 57+
-condition records exist
-(`CharEvent_*`, `CharEventCount_*`, `TimesHumiliatedPlayer*`,
-`DLG_*`) — the *query* side is fully shipped and wired into dialog,
-music, and behavior. (Andúril: 2,188 GameCondition records and 77
-`CharEvent_*` names confirmed inside `game.gamedb`.)
+event name, cell6 = `"CharacterEvent"` — **verified by Andúril**:
+`CharEvent_ActiveFlee_Recent` decodes `cell4 = Str("ActiveFlee")`,
+`CharEvent_ActiveInitialPlayerThreat` → `Str("ActiveInitialPlayerThreat")`,
+`CharEventCount_ShamedOnlyOnce` → `cell6 = Str("CharacterEventCount")`,
+and the constant cell6 ord `50876` on `CharEvent_*` records resolves
+to the `"CharacterEvent"` interned cstr (gamedb `+0x1ac703`). 57+
+condition records exist (`CharEvent_*`, `CharEventCount_*`,
+`TimesHumiliatedPlayer*`, `DLG_*` — Andúril counts **77**
+`CharEvent_*` names in gamedb) — the *query* side is fully shipped
+and wired into dialog, music, and behavior.
 
 ## Event vocabulary (34 types, harvested from GameCondition records)
 
