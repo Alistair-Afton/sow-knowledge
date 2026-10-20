@@ -200,29 +200,26 @@ Section B — spatial tree   (FUN_1406b3664)
            is this leaf-index array
 ```
 
-**Corpus coverage of the A+B model:** 58/109 files decode
-**byte-exact to EOF** — the full chain Section A → tree header →
-leaves → interior nodes → index nodes consumes the tail with zero
-remainder (all are `sectionsandlayers/` files). An earlier count
-of 62 included 4 small files whose tails only coincidentally
-matched the sentinel pattern — their `field0` interior count
-decodes as a huge float bit-pattern, which node-level parsing
-rejects. The remaining 51 files — including **all main-world
-files** (desert, minasithil, island, snowmtn, volcano, mtnpass,
-blackgates, baraddur) plus small files and `ol_*` layers — carry
-a different tail variant: an `f0c`-counted secondary record table
-(rows like `{f32 1.0, u32 1, 0, u32 object_id, …}`) in front.
+**Corpus coverage: 109/109 tails decode.** There is **one** tail
+format for every file — the earlier "two variants" were a shifted
+record-table boundary, not a different tail:
 
-**Variant trailer — decoded by reading the tail backwards.** The
-tail ends with a sequential `u32` run `0,1,…,n-1` (the leaf-index
-array), preceded by a 20-byte index-node header (`{0, n, 0, 0, 0}`
-on main worlds — leaf count at +0x04) and followed by the footer
-`{1,3,0,-1,-1,0}` as the last 24 bytes. Verified: desert n=207,
-volcano 172, mtnpass 166, minasithil 140, island 136, bm_island 32,
-plus 9 single-leaf `ol_*`/`night*` files. OPEN: the front region
-(f0c rows + where Section A/B begin in this variant); snowmtn,
-blackgates, baraddur and `worlduimenuws` lack the footer
-signature entirely.
+- **`f18` name-offset entries** sit between the string pool and
+  the record table: `f18` × `{u32 n_items, u32 name_off, u32}` +
+  `n_items` u32 pool-offset sub-indices. `f18` is 0 on every
+  section-layer file and 1 on every main world, so only main
+  worlds shift the boundary (52 bytes on desert). The "f0c
+  record table" previously reported was the tail end of the
+  record table seen through that misaligned window.
+- **`f0c` is the Section-A node count** — equals `n_aabb` on
+  every main world (desert 16, volcano 27, MI 17, mtnpass 10,
+  island 8, bm_island 9); 0 on files without region AABBs.
+
+Index nodes decode best-effort (main worlds: `{20B header
+{0, n_leaf, 0,0,0}, u8 0, n_leaf×u32 sequential, 2×u32 {1,3}}`
+then a 16B `{0,-1,-1,0}` footer tail); uncovered bytes stay in
+`rest` — observed remainders are only the `{1,3,0,-1,-1,0}`
+footer family in 24/16/12-byte fragments.
 
 Semantics: Section B is a two-level bounding-volume / streaming
 index — one interior root over `n_leaf` leaves, each leaf covering a
