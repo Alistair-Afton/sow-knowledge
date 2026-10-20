@@ -205,6 +205,18 @@ after table:  record_count × 50-byte records (OBJL is the last chunk;
               region runs to EOF, small tail of <=8 bytes observed)
 ```
 
+**Retail read path (Ghidra `FUN_140502b8c`, byte-verified):**
+`{OBJL, ver==5}` exact; after the header the loader bulk-reads
+**two** blobs (name table + param blob) plus an optional third,
+then walks `group` headers `{u32, u32 n}` with `n × 50B` file
+records expanding to **0x50-byte runtime records** — the first two
+u32s of each file record are **offsets resolved against the two
+blobs** (name offset → blob A, aux offset → blob B, matching the
+"type name offset" finding below), followed by `u16, u32, …`
+fields. A trailing base-list rebuild emits the engine's own error
+strings `"The base list off"` and `"Mismatch suggests the object
+count logic is incorrect and may be stomping memory."`
+
 Record layout (50 bytes):
 
 ```text

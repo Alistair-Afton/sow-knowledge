@@ -16,6 +16,11 @@ Vegetation grid manifest; lives next to `.vegtile` content:
 
 `VegGrid` in `anduril-veg`.
 
+(Retail loader `FUN_1404369dc` — Ghidra decompile: `{VEGG, ver==1}`
+exact, reads the section path as a fixed **0x104-byte** slot, then
+two section sub-reads; a u32 work array is filled with the constant
+`0x51ba43b7` — an uninitialized-cell marker.)
+
 ## `.sndmap` — SMAP v1 (1 file)
 
 `sound/_eventmap.sndmap` — Wwise event-hash index:

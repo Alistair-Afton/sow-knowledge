@@ -16,6 +16,13 @@ Navigation meshes per world/section. 444 files, 13 KB – 51 MB.
 +0x14  …       Havok TAG0 tagfile
 ```
 
+**Retail read path (Ghidra `FUN_14048427c`, byte-verified):**
+`{HKAI, ver==3}` exact, then the `0xffffd00d` sentinel and the
+little-endian size are checked in code; the tagfile is handed to a
+dedicated parser (`FUN_1404bc7f0`) and a **trailing `0xffffdead`
+sentinel** must follow it (`return local_res8[0] == -0x2153`) —
+so the file is `{HKAI,3,0xffffd00d,size,TAG0…,0xffffdead}`.
+
 ## Embedded tagfile
 
 `TAG0` + `40 00 00 10` + `SDKV20160200` (SDK version). Sections are
