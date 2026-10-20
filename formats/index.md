@@ -35,7 +35,7 @@ individual semantics may still be PARTIAL inside a "verified" format.
 | `.cres` | — | shadow tree / cinematic resources | PARTIAL |
 | `.subb`, `.vib`, `.vid`, `.uis`, `.uiwd`, `.hkai`, `.pck`, `.bnk`, `.pmo_rcv`, `.veg*, `*.ss_*` | various | Andúril has structural readers + `docs/formats/` notes | PARTIAL |
 
-Loader addresses for the exe-verified formats are in `engine.md`.
+Loader addresses for the exe-verified formats are in [`../engine/engine.md`](../engine/engine.md).
 
 ## Detailed specs
 

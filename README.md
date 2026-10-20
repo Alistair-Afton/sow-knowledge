@@ -57,7 +57,7 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 
 | Doc | Contents |
 |---|---|
-| `engine.md` | Coordinate frame, units, name hash, VFS mount order, Oodle |
+| `engine/engine.md` | Coordinate frame, units, name hash, VFS mount order, Oodle |
 | `formats/index.md` | Every known file type, magic, version, status |
 | `formats/archives.md` | LTAR `.arch06`, archcfg, EMBB/BNDL bundles |
 | `formats/gamedb.md` | GADB binary (`game.gamedb`, `.bvr`, embedded GADB) |
@@ -67,7 +67,8 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
 | `formats/detail/` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
-| `specs/` | Behavior specs — retail-observed behavior per subsystem (spawn, faction, moveset, combat, save, HUD, VFS, …); each carries its evidence tags and, where present, a labeled `## Andúril model` section |
+| `gameplay/detail/` | Behavior specs for game systems (nemesis/faction set, moveset, combat, traversal, HUD map); each keeps evidence tags + a labeled `## Andúril model` section where present |
+| `engine/detail/` | Engine/runtime specs (VFS mount order, spawn pipeline, event path, gamedb overlay merge, Lua host surface, mod load order, anim oracle) |
 | `reference/` | Script classes, event surface, and event-subscription tables |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |
@@ -88,6 +89,6 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
   part is the *binding* (which mesh group uses which material at which
   LOD) — documented where proven.
 - All asset names resolve through one case-insensitive name hash
-  (`engine.md`). Paths in records are keys, not filesystem lookups.
+  (`engine/engine.md`). Paths in records are keys, not filesystem lookups.
 - Real installs differ from any single doc: use tolerant parsers, and
   treat corpus scan counts as evidence for structure only.

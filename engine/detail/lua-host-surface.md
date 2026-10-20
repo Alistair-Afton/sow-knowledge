@@ -36,7 +36,7 @@ with whitelisted globals plus the `anduril` API — **no** `io`,
 ## Design rules
 
 - The host is our API, not the retail `LuaQ` VM surface — retail
-  scripts run under `anduril-scri`'s interpreter (`../formats/detail/scri.md`);
+  scripts run under `anduril-scri`'s interpreter (`../../formats/detail/scri.md`);
   the mod surface is intentionally different and documented as such.
 - Determinism: event dispatch order is stable (load order, then
   subscription order). **VERIFIED.**

@@ -9,7 +9,7 @@
 > checked against them.
 
 All data lives in `database/game/game.gamedb` (GADB; see
-`../formats/detail/gamedb.md`). Links are `category_index<<20 | record_index`.
+`../../formats/detail/gamedb.md`). Links are `category_index<<20 | record_index`.
 Attribute **names are absent** from serialized GADB — attributes are
 identified by `name_hash` of candidate names (see `nemesis-data.md`).
 
@@ -124,7 +124,7 @@ band, `F/B/L/R` direction to target, then hands/arc. Paths under
 STRI timed events mark hit frames in many clips: Talion strikes deal
 damage at `APPLYDAMAGE` (0.333 s), chain from `EHITWIN` (0.633 s);
 counter pairs end at `STOP_ALIGN`. Use them for damage timing where
-present, else a fixed fraction. See `../formats/detail/anix.md` for the
+present, else a fixed fraction. See `../../formats/detail/anix.md` for the
 STRI record layout.
 
 ## Open questions

@@ -4,7 +4,7 @@
 > screen placement PARTIAL (engine-driven, not in the movies)
 > **Provenance:** sow-rs/OnSight `hud-map.md` (gamedb queries +
 > `sow_gfx` tree walks of `sphud.gfx`/`minimap.gfx`). Format spec:
-> `../formats/detail/gfx.md`.
+> `../../formats/detail/gfx.md`.
 
 ## Gamedb records — VERIFIED
 

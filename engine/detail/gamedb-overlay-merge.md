@@ -4,7 +4,7 @@
 > **Provenance:** `anduril-gamedb` delta layer
 > (`crates/anduril-gamedb/src/delta.rs`), merged-overlay serialization
 > validated against real `database/game/game.gamedb`; merge notes in
-> `../formats/detail/gamedb.md`. Consolidated 2026-10-19.
+> `../../formats/detail/gamedb.md`. Consolidated 2026-10-19.
 
 Mods share `game.gamedb` without shadowing whole files: each mod
 contributes **record deltas** applied in load order over the base db,
@@ -34,7 +34,7 @@ the same mod ordering drives both file and record precedence.
 
 The merged overlay serializes back into a valid `.gamedb`. Known
 residue: `namedCount`/`unnamedCount` headers are off by a small fixed
-delta vs naive counts (documented in `../formats/detail/gamedb.md`);
+delta vs naive counts (documented in `../../formats/detail/gamedb.md`);
 `ADDED_STR` markers become real interned strings. **VERIFIED** for the
 fields our writer emits; the counter quirk is `INFERRED` (round-trips
 through our own reader; not yet diffed against engine output).

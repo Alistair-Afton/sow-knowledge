@@ -2935,7 +2935,7 @@ clip2 measurements (bola bank):
 
 ## r89 — file rec quat != runtime local quat; arena offset unsolved
 
-  - Recovered context: ../formats/detail/anix.md already established the
+  - Recovered context: ../../formats/detail/anix.md already established the
     record decode (d0=rol8 s32, d1=rol24 s32, u16@8/@10/@14 smooth
     channels; marker = LAST record's u16@12/@14 tag). Records plausibly
     = quat packed at mixed precision; translations in separate f32

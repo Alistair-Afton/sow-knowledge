@@ -4,8 +4,8 @@
 > semantics PARTIAL
 > **Provenance:** sow-rs/OnSight `moveset-map.md` §M6 (record chains +
 > `sow_tool probe` validation of edge placement against our own scene
-> geometry). Andúril-side context: `../formats/detail/objres.md` (CADB
-> section location), `../formats/detail/bvr.md` (blend graphs).
+> geometry). Andúril-side context: `../../formats/detail/objres.md` (CADB
+> section location), `../../formats/detail/bvr.md` (blend graphs).
 
 All units cm unless noted. Attribute names not in the dictionary are
 quoted by hash.

@@ -4,7 +4,7 @@
 > captain-generation semantics PARTIAL
 > **Provenance:** sow-rs/OnSight `formats/nemesis-data.md` (record
 > walks over installed `game.gamedb`); cross-checked against
-> `../formats/detail/gamedb.md`. Andúril-side sim model:
+> `../../formats/detail/gamedb.md`. Andúril-side sim model:
 > `faction-*.md`.
 
 The data layer reads GADB records directly; it does not execute the
