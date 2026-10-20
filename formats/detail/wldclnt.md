@@ -157,39 +157,51 @@ groups each = `{vec3 min, vec3 max, u32 flag, u32 seq}` 32B AABB,
 covering `0..pl` — a per-region membership list.
 
 **Large worlds** (MI `{17,5,6}`, island `{8,5,1}`, desert `{16,6,2}`,
-baraddur `{3,5,1}`): a **four-part** layout, verified by nonzero-run
-segmentation on all four files:
+baraddur `{3,5,1}`, volcano `{27,5,5}`, …): **fully decoded** — two
+sequential sections, verified byte-exact on desert (tail ends at
+exactly the last leaf record + trailing index array):
 
 ```text
-+0x0c  sparse region data — float-lead entries, length varies
-       (MI ~27 KB, island ~32 KB, desert ~52 KB, baraddur ~481 B).
-       Desert's block holds ~1,636 nonempty 32-byte entries; MI's
-       first bytes decode as world-space AABB floats.
-+...   u32 triple {n, n, flag}    — MI n=140, island n=136, desert n=207
-+...   packed block               — MI 36.6 KB, island 40.3 KB,
-       desert 84.5 KB; starts 0x0046ea60 (MI/desert) or
-       0x01471c40 (island) — the OPEN bit-packed stream below
-+...   u32 n (repeat) + n sequential u32s 1..n (~+footer
-       {1,3,0,-1,-1,0}) — a per-group index/identity table
+Section A — layer/group index   (FUN_1406b3cd0, ×f08 times)
+  +0x00  u32 n_aabb, u32 n_veclists, u32 n_groups
+  +0x0c  n_aabb × 32B   {vec3 min, vec3 max, u16, u8, 5B pad}
+                        — region AABBs (desert: 16, all sane world
+                        coords; entries may be sparse/zero)
+  +...   n_veclists × {u8 n, n×12B vec3}   (desert 6 lists, 24 pts)
+  +...   n_groups × {u32 id, u32 n, n×u32 placement_idx}
+         — group id 0 holds ~all placements (desert 12,714/12,877,
+         island/blackgates exactly all); other ids are name-hash-like
+         layer groups (0xD9E….. family)
+
+Section B — spatial tree   (FUN_1406b3664)
+  +0x00  13 × u32 header — fields at positions {0,1,3,4,6,7,8,9,11}
+         used; positions 2,5,10,12 are required zero-sentinels
+         (desert: {1,1,0,1,1,0,0,207,207,80404,0,·,0})
+  +...   field8(n_leaf) × leaf record:
+           {f32 radius, u32 flags, u32 n_vec3, u32 n_a, u32 n_b}   20B
+           n_vec3 × 12B vec3 positions
+           n_a × u16   — index list
+           n_b × u16   — index list
+         — 207/207 leaves tile byte-exact on desert; radii are round
+         draw/stream distances (20000–30000, −1 = unbounded)
+  +...   field0 × interior node (FUN_141cd3e54):
+           {60B header incl. AABB, u32 region_idx→72B runtime recs,
+           u32 flags, u8 n_children} + n_children×16B child refs
+           + u32 n, n×u32 → 96B recs + u32 m, m×u32 → 160B recs
+  +...   field3 × index node (FUN_141cd401c):
+           {20B header {u32 n,…}} + n×u32 leaf refs + 2×u32 →40B recs
+         — the trailing "sequential u32 1..n" table seen in raw dumps
+           is this leaf-index array
 ```
 
-The third part is the unresolved piece — now bounded by the retail
-read path (see "Retail read path" below): the engine reads the tail
-as **count-prefixed variable records**, not a bit-packed stream. Each
-node record = `{f32, u32 n_vec3, u32 n_a, u32 n_b}` (20 B) followed
-by `n_vec3 × 12 B` vec3 positions + `n_a × 2 B` + `n_b × 2 B`
-arrays, and the loader computes a min/max bound over the vec3s via
-`minps`/`maxps` — i.e. the tail is a **bounding-volume hierarchy /
-spatial index** (the f32 is a node radius; 0x44-0x48 lanes seen in
-the byte census are ~700–900 unit radii). Earlier fixed-width
-readings (`(x>>19)<placement_count`, "51% valid u16 indices", the
-`{code,n}` byte-pair framing) are artifacts of reading this
-variable-length stream word-aligned — do not trust them. The exact
-field order within the 20-byte node header and which tail sub-table
-each of the three element readers consumes is still open; the packed
-block's first bytes (`0x0046ea60` / `0x01471c40`) do not yet tile as
-node headers, so a short per-section preamble likely precedes the
-records. Payload is preserved raw as `tail`.
+Semantics: Section B is a two-level bounding-volume / streaming
+index — one interior root over `n_leaf` leaves, each leaf covering a
+spatial cell of `n_vec3` positions + `n_a`/`n_b` placement-index
+lists (u16 lanes seen in earlier byte censuses were the u16 index
+arrays; the 0x44–0x48 "codes" were f32 radii). `f44` leading
+placement records are skipped when the runtime region array is
+bound (`records + f44×0x48`) — consistent with record 0 being a
+material/section header, not a placement.
 
 ## Retail read path (Ghidra decompile, verified)
 
@@ -199,21 +211,24 @@ immediate — exactly one hit:
 
 - `FUN_1406b3510` — file loader: checks `WDSC` + version 9, calls
   `FUN_140423e70` (the **namehash**, already byte-confirmed) on the
-  file path, then `FUN_1406b3664` for the body.
-- `FUN_1406b3664` — body parser: reads a **13-u32 header** (9 used
-  fields + 4 zero-sentinels at positions 2, 5, 10, 12) into
-  `{f48,f44,f40,f3c,f38,f34,f30,f2c}`; allocates one buffer sized
-  `(f1c + f20*12 + f14 + f0c) × 8B + (f18 + (f10 + f08*4) × 2) ×
-  20B`; fills **three element arrays** of counts `f30/f48/f40` (=
-  `f20`/`f08`/`f10` — including `record_count`) via readers
-  `FUN_141cd4124` / `FUN_141cd3e54` / `FUN_141cd401c`; then
-  `param_1[7] = records + f44*0x48` and `param_1[8] = total − f44`
-  (the region record array is **72 B/record**, `f44` leading records
-  skipped — the section-header records); `f3c` sizes a final table.
-- `FUN_141cd4124` — node reader: one 20-byte header read
-  `{f32, u32, u32, u32, u32}` then `n×0x0C` vec3 bytes +
-  `n×2` + `n×2`, computing a `minps`/`maxps` bound — confirming the
-  bounding-volume-node shape above.
+  file path, then `FUN_1406b3914` (body) + `FUN_1406b3664` (tree).
+- `FUN_1406b3914` — main parser: reads the 9-u32 file header
+  (+0x08..+0x2c — **all of f08..f28 are element counts/sizes**),
+  reads the `f28`-byte string pool, `f0c` name-offset entries of
+  `{u32 n_items, u32 name_off, u16}` each with `n_items × u32`
+  sub-indices, then `f10` placement records via `FUN_141ccb150`,
+  then `f08` Section-A sub-structures via `FUN_1406b3cd0`.
+- `FUN_141ccb150` — placement reader: **0x48 (72 B) data + trailing
+  u32 pool offset** = 76 B/record exactly; name offset is
+  `namehash`'d and interned; contains a `u8` 2-bit flag field (the
+  `&3` group split in Section A) and the f32 stream radius that the
+  engine squares — byte-level proof of the "name is trailing" and
+  "radius²" findings.
+- `FUN_141cd4124` — leaf reader (20B hdr + vec3s + 2×u16 lists,
+  `minps`/`maxps` bound accumulation); `FUN_141cd3e54` — interior
+  node (60B hdr + child refs + index lists into 96B/160B records,
+  linked via `+0x90/+0x98`); `FUN_141cd401c` — index node
+  (20B hdr + u32 leaf-index list + 2×u32 refs into 40B records).
 
 ## Verified
 
@@ -223,10 +238,11 @@ bounds. CLI: `wldclnt <path>` (summary), `wldclnt <path> strings`,
 
 ## Unknowns
 
-- Header fields f08..f24 semantics (counts/types for tail sections?).
+- Semantic role of tail Section A groups vs Section B leaves (named
+  layer membership vs spatial streaming cells — partially modelled).
+- Interior-node 60-byte header field order and flag byte meanings.
 - `+0x20` placement field (mostly 1, occasionally 3 — flag?).
-- `+0x2c` base constant's exact meaning (cull radius² vs streaming
-  weight) — values are round numbers per prefab, −1 = never cull.
 - Whether per-placement bound variance comes from parametric prefab
   content (hypothesis) or a different record semantic.
-- Tail table structure (likely layer index lists keyed by header counts).
+- Small-file tail variant ({1,0,pl} permutation + 32B record) — does
+  it follow the same Section-A grammar with degenerate counts?
