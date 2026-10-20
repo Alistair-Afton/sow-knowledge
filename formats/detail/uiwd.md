@@ -10,6 +10,8 @@ Paired with [`uis.md`](uis.md) — same basename, same `@0x08` entry count.
 ```text
 +0x00  char[4] "UIWD"
 +0x04  u32     version = 4
+       (loader `FUN_1406c7718`: versions **3–4** accepted; v3 zeroes a
+       header field — v4 adds it; header = 4×u32 + 4×u16)
 +0x08  u32     entry count (== paired .uis count)
 +0x0c  u32     field (0/1)
 +0x10  u32     offset-like field

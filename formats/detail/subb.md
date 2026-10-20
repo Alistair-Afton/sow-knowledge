@@ -10,6 +10,7 @@ One file per cinematic video under `cinematics/videos/**` (121 files).
 ```text
 +0x00  char[4] "SUBB"
 +0x04  u32     version = 1
+       (loader `FUN_1417cd018`: ver==1 exact; header = 3×u32 then body)
 +0x08  u32     cue_count
 +0x0c  u32     flags (always 8)
 +0x10  u32     cue_table_bytes = 8 * cue_count

@@ -14,6 +14,7 @@ data-side.
 ```text
 +0x00  char[4] "UISH"
 +0x04  u32     version = 3
+       (loader `FUN_14072ed7c`: ver==3 exact; header = 3×u32 + 4×u16)
 +0x08  u32     entry count N — always equals the tail-pool name count
 +0x0c  u32     section offset/size field (opaque; correlates with body size)
 +0x10  u32     N again
