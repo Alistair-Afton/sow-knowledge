@@ -42,6 +42,17 @@ retail files. What *is* consistent is that the engine prefers
 +0x12  name     source .tex*-style path
 ```
 
+**Retail read path (Ghidra `FUN_1405030ec`, byte-verified):**
+accepts `{TEXR, ver==8}` **or** `{TEXA, ver==1}`, and the same
+`SLVT` v4 wrapper as CRES. After the magic the loader reads a
+**u64** (the packed +0x08 source-metadata bytes), then the source
+name as a fixed **0x104-byte** slot, then the kind byte `t` —
+`1,2` → 0x20-header records, `3..7` → 0x2C-header records, `5` →
+its own 0x24 shape. `t==4` (array) is **only legal under TEXA** —
+a TEXR with kind 4 is rejected. Array layer source names are
+`count × 0x104` slots skipped after the tail (the "name pool" in
+the tail spec is that fixed-slot array).
+
 ## Tail (2D kind 1/4, 23 + name bytes)
 
 ```text
