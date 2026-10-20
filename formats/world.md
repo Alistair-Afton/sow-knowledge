@@ -67,13 +67,17 @@ always walk the declared frame. Minas Ithil's 14 sections:
 
 `{u32 n1, u32 n2}` then `n1 + n2` × 12-byte vec3 slots of nav-surface
 points (~2% sentinel slots skipped on the same grid), then 21-byte
-markup records to EOF in two flavours: `{rgba, u32 a, u32 b, u8 flag,
-u32 -1, u32 -1}` and `{u32 seq, rgba, u32 a, u32 b, u8 flag, u32 -1}`
-(seq counts up monotonically). Minas Ithil: 67,354 real points /
-34,380 records; the point cloud plots as the city's street map —
-CONFIRMED nav-surface semantics. `a`/`b` are small index pairs
-(3,896→3,916, 687→723); what they index is OPEN. `rgba` values run
-the rainbow spectrum — debug colours.
+markup records `{u32 seq, rgba, u32 a, u32 b, u8 flag, u32 -1}`.
+Minas Ithil: 67,354 real points / 23,984 seq-flavoured records; the
+point cloud plots as the city's street map — CONFIRMED nav-surface
+semantics. Record stats (Andúril): `flag ∈ {0,1}` on real records;
+`seq = 0xFFFFFFFF` on most — the 2,141 real seqs span
+`25,250..33,607`, indexing the *first* vert partition (`n1`). `(a,b)`
+pairs span ~20–42 and repeat across records (a shared region window,
+not per-record ranges); the array addressed is OPEN. `rgba` runs the
+rainbow spectrum — debug colours. Note: a no-seq `{rgba,a,b,flag,
+-1,-1}` pattern also matches between records but yields garbage flags
+— parser false positives, not a second record kind.
 
 ### OBJL v5 — VERIFIED
 
