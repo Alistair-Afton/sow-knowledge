@@ -111,4 +111,4 @@ format is byte-for-byte decoded (232,319 records round-trip).
   in-memory patching (Option C); same-name patch records are not a
   confirmed override mechanism.
 - **Test offline.** A modded database should never be exercised
-  while signed into WB services (see `modding.md`).
+  while signed into WB services (see `../modding/testing.md`).

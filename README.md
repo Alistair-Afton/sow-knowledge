@@ -75,7 +75,11 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
 | `gameplay/traversal.md` | Movement constants, context-action edges, traversal clips |
 | `gameplay/nemesis.md` | Nemesis gamedb categories, captain generation, save data |
-| `modding.md` | How to actually modify the game: loose files, load order, plugins, caveats |
+| `modding/index.md` | Modding surface — every mechanism that changes the game (loose files, archives, plugins, gamedb overlays) |
+| `modding/acquiring.md` | Getting files out of the install — layout, extraction tooling |
+| `modding/editing.md` | Per-format edit matrix — what's writable, with what, traps |
+| `modding/packaging.md` | Shipping a mod — loose folders, `.arch06`, load order, plugins |
+| `modding/testing.md` | Verifying a mod — offline services, launch checks, save safety |
 | `open-questions.md` | Consolidated list of what is NOT known — the work queue |
 | `EVIDENCE.md` | The evidence-label contract (what counts as proof) |
 | `CONTRIBUTING.md` | How to contribute — claims + replayable evidence |
