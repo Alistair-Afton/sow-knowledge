@@ -62,7 +62,8 @@ layer is what makes record content composable.
   checked on all entries of the installed winning copy). No tail.
 - **Mod archives list their payload here.** THaych reports (in-game)
   that a mod archive's files only override/appear when its own
-  `archivepatchloosefiles.txt` lists them. Consistent with this
+  `archivepatchloosefiles.txt` lists them — with one exception:
+  `game.gamedb` in a mod archive is always used. Consistent with this
   install: every functional mod `.arch06` (`Patch_IncreasedCap`,
   `orcgrenades_all`, `primalroar`, the orc-eyes mod) ships one
   listing exactly its payload; only empty 1-file stubs lack it.

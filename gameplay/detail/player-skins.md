@@ -24,6 +24,29 @@ Interface/Menu/MenuTreeNode/Skin:<node>     (9 retail nodes)
 storage refs are `Profile/GlobalOptions` flags), `9 CharacterModel`,
 `10 PrimaryState`, `11 CreationPredicates`, `12 LockCommonPredicates`.
 
+The `GlobalOptions` flags at fields 5/8 are required — a node without
+them is hidden. Retail has no spare skin node, but the tree record
+already ships 8/9/10-slot layouts, so growing `BaseNodes` reuses an
+existing shape (THaych).
+
+**Model fields that matter** (`Character/Models`, CONFIRMED names):
+`41 SimpleModel` → `Model/SimpleModel` (entry struct
+`[?, bodyType, ?, pieces, head]`), `48 PlayerID`
+(`Character/Models/PlayerID`: Talion, Celebrimbor, …), `49 CombatTree`,
+`65 CharacterModelPicker`.
+
+- **Body type** selects every gear `Inventory/ArmorData` ModelPicker
+  entry — armour, weapons and the hand ring: 6 Talion, 8 Baranor/Serka,
+  9/11 Eltariel, 10 Celebrimbor. Changing it changes all gear (a
+  body-10 Talion wore Celebrimbor's armour) — THaych.
+- **`PlayerID` drives the voice set**, not gear (setting a Talion skin's
+  PlayerID to Celebrimbor switched the voice and left the ring alone).
+- **Combat profile** (`Combat/Tree`) carries `FXLookupKey`,
+  `CompanionModel` (the wraith), `MaterialController`, `InventorySetup`,
+  `PermanentItems` (skills incl. the ultimate), `PermanentBuffs`.
+- Inventory markers persist across skin changes; buffs don't — use
+  buffs for per-skin tests.
+
 **Endgame variants.** After the Shadow Wars ending, skins switch
 model through their `ModelPicker` (`ShadowWarUnlocked ⇒ …_ShadowWar`
 variant; e.g. `PlayerSkin_DarkTalion_Main` → picker `TalionSkin_Dark`).
@@ -42,14 +65,22 @@ stage is 1280×720; the selection frame is fixed, so adding slots
 means shrinking the step (THaych fit 10 icons by 70 → 55).
 
 Skin icons are 128×128 DXT5 `TEXR` textures, one mip, under
-`interface\textures\hud\questicons\new\…`. A UI texture that is not
+`interface\textures\hud\questicons\new\…`. The gap attributes hash
+to `HighlightedNodeGap` `0x12DCE869` and `IdleNodeGap` `0xF4976A30`
+(names CONFIRMED by hash); the first-node offset is attr `0xC00F4041`
+(name unrecovered). Steps look like `(0,57)` for vertical lists and
+`(60–80,0)` for rows; screen px = units × width/1280. The tree's
+`MenuWidget` names the Scaleform symbol (`LIB-QuestMenuTreeBaseSkin`
+in `interface\flash\widgets\componentlibrary.gfx`), whose blue frame
+is fixed art sized for 8 nodes at step 70. A UI texture that is not
 listed in a loaded bundle (`ingame_tex.bndl`, type `…UI_Textures`)
 renders **magenta** (THaych).
 
 ## Profile semantics (THaych, in-game)
 
-- **VFX lookup keys:** 1 = Talion (blue), 12 = DarkTalion (green),
-  14 = Celebrimbor.
+- **VFX lookup keys** (`Client/FXLookup/Table` rows `{fxPath, Key}`):
+  0 Fellbeast, 1 Talion (blue), 2 Eltariel, 6 Nazgûl, 12 DarkTalion
+  (green), 14 Celebrimbor.
 - **Ultimates:** Elven Rage (`PC_GC_Initiate`) requires
   `PC_IsDarkTalion` **absent** plus `PS_CBGameChanger_SKILL`;
   Ringwraith (`PC_GC_2_Initiate`) requires it **present**.
@@ -61,7 +92,22 @@ renders **magenta** (THaych).
   `AD_Talion_Isildur_Ring`) picks its model by **body type**
   (6 = all Talion skins, 8 = Baranor/Serka, 10 = Celebrimbor), so it
   cannot vary per Talion skin through data alone — body-type changes
-  also swap armour.
+  also swap armour, ring pickers exist only for body types 6 and 8,
+  and `InventoryItemSlotVisible` actions hide whole slot groups
+  (2 = weapons, 9 = melee + offhand), not one item. Item chain:
+  `Talion_Isildur_Ring` / `Talion_Celebrimbor_Ring` → `IB_…` → `AD_…`;
+  when both are owned, Isildur's wins.
+
+## Runtime notes (THaych)
+
+- At runtime each record is an object of 8-byte fields; links become
+  pointers to **name-table entries**
+  `{ptr, object, category, name ptr, u32 category id, u32 hash}`.
+  Bundle-definition objects start with a pointer to their bundle path.
+- The ring model is read at `exe+0x27877f` (inside the generic
+  record-field reader `0x140278758`) while a character is built, and
+  earlier at spawn at `exe+0x4d6aad` — before the skin is known — so
+  per-skin swaps need persisted state.
 
 ## Making a new skin (proven recipe)
 

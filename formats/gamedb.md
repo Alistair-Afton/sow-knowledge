@@ -41,9 +41,15 @@ meanings cross-checked with THaych's Player Skins Overhaul notes):**
 | `+0x14` | unnamed struct records | 415,767 |
 | `+0x18` | total value words | 8,544,670 |
 | `+0x1C` | layout descriptors (15-byte entries) | 361,939 |
-| `+0x20` | content hash (checked by `.gamedb_patch`) | `0xD186F247` |
+| `+0x20` | DB identity stamp (checked by `.gamedb_patch`) | `0xD186F247` |
 | `+0x24` | 0 | |
 | `+0x28` | offset of the self-path (`0x2C`) | |
+
+`+0x20` is **not recomputed from content**: the installed
+`Patch_IncreasedCap` mod's `game.gamedb` differs from retail
+`hotchunk` in 114 bytes yet carries the same `0xD186F247` and loads
+fine — it's an identity stamp a patch is matched against, not an
+integrity check on the base (CONFIRMED by byte diff).
 
 At `0x2C` a `u16`-length-prefixed **self path**
 (`database\game\game.gamedb`) follows; the string pool begins right
@@ -61,12 +67,16 @@ string-reader slot into a **0x100-byte buffer**, then reads
 (`DAT_14266cd70`, statically `1` in retail with no code writers) is
 set, it accepts an optional second stream — the patch — and drops it
 unless the loaded patch's `+0x2c` field equals this file's header
-`+0x20` content hash; an accepted patch's extra table/record counts
+`+0x20` identity stamp; an accepted patch's extra table/record counts
 are added to the allocation and its tables merge into the base by
 name hash (see body layer below).
 
-`FUN_141c3ff20` (the `database\game\game.gamedb` open) builds the
-patch path by **replacing the extension with `gamedb_patch`**
+`FUN_141c3ff20` (the `database\game\game.gamedb` open — reached from
+the DB manager global `0x142a86a30`, vtable slot 1, via
+`0x141c3fefc`) first asks the asset system for a type-`0x1d` (gamedb)
+resource; failing that it builds the patch path by optionally
+appending `_<suffix>` and then **replacing the extension with
+`gamedb_patch`**
 (`FUN_14017aa78` — appends `.gamedb_patch` when the path has no
 extension) → `database\game\game.gamedb_patch`, and opens base +
 patch as a stream pair. `FUN_1417662b0` is the **whole-file blob
@@ -78,7 +88,15 @@ ends in `gamedb_patch` never looks for its own patch, a well-formed
 chain is **one layer deep (base → patch)** — an earlier revision of
 this doc claimed patch-of-patch chains; the extension guard rules
 that out. No `.gamedb_patch` ships with retail, and its exact file
-layout beyond sharing the GADB header is OPEN.
+layout beyond sharing the GADB header is OPEN. (A community note
+words the stamp check as "patch `+0x20` == base `+0x2c`"; in the
+decompile the base's own header `+0x20` is compared against `+0x2c`
+of the *loaded patch object* — the reading above.)
+
+The blob loader is what retail uses for `game.gamedb` (reached from a
+resource-type handler at `0x141d292ec`); the stream parser
+additionally runs ~4,500 times per launch on small GADB-like streams
+that are not the main database (THaych, measured via hook logs).
 
 The body layer (decoded via `FUN_1404b9b50` → `FUN_1404ba07c`):
 `{u32 schema_off, u32 n_tables}`, then per-table 0x18 headers
@@ -157,7 +175,29 @@ overlaps our own parse the two agree.
   header's named total), and categories (24-byte header; records
   `{u32 name, u16 nf, u8 ndesc, u24 layout id, u8 0x08}` + `4·nf`).
   Links address non-default blocks only. Data after the layout table
-  must stay **4-byte aligned** — pad pool growth.
+  must stay **4-byte aligned** — pad pool growth. The block count
+  after the table equals header `+0x0C`; the file ends 4 bytes after
+  the last record. Blocks classify by pool strings: struct array =
+  valid name ∧ `w2 == 0x4C` (empty string) ∧ `w1` a valid string ∧
+  `w4 ∈ {0,1}`; default record = name starts `DEFAULT_RECORD_NAME`;
+  category = string at `w2` ends with `gdb.category06`. A category's
+  record count sits at header `+16`.
+- **Field typing** from layout entries (THaych, cross-tabulated over
+  decoded values): an entry covers fields `firstValue …
+  firstValue+valueCount−1` (count 0 covers nothing); kind `1` is a
+  flags/bool layer overlapping other kinds — ignore it when another
+  kind covers the field. Kinds: `1/2/3` numeric (`2` float), `4`
+  string, `5` **enum string** (`Normal`, `CharacterCombatBuff`),
+  `0x44` (68) file path, `7` vec2 pool constant, `0x0A` record link,
+  `0x0B` struct-array link. Value-shape heuristics without the kinds
+  misfire (`0x100` looks like a pool string).
+- The record header's layout id is an **absolute index into the
+  layout table** (records with the same shape share it), so a patch
+  names a layout by "a record that already has it". Records of the
+  same type may have different field counts; lists are inline.
+- Category order = ascending unsigned name hash (THaych verified on
+  Skin, Models, Buffs, Hooks); the largest categories end near
+  `0xFFFxxxxx`, so new names there rarely sort last.
 - **Appending without renumbering:** a new record can be appended to
   the end of a category without re-pointing any link *only if its
   name hash sorts last* in that category (THaych picked a menu-node

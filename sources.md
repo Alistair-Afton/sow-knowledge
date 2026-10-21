@@ -63,7 +63,13 @@ those sourced from his notes say so.
   audio-hook runtime behavior. We re-verified the header map,
   pool base, loose-index layout, Wwise FNV-1 IDs, skin/audio record
   shapes and the patch-path logic on the installed build; the rest is
-  labeled as his in-game evidence.
+  labeled as his in-game evidence. His expanded shareable briefing
+  (`AI_CONTEXT_SHARE`) added the RE method (llvm-objdump + `.pdata`,
+  no Ghidra), the full DB load chain, stream-class slot targets, hook
+  prologue signatures (all re-confirmed byte-exact here), LTAR stock
+  layout details (re-confirmed), the player-assembly chain (body
+  type, PlayerID, combat profile), gameplay-audio flows, and a list of
+  approaches that do not work.
 - **SoW Modding Community** — `ImHex-Patterns` and `MeshParser`
   (binary format references).
 - **LordMonstey** — MIT-licensed Monstey Mesh Publisher and

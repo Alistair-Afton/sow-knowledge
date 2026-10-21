@@ -13,7 +13,7 @@ kept.
 
 - **`.gamedb_patch` file layout.** The loader path is mapped (one
   layer, `+0x2c` of the loaded patch must equal the base header's
-  `+0x20` content hash, tables merge by name hash) but no retail
+  `+0x20` identity stamp, tables merge by name hash) but no retail
   patch exists to read. Start: `FUN_1404baebc` (patch object build
   from the stream) and `FUN_14176625c` (accept check), then craft a
   minimal patch and test offline.

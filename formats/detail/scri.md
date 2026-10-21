@@ -28,6 +28,14 @@ kind 1). The Nemesis doc describes this field as a plain u32 size with
 a separate flag byte — that reading is wrong; the kind byte is packed
 into the low byte of the size field (the byte at +0x0c is padding).
 
+A community note (THaych) reads the same 13 bytes as
+`{SCRI, u32 ver, u8 kind, u32 len}` — byte-identical to the packed
+reading while the reserved byte is 0 and the length fits in 24 bits —
+and describes `.scripts` as editable HavokScript text (quest, prop,
+fort-assault logic; edit, then fix the length). On retail the text
+payloads are the kind-1 prototype declarations below; executable
+logic ships as kind-0 bytecode.
+
 ## Payload kind 0 — LuaQ bytecode
 
 One or more compiled HavokScript (modified Lua 5.x) chunks

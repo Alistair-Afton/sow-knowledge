@@ -67,7 +67,7 @@ working tenth tribe (records, roles, strdb keys; see gamedb.md for
 the sort-by-hash and link-repoint rules that make rebuilds stick).
 Readers exist in both projects; Andúril's writer is still OPEN.
 The engine also natively loads a `database\game\game.gamedb_patch`
-sibling (one layer, content-hash checked against the base; enable
+sibling (one layer, matched against the base header's `+0x20` stamp; enable
 flag on in retail) — format beyond the GADB header is OPEN, but it is
 the only overlay route the game itself supports.
 
@@ -106,13 +106,29 @@ details in `engine/detail/hydra-online-services.md`.
   override archives / rebuild copies.
 - **Mod archives need their own `archivepatchloosefiles.txt`**
   listing every payload path (layout in `runtime/vfs.md`) — files not
-  listed don't override (THaych; every working mod archive in a
-  reference install carries one).
+  listed don't override, except `game.gamedb`, which is always taken
+  (THaych; every working mod archive in a reference install carries
+  one).
 - **Never write the player's save from a buff/data mod, and never give
   a buff an `InventoryItemRemove` on a story item** — THaych lost
   `Talion_Isildur_Ring` from a save this way.
 - Nexus flags script installers (`.bat`) — ship DLL + archive +
   README.
+
+## Known dead ends (THaych — save the time)
+
+- Plain loose files in the install root are ignored; directory
+  sources must be listed in `default.archcfg` (or mounted at runtime).
+- Changing a skin's `PlayerID` switches the voice only; changing its
+  body type swaps **all** gear (see `gameplay/detail/player-skins.md`).
+- A per-skin hand ring can't be done in data (ring pickers exist only
+  for body types 6 and 8; slot-visibility actions hide whole groups).
+- Editing a shared vec2 pool constant changes every menu using it —
+  give the record its own copy.
+- Detouring Wwise `GetIDFromString` breaks callers (they keep live
+  values in `r9`–`r11`).
+- A global audio mix set at spawn is overwritten by loading hooks and
+  menu preview characters — re-assert it on the gameplay event.
 - **Oodle** is proprietary: use the install's `oo2core_5_win64.dll`
   at runtime; do not redistribute it.
 - **Naming:** VFS paths hash case-insensitively with backslashes;

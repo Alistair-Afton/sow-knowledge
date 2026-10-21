@@ -11,7 +11,7 @@ individual semantics may still be PARTIAL inside a "verified" format.
 | Extension | Magic / ver | What it is | Status |
 |---|---|---|---|
 | `.arch06` | `LTAR` v4 | game archive (VFS container) | CONFIRMED structure |
-| `.bndl` / `.embb` | EMBB v5 | bundle manifest + payload | CONFIRMED structure |
+| `.bndl` / `.embb` | `BNDL` v6 / `EMBB` v5 | bundle manifest + payload | CONFIRMED structure |
 | `.gamedb` | `GADB` | master record database (57 MB) | CONFIRMED structure; attribute names hashed |
 | `.bvr` | `GADB` | per-character blend/behavior database | CONFIRMED structure; semantics PARTIAL |
 | `.mesh` | `MMSH` | character/prop mesh (skinned) | CONFIRMED structure + attributes |
@@ -28,9 +28,10 @@ individual semantics may still be PARTIAL inside a "verified" format.
 | `.texa` | (TEXR array) | DX10 array texture | VERIFIED |
 | (in `.tex`) | `SLVT` v4 | container of embedded TEXR records | VERIFIED (15 files) |
 | `.gfx` | `GFX`/`CFX` | Scaleform movie (SWF superset) | VERIFIED tag walk |
-| `.strdb` | — | localized string table | CONFIRMED (Andúril) |
-| `.scri` | — | script/quest data | CONFIRMED (Andúril `docs/formats/scri.md`) |
-| `.save` files | — | save data | PARTIAL (Andúril `docs/formats/save.md`) |
+| `.strdb` | `SKDB` v9 | localized string table | CONFIRMED |
+| `.scripts` | `SCRI` v1 | HavokScript bytecode + prototype text | CONFIRMED structure |
+| `.sav` | `SOM3` (encrypted) | save data | PARTIAL (`detail/save.md`) |
+| `.cred` | UTF-16LE BOM | credits text | observed (THaych) |
 | `.fxp` / `.fx` | — | particle FX records | PARTIAL |
 | `.cres` | — | shadow tree / cinematic resources | PARTIAL |
 | `.subb`, `.vib`, `.vid`, `.uis`, `.uiwd`, `.hkai`, `.pck`, `.bnk`, `.pmo_rcv`, `.veg*, `*.ss_*` | various | Andúril has structural readers + `docs/formats/` notes | PARTIAL |
