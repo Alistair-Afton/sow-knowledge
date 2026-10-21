@@ -54,9 +54,14 @@ The `_ShadowWar` profiles grant the `PC_IsDarkTalion` buff that
 drives the green Dark-Talion presentation (THaych).
 
 - `PlayerSkin_Celebrimbor_ShadowWar` (model **and** its
-  `Combat/Tree` profile) is referenced **only** by the Celebrimbor
-  skin — patching it changes that skin and nothing else (THaych's
-  skin-specificity seam). Its retail profile is a "Dark Celebrimbor":
+  `Combat/Tree` profile) is reachable **only** through the Celebrimbor
+  skin — CONFIRMED by full-corpus reverse-ref scan: the model's sole
+  incoming ref is `CelebrimborSkin_Basic.Entries[0]` (the skin's own
+  `ModelPicker`); the profile's only incoming refs are the model's
+  `CombatTree` link and two `Faction/World/Predicates/Character`
+  records (`Talion`, `Talion_NoEltGraft`) that merely *classify* it
+  as a Talion-type character, not grant it. Patching it changes that
+  skin and nothing else. Its retail profile is a "Dark Celebrimbor":
   `FXLookupKey DarkTalion` (green), `CompanionModel
   DarkCelebrimborWraith`, `InventorySetup Player_DarkTalion` (dark
   brand + Isildur's ring), the Ringwraith ultimate items, and
