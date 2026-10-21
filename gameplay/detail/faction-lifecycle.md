@@ -42,33 +42,24 @@
   residual gap (sim ~14-17% vs live 37%) is member-aging accumulation
   — OPEN, tied to the unmodeled promotion cadence.
 
-## `Follower_GrabAndThrow` seat-strip (VERIFIED — live resolution)
+## `Follower_GrabAndThrow` — follower-eligibility (VERIFIED)
 
-- Fresh-spawn presence ≈ **42%** flat (live n=562 census, members
-  with no return markers: unseated 100/240 ≈ 42%). Earlier
-  level-scaling readings (21% ≤20 → 51% @51+) were *returner
-  contamination* — mature boards are dominated by returns.
-- Returns re-grant: unseated returners 68% (79/116), seated
-  returners 38% (5/13) — raise-dead/cheat-death/escape returns
-  restore it. RaiseDead holders among seated keepers: 3/39 vs
-  0/166 stripped — strongly enriched.
-- Seating strips it: fresh seated 18% vs fresh unseated 42% →
-  ~43% of carriers keep it ⇒ **chance strip, not outright remove**.
-  Flat across seat tiers (Captain_0 19%, _1 19%, _2 14%, Outer WC
-  30%, Inner WC 15%, Overlord 14%) and classes — seat, not rank
-  or class, is the trigger.
-- **The gate is decoded**: the `Picker_Follower_GrabAndThrow` entry
-  carries `RequirePlayerFollower=True` (VERIFIED record field) —
-  the trait only lands on follower-eligible members (ambient/event
-  follower-candidate spawns, returns). It is NOT a random keep or
-  an outright seat strip: board-fill seats are just rarely
-  follower-flagged.
-- Corollaries that now resolve: region spread on fresh unseated
-  (18% MinasIthil → 55% desert) = follower-flag share per board
-  (fill path mix), not a level mechanic; `Default_Act1` members
-  carry it less (30% vs 46%) because Act1 board fill is
-  non-follower; `Quirk_IronWill` anti-correlates (3/140 vs 53/100)
-  — INFERRED same-path exclusivity.
+- The picker gate is `RequirePlayerFollower=True` (VERIFIED record
+  field on `Picker_Follower_GrabAndThrow`) — the trait only lands
+  on follower-eligible members. It is not a random keep and not a
+  seat strip: board-fill spawns are simply rarely follower-flagged.
+- Rates on the live roster (n=562): fresh unseated **42%**
+  (100/240), fresh seated **18%**, unseated returners **68%**
+  (79/116), seated returners 38% (5/13). Returns re-grant it;
+  RaiseDead holders among seated keepers 3/39 vs 0/166 stripped.
+- The 18%↔42% seated gap is the follower-flag share of each fill
+  path, flat across seat tiers and classes.
+- `Default_Act1` members carry it less (30% vs 46%) — Act 1 fill
+  is non-follower. `Quirk_IronWill` anti-correlates (3/140 vs
+  53/100) — INFERRED same-path exclusivity. The fresh-unseated
+  region spread (18% MinasIthil → 55% desert) tracks each board's
+  fill-path mix; the mechanism behind which spawn is flagged
+  follower-eligible is UNVERIFIED.
 - Sim models: flat eligibility roll p≈0.42 at spawn, seat keep
   0.43 (≈ seated follower-flag share), re-grant on return.
   Residual region spread UNVERIFIED at mechanism level.

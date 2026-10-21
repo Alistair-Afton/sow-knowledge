@@ -38,9 +38,9 @@ not just the name.
   `pr_dm_CommDefend` domination "command defend" family) and
   `dx_sbx_CeleActivate_cele_02` (the 20-line Celebrimbor
   activate-bark set) resolve to the same text. The CommDefend
-  context — Celebrimbor ordering a dominated captain to keep
-  fighting ("Stay and fight for me") — is reported cut; the line
-  was re-registered in the activate pool. See
+  context is a cut "Stay and fight for me" line set (EXTERNAL:
+  THaych/Mach-Tei); the recording lives on in the activate pool.
+  See
   [`audio-hooks.md`](audio-hooks.md#duplicate-line-keys--the-same-recording-under-two-names).
 - **`dx_pr_dm_CommDefend_cb_01..03` — no strdb entries (VERIFIED
   absent keys; cut lines INFERRED).** The shipped CommDefend set

@@ -159,7 +159,9 @@ subtitle from the English `string.strdb` (THaych's workflow).
   `cele_01..20` of domination-activation barks ("You shall abide!",
   "Bring Light!", "Serve my will!", … "My eyes are yours!").
 
-So the same line was recorded/registered under both a (reportedly
-cut) command-defend context and the activate-bark pool — when
-tracing a line by name, expect strdb text to collide across `dx_*`
-families; the key names the *hook context*, not a unique recording.
+The line is registered under both the command-defend context (a
+cut "Stay and fight for me" set — per THaych/Mach-Tei, EXTERNAL)
+and the activate-bark pool. Practical consequence: strdb text
+collides across `dx_*` families — the key names the *hook
+context*, not a unique recording, so a subtitle match alone cannot
+identify which context played.
