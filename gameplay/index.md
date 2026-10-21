@@ -20,6 +20,7 @@
 - [`faction-spawn-model.md`](detail/faction-spawn-model.md) — Spec: Faction member spawn / leveling model
 - [`faction-xp-rewards.md`](detail/faction-xp-rewards.md) — Spec: Faction XP reward system (`RewardXPLevelSetup` / `RewardXPLevel`)
 - [`hud-map.md`](detail/hud-map.md) — HUD — gamedb records, Scaleform movies, widget map
+- [`inventory-loot.md`](detail/inventory-loot.md) — Inventory items and nemesis loot — item graph, loot route, weights
 - [`moveset.md`](detail/moveset.md) — Talion moveset — skills, meters, ranged, and move chains
 - [`nemesis-data.md`](detail/nemesis-data.md) — Nemesis data layer — faction categories in `game.gamedb`
 - [`player-skins.md`](detail/player-skins.md) — Player skins — menu node → model → combat profile chain

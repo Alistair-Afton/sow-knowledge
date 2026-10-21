@@ -195,6 +195,20 @@ overlaps our own parse the two agree.
   layout table** (records with the same shape share it), so a patch
   names a layout by "a record that already has it". Records of the
   same type may have different field counts; lists are inline.
+- **Growing a DB without renumbering** (LordMonstey's compiler,
+  1,208 weapons installed in one batch with existing ordinals
+  preserved): keep the string pool as a byte-exact prefix and append
+  aligned atoms; keep existing layout blocks; when a list changes
+  length, clone its layout block, update that field's count/offset
+  and relocate later fields in the record; recompute value counts,
+  layout indices, category counts and DB totals; reparse and prove
+  unrelated records and prefixes unchanged. Raw byte offsets are not
+  a stable interface — tables move even when ordinals don't.
+- **Naming appended records:** reordering to sort names would change
+  ordinals, so give new records names whose hashes **extend the
+  existing sorted tail** (LordMonstey and THaych independently use
+  this). Propagate the final names to exact string consumers such as
+  scripts.
 - Category order = ascending unsigned name hash (THaych verified on
   Skin, Models, Buffs, Hooks); the largest categories end near
   `0xFFFxxxxx`, so new names there rarely sort last.

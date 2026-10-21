@@ -77,6 +77,16 @@ mount order)
   carried by several bundles.
 - `resource_size[]` must match the replacement payload size; a stale
   size is a load failure, not silent ignore.
+- **But don't normalize native hints.** A `.bndl` may list resources
+  that are *not* embedded in its paired `.embb` (external materials,
+  textures, shaders), and native size hints can legitimately differ
+  from an embedded variant's length. Update hints only for resources
+  you changed; preserve the rest (LordMonstey). If an embedded child
+  also exists as a direct archive entry, the two can disagree — a
+  fresh loose mesh doesn't fix an older copy embedded in the bundle
+  actually loaded.
+- `.embb` child lengths must match stored bytes; preserve untouched
+  children's bytes and order when rebuilding.
 - Texture replacement must cover `.tex`/`.tex0`/`.texuhd` companions
   consistently or the engine picks up mismatched mip strips.
 - `Flair_*MB` bundle-type strings are per-budget pools the loader uses

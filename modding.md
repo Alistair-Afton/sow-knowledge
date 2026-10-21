@@ -115,6 +115,46 @@ details in `engine/detail/hydra-online-services.md`.
 - Nexus flags script installers (`.bat`) — ship DLL + archive +
   README.
 
+## Adding a new weapon (LordMonstey's pipeline)
+
+Full walkthrough in LordMonstey's *sow-weapon-modding-guide*; the
+engine facts are in `gameplay/detail/inventory-loot.md`. The stages
+are independent and each needs its own check:
+
+1. **Geometry** — fit to a native template of the same route (rig,
+   grip frame, binding), export MMSH (Monstey Mesh Publisher), recompute
+   the mesh allocation counters.
+2. **Materials/textures** — rebuild native `.mat`/`.tex` for the
+   chosen shader; Blender PBR doesn't convert.
+3. **Resource closure** — every path the item references resolves
+   through the bundle the item actually loads (`DynamicBundle`).
+4. **Item graph** — clone a same-slot, same-rarity loot donor's
+   records; add to the donor's `Combat.PredicateItem` lists; string
+   keys in every shipped locale.
+5. **Loot graph** — clone a `NemesisGear`, attach via a gear list;
+   check tags, upgrade-tier art overrides and how widely the list is
+   shared.
+6. **Packaging** — archive + `archivepatchloosefiles.txt`
+   registration, archcfg line.
+
+**Composition rules** (LordMonstey):
+
+- A delta must name the exact **parent DB hash** it extends and refuse
+  a different parent — rebuilding a modded DB from a clean one drops
+  earlier mods' items, strings and loot edits.
+- Write each changed list as its complete final value against the
+  current parent: keep foreign members in order, replace only your own
+  previous entries. Sequential full-list patches from separate
+  components silently drop each other's additions.
+- Two components changing the same locale table (or the same
+  skeleton's animation-library registrations) must be merged into one
+  file — two copies at one VFS path don't combine.
+- A stale loose overlay can win over a correct new archive; record the
+  intended winning bytes and check what is actually mounted.
+- Test a fresh natural drop, equip/sheathe/attack, spectral mode, a
+  second instance and a full save → restart → reload separately; a
+  controlled grant proves none of the loot path.
+
 ## Known dead ends (THaych — save the time)
 
 - Plain loose files in the install root are ignored; directory

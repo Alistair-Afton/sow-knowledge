@@ -38,6 +38,13 @@ magic (experimental per sow-rs; rescan reports 1,137 clean).
   Convert to BC5 without decode: keep the alpha block as BC4-Y,
   re-encode green→BC4-X (`normal_bc3_to_bc5` trick, error ≤1/14 of
   block range).
+- **Weapon recipe** (`talion_weapon` shader, LordMonstey): color,
+  packed normal/AO (X in G, Y in A, **AO in B**) and packed
+  metalness/roughness textures. Channel meaning is per shader — don't
+  infer it from `_n`/`_s` suffixes. Native geometry is Y-up
+  centimetres, quaternions XYZW; SKEL record order ≠ Havok palette
+  order used by mesh blend indices; vertex color can affect native
+  shaders.
 - **Diffuse alpha** on 4-layer shaders is a height/cavity map
   (bright faces, dark mortar) — used for height-blend, not opacity.
 - **Specular map**: R ≈ specular intensity (~0.66 skin/wood, ~0.92

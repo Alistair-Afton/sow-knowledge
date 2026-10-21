@@ -74,7 +74,14 @@ those sourced from his notes say so.
   (binary format references).
 - **LordMonstey** — MIT-licensed Monstey Mesh Publisher and
   sow-anix-format (mesh + animation format notes; the Havok
-  sibling-block palette-order detail is theirs).
+  sibling-block palette-order detail is theirs), and
+  *sow-weapon-modding-guide* (MIT): the item and nemesis-loot record
+  graphs, loot selection and type-weight rotation, weapon rigs and
+  slot routes, the behavior-state (`Predicate.ActiveNode`) lesson,
+  DB growth without renumbering, BNDL hint rules, MMSH allocation
+  counters, and composable packaging. We re-verified category paths,
+  field names, `Faction/Loot/Type` weights and the sword rig on the
+  installed build; the rest is labeled as theirs.
 - **Luigi Auriemma** — `shadow_of_mordor.bms` QuickBMS script v0.4
   (LTAR layout reference).
 - **WarpZephyr** — MIT-licensed MordorFormats / MordorTemplates.

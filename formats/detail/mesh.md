@@ -71,6 +71,14 @@ MeshInfo[mesh_count]  40B each:
     u32 layout_index    into VBL section
 ```
 
+**Allocation counters:** LordMonstey's MMSH writer recomputes the
+words at INFO `+20` and `+40` when submeshes or vertex layouts change —
+keeping a smaller donor's values leaves too little runtime draw/
+attribute storage. Which `counts[]` slots these are (depends on
+whether the offset includes the section id) is unconfirmed here.
+Per-draw vertex/face limits, palette limits and the chosen shader's
+own requirements still apply on top of the file format.
+
 Then three sub-sections, each with its own id:
 
 ### LOD section — id `0x8E3E068E`

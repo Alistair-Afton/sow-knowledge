@@ -60,6 +60,10 @@ layer is what makes record content composable.
   `n × {u32 name_hash(path), u32 strtab_offset}` **sorted by hash**
   (entries hash the full backslash path with the engine name hash —
   checked on all entries of the installed winning copy). No tail.
+  The hash distinguishes `/` from `\` (`FOLD['/'] = 0x34`,
+  `FOLD['\\'] = 0x2a`), so normalize paths to backslashes before
+  hashing; check new paths for hash collisions against the whole
+  catalog, not just your own package (LordMonstey).
 - **Mod archives list their payload here.** THaych reports (in-game)
   that a mod archive's files only override/appear when its own
   `archivepatchloosefiles.txt` lists them — with one exception:
