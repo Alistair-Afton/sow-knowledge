@@ -98,6 +98,12 @@ name (THaych).
   `CharModel_Player*` checks use** — the default mode also matched
   the Celebrimbor player and muted him again; and model tests run at
   spawn before the skin model applies (above).
+- **Silencing a sound for one skin** (THaych's dash-mute for Prologue
+  Talion): insert a mute hook **first** in the key's ordered list —
+  hooks are evaluated in order, so a first-position hook gated on the
+  skin's CharModel wins before the sound plays. He used the spare
+  `fts_ply_step_bamboo` hook + `CharModel_PlayerOrcBerserker`
+  condition inside keys `wra_swiftness_in` / `wra_gc_wrath_dash`.
 - **Player identity tests:** `CharModel_PlayerTalion`,
   `CharModel_Celebrimbor`, `CharModel_PlayerAny`; dead slots
   (`PlayerSkin01/02`) name no model.

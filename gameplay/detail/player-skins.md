@@ -164,3 +164,38 @@ last** (appendable without renumbering — see `formats/gamedb.md`),
 an icon texture + its bundle entry, string keys for title and
 description, and a `BaseNodes` slot. THaych shipped two skins this
 way.
+
+## Spare / repurposable records — CONFIRMED ref counts
+
+THaych's overhaul runs on repurposed retail records. A full-corpus
+reverse-ref scan (named + anonymous records) classifies his spares
+into three grades — "zero incoming refs" is the only truly safe
+grade:
+
+**Unreferenced in the db** (CONFIRMED zero incoming refs — free
+slots): `CharModel_GraugOrCarnan` (GameCondition),
+`CharModel_PlayerOrcBerserker`, `CharModel_OlogForVX`,
+`CharModel_PlayerOrcSpearman`, `HasItem_PS_SuperBrawlC1`,
+`Quest_PS_TrialGhuls_IsNotActive` (audio conditions),
+`Skin_TalionDefault` (menu node — his Prologue Talion slot),
+`Flower_Rare_Buff`, `zOld_Krak_Graug_StaminaMeter_Default_Clear`
+(buffs — his Prologue mix-keys buff / PDARKTALION tag buff),
+`PlayerSkin_Eltariel_NoModelPicker` (model — his Celebrimbor Talion
+base).
+
+**Classifier-only refs** (referenced only by the `Talion` /
+`Talion_NoEltGraft` `Predicates/Character` lists + their own
+CombatTree back-link — same pattern as `…_Celebrimbor_ShadowWar`;
+reusing them changes nothing that grants them elsewhere):
+`PlayerSkin_DarkTalion_Intro` (Prologue Talion),
+`PlayerSkin_Celebrimbor_Intro` (Celebrimbor Talion profile).
+
+**Ref-chain repurposes** (the record *is* referenced — he keeps the
+chain and rewrites the contents; safe only because the ref chain is
+dead code-side or meant to be reused): `vx_OlogFlameThrower`,
+`vx_OlogReactScared`, `dx_SotPIsland_SC_010_WarchiefShowdown`,
+`fts_ply_step_bamboo` (each referenced by its own AudioHooks
+key/action — whether the key ever fires can't be disproven
+statically; "unused" here is THaych's read). `DoesNothingBuff` is
+live (`Item_Hate_LowHealth_Cooldown` refs it) — it's the
+re-point *target*, not a spare.
