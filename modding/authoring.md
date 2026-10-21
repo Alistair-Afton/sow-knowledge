@@ -1,160 +1,148 @@
 # Authoring & round-tripping files
 
 > **Status:** **living**
-> **Provenance:** tool commands verified on the reference install
-> (Andúril CLI); community tools per `../sources.md`.
+> **Provenance:** commands verified on the reference install;
+> community tools per `../sources.md`.
 
 Creating a file is always three steps: **out of the binary** →
 **edit in a sane form** → **back into the binary layout the game
-loads**. This page is the per-format recipe; per-format byte specs
-are in `../formats/`, delivery in `packaging.md`.
+loads**. This page is the per-format recipe. Nothing here requires a
+specific toolkit — wherever a tool is named, any equivalent that
+speaks the format works; the byte-level specs in `../formats/` are
+complete enough to build your own.
 
 ## The golden rule
 
-You almost never hand-edit the game's binary formats. Every format
-here has (or needs) a **decoded intermediate form** — JSONL records,
-TOML deltas, PNG, OBJ, TSV strings — that you edit, then a tool
-re-emits the binary. The formats that lack a round-trip writer are
-marked NO WRITE PATH; for those you build the emitter yourself from
-the `../formats/detail/` spec.
+You almost never hand-edit the game's binary formats. Each has (or
+needs) a **decoded intermediate form** — a text dump, TOML deltas,
+DDS, OBJ — that you edit, then a tool re-emits the binary. Formats
+with no working writer are marked **NO WRITE PATH**: for those you
+build the emitter yourself from the spec doc — all of them are small
+enough that a writer is a script, not a research project.
 
-## `game.gamedb` — the sane way (no hex, no insanity)
+## `game.gamedb` — doing it without going insane
 
-The database is the worst format to hand-edit and the most valuable —
-so the whole pipeline is built around **never touching it raw**:
+The database is the worst format to hand-edit and the most valuable.
+Two practical routes:
 
-```
-1. Inspect:   anduril db rec Role_Slaver          # one record, decoded
-              anduril db refs Trait_Fire          # who links to it
-              anduril db emit db.jsonl            # whole DB -> JSONL
-              anduril db lists Faction            # browse categories
-2. Author:    write TOML deltas — Mods/<mymod>/db/mypatch.toml:
+### Route A — in-memory patching (no file format at all)
 
-              [[record]]
-              list = "Faction/Roles/Definitions"
-              name = "Role_Slaver_Mine"        # clone + tweak
-              new  = true
-              clone = "Role_Slaver"
-              set  = { "BaseWeight" = 200.0 }
+A plugin DLL hooks the GADB loader, patches records as they stream
+in, and hands the engine an in-memory stream. **This is the route a
+shipped mod already uses** (THaych's Player Skins Overhaul): the
+patch is keyed symbolically (category + record name + expected
+field), and a careful patcher *refuses* when a record shape is
+unexpected — so a bad patch degrades to "game runs unmodded", never
+a corrupt DB. See `../formats/gamedb.md` for the loader hook
+addresses and `packaging.md` route 3 for how plugins load.
 
-              [[record]]
-              list = "Combat/AOE"
-              name = "SomeRecord"
-              set  = { "3" = 42 }              # raw cell index
-              ref  = { "1" = "Refs/Things/X" } # repoint a link cell
+To write one you need: a minimal DLL, the loader address for your
+build, and the record accessor the binary exposes for "find record
+by name hash, write cell N". That's ~200 lines of C++ once the
+addresses are known — they're mapped in `../runtime/engine.md`.
 
-3. Merge:     anduril db merge            # apply all enabled mods, report
-                                          # conflicts/warnings first
-              anduril db write game.gamedb   # emit one merged valid file
-4. Ship:      drop at Mods\database\game\game.gamedb (see packaging.md)
-```
+### Route B — a rewritten `.gamedb` file
 
-`new = true` + `clone` copies a donor record so required cells are
-never missing; `set`/`ref` then patch it. Unnamed struct records use
-`name = "#<idx>"` (or `new` with no name to append). Cells accept raw
-indices or schema field names — prefer names; index cells can't be
-kind-checked.
+Editing a record = rewriting the file. A GADB writer must:
 
-To target the **patch route** instead of a merged file: the same
-authoring produces your added records — a `.gamedb_patch` emitter is
-the missing tool (spec in `../formats/gamedb-patch.md`); the merged
-`db write` output is the proven route and needs no lineage stamp.
+1. Keep **named records sorted by `name_hash`** — the engine
+   binary-searches them.
+2. **Repoint every link cell** (`class_index << 20 | ord`) into the
+   new index space — links are positional, not names.
+3. Rebuild the string pool (suffix-deduplicated, offsets relative
+   to pool start, pointer 0 lands `0x1B` in) and patch the header
+   counts.
 
-**Strings** round-trip the same way: `anduril str emit out.tsv` →
-edit TSV → author `Mods/<mymod>/strings/*.strdelta` (`set 0x<hash>
-<text>`, `replace <old> -> <new>`, `del 0x<hash>`) →
-`anduril str merge out.strdb` → ship loose.
+None of that is guesswork — the full byte layout is in
+`../formats/gamedb.md`, verified field-for-field on 232,319 records.
+A minimal writer in Python is a few hundred lines; the known
+pitfalls are all documented there (sort order, link repointing, the
+`0x47` pool base, the self-path at `+0x2C`).
 
-## Textures
+Then ship it as `Mods\database\game\game.gamedb` (loose override —
+proven in-game) or inside an `.arch06`. The native `.gamedb_patch`
+layer works too but needs the same writer plus the lineage stamp —
+see `../formats/gamedb-patch.md`.
 
-```
-out:  anduril tex <path> png out.png    # mip0 -> PNG (BC1/BC3/R16/RGBA)
-      anduril tex <path> dump out.dds   # raw DDS payload
-edit: any image tool; re-encode DDS (BC1/BC3/BC5/BC6H;
-      normals = BC3 X-green/Y-alpha)
-back: wrap the DDS back into the TEXR container (spec:
-      ../formats/detail/tex.md); `.texa` = DX10 arrays
-```
+## Strings (`.strdb`)
 
-## Meshes & skeletons
+- Extract/decode with any reader built to `../formats/detail/strdb.md`
+  (hash → UTF-8 text, ~60-line parser).
+- Edits = add/replace/delete keyed by `name_hash` of the string key.
+- Rebuild the table and ship loose from `Mods\`.
+- A merged strdb has been rendered in-game (verified 2026-09-24).
 
-```
-out:  anduril mesh <path> obj out.obj [lod]   # Wavefront OBJ + .mtl
-      anduril mesh <path> meshes              # layout/verts/groups
-      anduril skel <path> bones
-edit: Blender/Max against a native template (same rig + grip)
-back: MMSH write — Monstey Mesh Publisher exports it; recompute the
-      mesh allocation counters (../formats/detail/mesh.md)
-view: anduril mesh <path> view  (interactive wgpu) | render out.png
-```
+## Textures (`.tex`)
 
-## Animations
+- The TEXR container is a small header around a standard **DDS**
+  payload — extract the payload with a hex editor or 30-line script
+  (offsets in `../formats/detail/tex.md`), edit in any DDS-capable
+  tool (Paint.net, GIMP+DDS, texconv), re-wrap into TEXR.
+- Formats: BC1/BC3/BC5/BC6H; normal maps are **BC3 X-green/Y-alpha**.
+- `.texa` = DX10 texture arrays; slice choice is a material property.
 
-```
-out:  anduril anix <path> clips -v            # codecs, tracks, events
-      anduril anix <path> sample <clip>       # engine-exact evaluation
-      anduril anix <path> skin <skel> <mesh> <clip> out.png  # visual check
-edit: pose data is decodable; authoring clips = emit a `U*`
-      uncompressed-codec track (simplest format) — toolchain immature
-back: ANIX writer does not exist yet (NO WRITE PATH beyond U*)
-```
+## Meshes & skeletons (`.mesh`, `.skel`)
 
-## Scripts (`.scri`/`.bndl` script bundles)
+- Out: the SoW Modding Community **MeshParser** /
+  ImHex patterns decode MMSH to editable geometry; spec in
+  `../formats/detail/mesh.md`.
+- Edit: Blender/Max **against a native template** — same rig, same
+  grip frame, same binding; custom skeletons are not yet writable.
+- Back: **Monstey Mesh Publisher** exports MMSH; the mesh allocation
+  counters must be recomputed (documented in the spec).
 
-```
-out:  anduril scri <path> protos   # hstructure prototypes -> TSV
-      anduril scri <path> chunks   # LuaQ chunk extents
-edit: source-level Lua (the VM runs 81.7% of retail bodies — see
-      ../runtime/scriptvm.md)
-back: HavokScript/LuaQ compiler — NO WRITE PATH; mod logic normally
-      lives in plugin Lua instead (packaging.md route 3)
-```
+## Animations (`.anix`)
 
-## Audio
+- Decode: all codecs are documented (`../formats/detail/anix.md` —
+  one rare codec is undecoded community-wide).
+- Write: emit a clip in one of the **`U*`** uncompressed codecs —
+  simplest possible track format. No turnkey exporter exists; this
+  is a build-your-own-writer format.
 
-```
-out:  .pck/.bnk are Wwise containers — `anduril bnk <path>`
-      summarizes; wem payloads extract with standard Wwise tooling
-back: Wwise-authored .bnk (version match matters) — PARTIAL
-```
+## Materials (`.mat`)
 
-## Placements / world
+- Simple typed-property file (`../formats/detail/mat.md`) — editable
+  directly. Use it to point meshes at your rebuilt `.tex` or tune
+  shader params. New *shaders* are out (`.fxo` is compiled DXBC —
+  no compile path).
 
-```
-out:  anduril embb <path> objects   # OBJL record names in a region bundle
-edit: .wldclnt records are 76 B typed structs — editable per
-      ../formats/detail/wldclnt.md
-back: same file, in place in your override archive/loose tree —
-      write path exists but world-edit workflows are young
-```
+## Audio (`.bnk`, `.pck`)
 
-## Saves (for inspection/migration only)
+- Wwise containers. Media payloads extract/replace with standard
+  Wwise tooling (wwiser, bnk_extr, etc.); rebuilds need a matching
+  Wwise version (PARTIAL — verify against the game's banks).
 
-```
-out:  anduril save <file.sav> chunks   # decrypt SOM3 -> chunk map
-edit: chunk-level edits; every size field must stay consistent
-back: re-encrypt round-trips byte-for-byte (../formats/detail/save.md)
-      — but mods should never write saves; see testing.md
-```
+## Placements & world (`.wldclnt`, `.objres`, `.bndl`)
 
-## No-write-path formats
+- `.wldclnt` records are 76-byte typed structs — directly editable
+  per `../formats/detail/wldclnt.md`.
+- `.bndl` manifests rebuild cleanly; "remove" = omit from a rebuilt
+  manifest, "replace" = loose file + size fix in every listing
+  (semantics in `index.md` §1).
 
-`.fx`/`fxo` shader banks (DXBC — no compile path), most of
-`.scri`, and `.hkai` navdata have readers but no writer. For these,
-the practical "edit" is a plugin hook at load or a neighboring
-data record that redirects the reference.
+## Saves (`.sav`)
 
-## The general recipe
+- SOM3-encrypted; decrypt/encrypt round-trips byte-for-byte
+  (key schedule + chunk layout in `../formats/detail/save.md`).
+- Useful for *inspection* and save surgery. A gameplay mod should
+  **never** write saves — see `testing.md`.
 
-For any format with no tooling:
+## No write path (yet)
 
-1. Read `../formats/detail/<fmt>.md` — layouts here are
-   byte-verified, labeled, and tolerant-read safe.
-2. Extract samples: `anduril extract <substr> outdir` or QuickBMS.
-3. Write the smallest possible change (one field, one record) with a
-   hex editor or a 50-line script.
-4. Diff-test: boot offline (testing.md), watch for silent ignores —
-   a malformed file usually loads *unpatched*, not crashed.
-5. Once one edit round-trips, automate: the format is simple enough
-   that a writer is a weekend script, not a research project — that's
-   the design intent of the whole corpus.
+`.fxo`/`.fx` shaders, `.scri` script bytecode, `.hkai` navdata:
+readers exist, writers don't. The practical "edit" is a plugin hook
+or a neighboring data record that redirects the reference.
+
+## The general recipe (any format)
+
+1. Read `../formats/detail/<fmt>.md` — layouts are byte-verified.
+2. Extract samples (QuickBMS `shadow_of_mordor.bms` for `.arch06`,
+   or any LTAR reader built from `detail/arch06.md`; Oodle via the
+   install's own `oo2core_5_win64.dll`).
+3. Make the smallest possible change — one field, one record — with
+   a hex editor or a short script.
+4. Boot offline (`testing.md`) and verify it took. A malformed file
+   usually loads *unpatched* rather than crashing — confirm the
+   change is actually live before iterating.
+5. Once one edit round-trips, automate — that's how every working
+   tool in `../sources.md` started.

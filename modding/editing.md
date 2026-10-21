@@ -27,8 +27,8 @@ are in `../formats/`; this page is the practical matrix.
 ## Rules of thumb
 
 - **Data before assets**: most rule changes are `game.gamedb`
-  edits, not file edits — check the record graph first
-  (`anduril db rec`, `db refs`, `db emit`).
+  edits, not file edits — check the record graph first with any
+  GADB reader (spec: `../formats/gamedb.md`).
 - **Clone a donor**: new content is made by cloning a working
   record/item of the same class, not by building from scratch —
   see the weapon pipeline in `index.md`.

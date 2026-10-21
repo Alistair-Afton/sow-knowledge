@@ -2,7 +2,7 @@
 
 > **Status:** **living**
 > **Provenance:** install layout and extraction verified on the
-> reference install; tool list from `sources.md`.
+> reference install; tool list from `../sources.md`.
 
 Where everything lives and how to get it out.
 
@@ -33,47 +33,46 @@ Key data paths *inside* the VFS:
 place or copy bytes out; the install stays pristine so a vanilla
 compare is always available.
 
-- **Andúril CLI** (`anduril`): mounts the install read-only through
-  its own LTAR/Oodle implementation.
-  - `anduril ls <filter>` — find VFS paths by substring
-  - `anduril read <vfs-path> > file` — extract one file through the
-    mount stack (gets the *winning* version)
-  - `anduril cata <archive> <path> > file` — extract from one
-    specific archive (pre-override copy)
-  - `anduril extract <filter> <dir>` — bulk-extract every VFS path
-    containing `<filter>`
-  - `anduril db emit <out.jsonl>` / `anduril db rec <name>` /
-    `anduril db refs <name>` — decoded `game.gamedb` dumps
-  - `anduril str emit <out.tsv>` — decoded string table
-- **QuickBMS** + `shadow_of_mordor.bms` v0.4 — community extractor
-  for `.arch06` (uses the install's own `oo2core_5_win64.dll`).
-- **WarpZephyr's MordorFormats** — reference parser code.
+Archives are **LTAR v4** with **Oodle**-compressed chunks — any
+extractor needs an Oodle decode; the install's own
+`x64\oo2core_5_win64.dll` provides it (use in place, don't
+redistribute).
+
+Working extraction routes:
+
+- **QuickBMS** + `shadow_of_mordor.bms` v0.4 — the community
+  extractor; unpacks `.arch06` to loose files.
 - **SoW Modding Community ImHex-Patterns / MeshParser** — binary
-  templates + mesh extraction.
-- **Hex/editor**: `ImHex` with the community patterns for inspecting
+  templates + mesh-level extraction.
+- **WarpZephyr's MordorFormats** — reference parser code.
+- **Roll your own** — the LTAR format is fully spec'd in
+  `../formats/detail/arch06.md`; a reader is ~150 lines plus an
+  Oodle binding.
+- **Andúril CLI** (the engine-reimpl project behind this corpus) —
+  `ls`/`cata`/`read`/`extract` traverse the mounted VFS read-only
+  and decode `game.gamedb`/`.strdb` to JSONL/TSV; the Andúril source
+  is a readable reference even if you don't run it.
+- **Hex inspection** — ImHex with the community patterns for reading
   structures by hand.
 
 ## What needs which tool
 
 | Want | Get it via |
 |---|---|
-| A texture/mesh/sound file | `anduril read`/`extract`, or QuickBMS |
-| Gameplay values (stats, loot, nemesis tables) | `anduril db rec` / `db emit` on `game.gamedb` |
-| Localized text | `anduril str emit` on `string.strdb` |
-| Per-region world data | `anduril lsa <region archive>` to inventory, then `cata`/`extract` |
-| A save file | copy from `userdata` / `%LOCALAPPDATA%` (see `formats/detail/save.md` for the encryption) |
-| The original (unpatched) version of a file | `anduril cata` against the *stock* archive, not the VFS |
+| A texture/mesh/sound file | QuickBMS or any LTAR reader → then the format's own tools (`editing.md`) |
+| Gameplay values (stats, loot, nemesis tables) | `game.gamedb` out of an archive, then any GADB reader (spec: `../formats/gamedb.md`) |
+| Localized text | `string.strdb` + `../formats/detail/strdb.md` (~60-line parser) |
+| Per-region world data | the region's archive — inventory with the LTAR reader, then pull per file |
+| A save file | copy from `userdata` / `%LOCALAPPDATA%`; encryption in `../formats/detail/save.md` |
+| The original (unpatched) version of a file | read it from the *stock* archive, not the topmost VFS layer |
 
 ## Notes
 
-- Oodle decompression uses the install's own
-  `x64\oo2core_5_win64.dll` — every working tool either loads that
-  DLL or bundles an equivalent. The DLL is proprietary; use it in
-  place, don't redistribute it.
-- VFS layering matters: the same path exists in several archives
-  and in `Mods\` — the bottom entry in `default.archcfg` wins.
-  Always check which copy you extracted (`anduril mounts` shows the
-  order).
+- VFS layering matters: the same path exists in several archives and
+  in `Mods\` — the bottom entry in `default.archcfg` wins. Always
+  check which copy you extracted.
+- Oodle is proprietary: call the install's DLL at runtime, never
+  ship it.
 
 Next step: [`authoring.md`](authoring.md) — turning what you
 extracted into something editable and back into what the game loads.
