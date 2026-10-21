@@ -74,3 +74,6 @@ compare is always available.
   and in `Mods\` — the bottom entry in `default.archcfg` wins.
   Always check which copy you extracted (`anduril mounts` shows the
   order).
+
+Next step: [`authoring.md`](authoring.md) — turning what you
+extracted into something editable and back into what the game loads.

@@ -9,6 +9,7 @@ index covers the *mechanisms*; the workflow docs are:
 | Doc | Contents |
 |---|---|
 | [`acquiring.md`](acquiring.md) | Getting files out of the install — layout, archives, extraction tooling |
+| [`authoring.md`](authoring.md) | Creating/editing files — binary → editable form → back, per format (incl. a sane gamedb/gamedb_patch pipeline) |
 | [`editing.md`](editing.md)   | Per-format edit matrix — what is writable today, with what, and the traps |
 | [`packaging.md`](packaging.md) | Shipping a mod — loose folders, `.arch06`, load order, plugins |
 | [`testing.md`](testing.md)   | Verifying a mod — offline services, launch checks, save safety |

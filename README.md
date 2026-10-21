@@ -77,6 +77,7 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `gameplay/nemesis.md` | Nemesis gamedb categories, captain generation, save data |
 | `modding/index.md` | Modding surface — every mechanism that changes the game (loose files, archives, plugins, gamedb overlays) |
 | `modding/acquiring.md` | Getting files out of the install — layout, extraction tooling |
+| `modding/authoring.md` | Binary → editable → back round-trips per format; the sane gamedb pipeline |
 | `modding/editing.md` | Per-format edit matrix — what's writable, with what, traps |
 | `modding/packaging.md` | Shipping a mod — loose folders, `.arch06`, load order, plugins |
 | `modding/testing.md` | Verifying a mod — offline services, launch checks, save safety |
