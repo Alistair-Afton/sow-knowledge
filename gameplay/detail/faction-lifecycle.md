@@ -108,6 +108,15 @@ The package (UB holders vs others): `Quirk_Undead` 93/0,
 `MarkerList_Resurrected_PlayerRaiseDead` → the marker; region share
 tracks conquest order (19% MtnPass vs 2% snowMtn).
 
+**Undead is a raise, not a cheat — VERIFIED (roster split):**
+cheat-death and escape returners are 0% undead (`Marker_MoreLucky_
+to_CheatDeath` 0/37, `Marker_EscapedPlayer_*` 0/~34); undead
+members are exactly the raised set — `RaiseDead` holders 98%
+undead. Retail sources of the undead package are therefore the
+player's Raise Dead ability and necromancer-captain resurrection
+(`DLC5_Necromancer_SelfRes*`, `Picker_Undead`); a natural
+cheat-death returns scarred (`Marker_Deranged` etc.) but living.
+
 ## Shame reward pools (VERIFIED — GameDB `Faction/Rewards/Lists`)
 
 A shame transition draws this suite (def gates pick normal-vs-super
