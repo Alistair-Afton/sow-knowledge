@@ -39,6 +39,9 @@ individual semantics may still be PARTIAL inside a "verified" format.
 
 Loader addresses for the exe-verified formats are in [`../engine/engine.md`](../engine/engine.md).
 
+See [`contents.md`](contents.md) for the inventory side: how many
+of each type ships and what is actually inside it.
+
 ## Detailed specs
 
 Full field-level specs per format, in [`detail/`](detail/)
