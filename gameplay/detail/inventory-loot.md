@@ -106,6 +106,110 @@ and `NG_1Sword_E_AllHealthMightLC_4E`, whose fields are
 - Already generated drops keep their recorded choices — editing a
   table doesn't reroll them.
 
+## Retail drop algorithm — VERIFIED-STATIC (Ghidra)
+
+Decoded from the retail exe; the engine's own `[LOOT]:` debug strings
+name each step, which anchors the reading. Field names CONFIRMED by
+attr hash on the installed DB.
+
+**Which tables are considered.** `Faction/Loot/Setup` (`Default`)
+holds `Groups[]` → `FactionLootSetupEntry` rows, each an **ordered
+list of loot tables** plus a predicate ref; e.g. one group is
+`Equip_AllEquipment_Drops, Equip_EpicEquipment_Drops,
+Equip_LegendaryEquipment_Drops, …_RevengeMission, …_DeathThreat,
+…_DeathThreat_Ambush, Equip_Zog_CarnanSide6`, a sibling group the
+`_NoRing` variants, others DLC3/DLC4/treasure-orc/Mirian tables. The
+active setup is fetched by `FUN_140f84870` (a `LootSetup` field on a
+`Global`-named record, with three override setups chosen by member
+`+0x508` bits 48–50 — `FUN_140f87840`). Members spawn with their
+setup preloaded (`FUN_140356370`). That `Default` is the setup
+normally active is INFERRED.
+
+**Drop entry** `FUN_1404f2748` (per dying member):
+
+1. Member `+0x508` bit 40 → `"FactionMember %s has Loot disabled"`;
+   nothing drops.
+2. Member `+0x260` set → `"has Stolen Loot"`: the stolen item drops
+   instead, at its level **+5**, clamped `[1, 90]`.
+3. **Rare roll** (`FUN_1404f3378`, record
+   `Faction/Loot/LootRareChanceSetup:Player`): draw
+   `r ∈ [0, RandomRollMaxValue]`; sum four terms, each
+   `clamp(Flat + n × EnemyLevelScalar, 0, Max)` and present only if
+   the member qualifies — Captain-or-Warchief (`Warchief*` fields when
+   a warchief, else `Captain*`), DeathThreat, Revenge, Vendetta —
+   where `n = member+0x470 + 1 + member+0x4b8`. Roll passes when
+   `r ≤ sum`. Retail values: Warchief 0.4 / DeathThreat 0.4 / Revenge
+   0.1 / Vendetta 0.1 / Captain 0 flat, all level scalars 0, max 1.
+4. Collect the tables passing the filter below, in list order; for
+   each: `"Selected: LootTable: %s"`, compute item level and rarity,
+   try to award — **the first table that awards anything wins**.
+
+**Table filter** `FUN_1404f2c04` — rejection order (each logs
+`"Rejecting Loot Table: %s - <reason>"`):
+
+| # | Reason | Rule |
+|---|---|---|
+| 1 | `NamedOnly` | flag set and the victim isn't a named member |
+| 2 | `RandomRollPredicate` | flag set and the rare roll failed |
+| 3 | `GameMode` | table lists game modes and the current one isn't among them |
+| 4–5 | `CharacterTypeList-Included/-Excluded` | victim character type |
+| 6–7 | `KillerCharacterTypeList-Included/-Excluded` | killer's character type |
+| 8 | `KillerMustBePlayerAlly` | int tri-state: 0 any, 1 must be ally, 2 must not |
+| 9 | `MustHaveDeathThreat` | bool predicate must equal the victim's death-threat state |
+| 10–11 | `Included/ExcludedAttackerCategory` | killing blow's `Combat/Category` (stealth, melee, counter, …) |
+| 12–14 | `IncludedItemPlayer`, `IncludedItem`, `ExcludedItem` | `Combat/Predicates/Item` against player / victim inventories |
+| 15–16 | `Min/MaxFactionMemberKills` | victim's kill count (0 = no bound) |
+
+**Item level** `FUN_14075ad7c` (`Faction/Loot/ILvl`): with
+`OverrideMinLevel/OverrideMaxLevel` set, a uniform level in that range;
+otherwise `player_power + level-diff bonus (LevelDiffBonus table,
+enemy vs player) + PlayerItemBonus + MeanOffset`, perturbed by a
+`StdDev` draw, clamped to `[mean − MaxNegativeDifference,
+mean + MaxPositiveDifference]`, rounded, min 1 (`"CalcILvl Start"`).
+
+**Rarity** `FUN_14075a6f8` (`Faction/Loot/RaritySetup`; log
+`"CalcLootRarity Start - %s - RowRank = %s, Vow = %s, RevengeKill =
+%s"`): score = `WeightTableOffset + (LevelDiffBonus(enemy, player) +
+RankBonus[row rank] + weight-table term + (vow ? bonus : 0) +
+(revenge kill ? bonus : 0)) × WeightTableOffsetScalar`, floored at
+`MinRarityScore`, rounded. "Vow" is member `+0x508` bit 12 — the same
+bit the `MustHaveDeathThreat` filter tests, so a death-threat victim;
+"RevengeKill" is bit 24. The two bonuses are the setup's
+`DeathThreatBonus` / `RevengeBonus` (binding INFERRED from names;
+`Rarity_EpicOrc`: `DeathThreatBonus 2.0`, `RevengeBonus 0`,
+`WeightTableOffsetScalar 4.0`). The item-level terms above are bound
+to fields the same way (structure VERIFIED-STATIC, field roles
+INFERRED). Each `Entries[]` rarity
+(`Faction/Loot/Rarity`) then gets the value
+`WeightTable[score] × PlayerLevelWeightTable[player-item level]`
+(both `Combat/Stat/Constant/FloatArray` curves, e.g. `Loot_Epic`,
+`Loot_LevelComparison_Epic`), and one rarity is picked by **weighted
+reservoir sampling** over those values (values ≤ 0 never win) (`"CalcLootRarity Rarity Type
+= %s, Value = %0.3f"` / `"Final"`).
+
+**Award** `FUN_140648214` — walks the table's `Items[]`
+(`FactionLootEntry`), keeping entries whose rarity list is empty or
+contains the chosen rarity:
+
+- Gear lists of the entry are drawn by **weighted reservoir sampling**
+  on their loot type's *current tracked* weight (untracked/null type =
+  1.0); the drawn list builds gear (tag-ranked pick inside the list);
+  a list that builds nothing is removed and the draw repeats.
+- On success the type tracker updates (`FUN_140648db8`): the drawn
+  type resets to its return value, every other tracked type becomes
+  `(w + OnDropOtherAdjustment) × OnDropOtherAdjustmentScalar`, all
+  clamped to `[0.1, 10000]`.
+- Entries can instead carry a plain item or one of 12 resource types,
+  each competing at weight 1.0; nemesis gear found wins
+  (`"Awarding NemesisGear %s"` / `"Awarding Item %s"` / `"Awarding
+  Resource %s"`).
+
+**Weighted reservoir sampling** (`FUN_1401b3b90`, used throughout):
+keep a running total `T`; a candidate of weight `w > 0` replaces the
+current pick when `u·(T + w) < w`, `u ∈ [0,1)`; then `T += w`.
+Weights ≤ 0 never win. RNG step: `x = x·0x0BB38435 + 0x3619636B`,
+high 32 bits / 2³².
+
 **Pitfalls:** an inherited `UpgradeTiers[].ArtOverride` can restore
 the donor's art on acquisition or upgrade; `DescriptionOverride` and
 preorder flags carry over from donors; entries and lists are shared
