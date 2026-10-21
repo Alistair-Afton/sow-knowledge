@@ -14,6 +14,22 @@ stock ones by path. This is how every shipped asset mod works
 writer producing the game's chunked layout (tools exist
 community-side; Andúril has a reader, not yet a writer).
 
+**Loose folders work too.** `default.archcfg` lists plain folders as
+well as archives (it already has `..\Game`), searched bottom-up — a
+folder line appended last (`..\MyMod`) wins over every `.arch06`
+with **no archive packing at all** (verified in-game by the
+Universal Modder notes; a rebuilt loose `game.gamedb` boots — the
+format has no checksum). A Steam verify/repair rewrites
+`default.archcfg` and silently drops appended lines — re-add them
+afterwards.
+
+**Newest `.bndl` wins.** When several archives hold the same bundle
+path, the last in archcfg decides what loads — so "removing" a file
+is omitting it from a rewritten `.bndl`, and "replacing" is a loose
+file at the stock path plus its new size written into every `.bndl`
+that lists it (this reproduces Packet Loader's remove/replace
+semantics in pure data — verified in-game, no DLL).
+
 **Overridable by this route:** any VFS file — `.tex`, `.mesh`,
 `.inst`, `.mat`, `.anix`, `.gamedb`, `.bvr`, `.gfx`, `.terrain`, …
 
@@ -34,11 +50,22 @@ mapped there and in the Ghidra project).
 
 `game.gamedb` is the behavior database: stats, formulas, skills,
 items, meters, input bindings, fight circle, HUD links, weather,
-nemesis tables. Editing it changes game rules without code. Needs a
-GADB writer preserving layouts/links/string heap (OPEN tooling;
-readers exist in both projects).
+nemesis tables. Editing it changes game rules without code — and it
+is *proven* writable: the Universal Modder notes rebuilt it to add a
+working tenth tribe (records, roles, strdb keys; see gamedb.md for
+the sort-by-hash and link-repoint rules that make rebuilds stick).
+Readers exist in both projects; Andúril's writer is still OPEN.
 
-## 4. Asset pipeline notes for would-be creators
+## 4. Online services / offline testing
+
+The game's WB/Hydra traffic rides WinHTTP — a search-order
+`winhttp.dll` proxy can answer it locally (offline sign-in, local
+Garrison, local wallet) with no code patching. This is the
+recommended harness for testing any data mod offline: a modded
+database must never be exercised while signed in to WB. Protocol
+details in `engine/detail/hydra-online-services.md`.
+
+## 5. Asset pipeline notes for would-be creators
 
 - **Textures:** DDS payloads inside TEXR; BC1/BC3/BC5/BC6H used;
   normal maps are BC3 **X-green/Y-alpha** (see materials.md).

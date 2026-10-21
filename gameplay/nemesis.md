@@ -26,16 +26,75 @@ isn't reproducible from data alone.
   `Required/ExcludedAppearanceTag`) → `SimpleModelPiece` → `Model`
   (see geometry.md for LOD/mesh-index semantics).
 
+## Appearance pipeline detail — VERIFIED (Universal Modder, in-game)
+
+Field-note findings from working new-tribe mods (Goblins, Falmer),
+each point confirmed in the real game:
+
+- **`ArmorData` equipment slots** (attr `0x2FA68885`): 0 helmet/hair,
+  1 shoulders, 2 chest, 3 arms, 4 pants, 5 legs, **10 body
+  replacement**, **11 head replacement**. Stock `IT_empty_*` items
+  blank slots 0–5.
+- **Body type is chosen per class, not per tribe**: `BodyType` 2 =
+  slim, 4 = stocky, 3 = buff; a body-replacement item must carry a
+  `ModelPicker` for *all three* or the member renders invisible.
+- **Corpses and the Garrison require stock body-item records.**
+  `Faction/Global` keeps a `ModelFixUp` list (slot → pieces → item).
+  A *cloned* body item chain makes the body piece vanish on death and
+  gets the captain refused by the Garrison; putting new pickers on the
+  **stock** `AD_Infested_Body`/`Infested_Body` item + its FixUp entry
+  keeps corpses persistent and garrisoning working.
+- **Item replace priority** (attrs `0x8A4035A9`, `0xB2EDA81E`):
+  ordinary armour uses 2 — the captain gear roll swaps it out;
+  `*_DoNotRemove` items use 10, `Infested_Body` 50, `*_Reference`
+  100. Role items intended to survive the roll need ≥10.
+- **Titles are roles.** A captain's epithet ("the Poet") is the
+  role's string key (attr `0x1D4D2940`, text in strdb); the game
+  avoids duplicate epithets among living captains — a tribe whose
+  roles share too few epithets starves its own generation.
+- Grunt/creature body pieces ship with **no bundle** (resident);
+  a body piece's own `ArmorDataDynamicBundle` loads only through the
+  armour system — ambient-grunt bodies must ride the head's bundle
+  in the `DynamicResource.DynamicHeads:NPCHead` loader group (type
+  `Cha_Head_G`), shared one-per-look.
+- Appending entries to a `GangType_*` template list does **not**
+  spawn new ambient looks; appending body entries to a grunt class
+  `SimpleModel` body list does (repeating the stock entries sets the
+  share). `AI/SpawnAmbient/AITypes` → `AI/Templates` →
+  `Character/Models` is the placement chain.
+- Prisoner gang types force orc look items (`orc_sauron_brand`,
+  `Slave_BodyPaint`, `Slave_HeadPaint`, `IT_Orc_Body_LOD`,
+  `IT_Orc_Body_Slave_LOD`) — strip them for non-orc prisoner looks.
+
 ## Captain generation — PARTIAL, do not overtrust
 
-A field note reports the game takes a role's **first valid `Tribes`
-entry**, with `RequiredDLC` checked in code. sow-rs's preview follows
-struct links when resolvable, else picks role and tribe independently
-with a warning. **Not reproduced:** DLC eligibility, name-generation
-tables, builder weights, and the executable's picker logic. Generated
-names/titles, class interpretation, trait combos and choice weights
-are guesses — there is no data-only save-accurate captain generator
-yet (OPEN).
+The game takes a role's **first valid `Tribes` entry** (`RequiredDLC`
+checked in code) — **VERIFIED in-game** by two independent tribe
+mods: appending a second tribe to an existing role is never chosen;
+tribe assignment needs tribe-specific role clones in the role lists.
+sow-rs's preview follows struct links when resolvable, else picks
+role and tribe independently with a warning. **Not reproduced:**
+name-generation tables, builder weights, and the executable's picker
+logic. Generated names, class interpretation, trait combos and choice
+weights are guesses — there is no data-only save-accurate captain
+generator yet (OPEN).
+
+Other verified generation-adjacent rules:
+
+- Never set `Tribe` on a builder record — it marks members as
+  presets (`UI_TargetDialog_PresetBlocked`) and they can't be
+  interacted with. Tribe belongs on roles.
+- Tribe-specific streaming (gear bundles, UI cards, banners) is
+  gated by `Faction/Bundle/Predicate:Pred_TribeRegal*` /
+  `Interface/Predicates/FactionMember:IsRegalTribe`-style predicates
+  against the `Regal` TribeList — a new tribe must join `Regal` or
+  its gear never streams and its cards render blank.
+- `Faction/Resurrection/Chance` lists are ordered rules: a
+  `{marker, chance}` entry placed first with chance 0 suppresses
+  comebacks entirely (verified: `Marker_Falmer` = never returns).
+- Market war chests pick a tribe via
+  `Marketplace/Builders/FactionMember/Tribe` and validate through
+  `Store_*` builders' `IncludedTribes`.
 
 ## Orc gear visuals — CONFIRMED (renders)
 

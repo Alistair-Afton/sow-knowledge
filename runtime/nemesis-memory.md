@@ -948,6 +948,15 @@ sub-4GB; live roster elements sit at `0x12A…`/`0x10A…`):
   "faction-definition table" reading missed the inner-vec indirection.
 - `member+0x4f0` — a keyed sub-container object (`0x14034fb7c` lookup,
   result `[+0x18]` consumed).
+- `member+0x3D0` — **the member's Nemesis/NPC id string**
+  (Universal Modder offline-mode note, VERIFIED-INGAME by them):
+  `"<prefix>_NPC_<n>"` written only while the field is empty. `prefix`
+  is a 32-hex session GUID at `analytics-manager+0xA81` (manager =
+  `*(*(exe+0x26FFAA8)+0x6D18)`), set only while online; `n` is a
+  global counter restarting at 0 each launch. Carried by `NPCProfile`
+  telemetry events; duplicated ids offline break the
+  `ReassignmentOrders_GUID` garrison contract (`HasNPCGUID == False`).
+  See `engine/detail/hydra-online-services.md`.
 
 **Member serializer fields** (VERIFIED-STATIC 2026-09-29 —
 `Faction.Dump` → `0x141b5ea0c` iterates `mgr+0x98`/`+0xa0` at `0x290`

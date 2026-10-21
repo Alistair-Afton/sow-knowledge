@@ -39,8 +39,19 @@ those sourced from his notes say so.
 
 ## Community documentation and tooling used as references
 
-- **Universal Modder knowledge base** — field notes incl.
-  "Goblins of War" and "Offline mode and local Garrison".
+- **Universal Modder knowledge base** (MIT,
+  `github.com/rehan-remade/universal-modder`) — five Shadow of War
+  field notes plus a published `winhttp.dll` stand-in source:
+  "Goblins of War" (gamedb writer-level layout, sort-by-hash rule,
+  role→tribe), "Offline mode and local Garrison" (Hydra transport,
+  `x-ag-binary` wire format, Garrison protocol, `member+0x3D0` NPC
+  ids), "Falmer tribe" (appearance pipeline: ArmorData slots, body
+  types, ModelFixUp/corpse rule, grunt bundles, MMSH part records,
+  Wwise PCM replacement), "Packet Loader mods without Packet Loader"
+  (newest-`.bndl`-wins semantics), and "Save files: SOM3 decryption".
+  Where their claims overlap ours we verified independently; the one
+  disagreement (`.tex0` "top three mips" vs our strip-top-mips
+  reading) is noted inline in `formats/detail/tex.md`.
 - **SoW Modding Community** — `ImHex-Patterns` and `MeshParser`
   (binary format references).
 - **LordMonstey** — MIT-licensed Monstey Mesh Publisher and

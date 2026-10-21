@@ -59,3 +59,21 @@ playable via standard Wwise `.wem` tools/decoders.
   sound wiring, switch/state values, RTPCs).
 - `BKHD` tail fields beyond `version`/`bankId`.
 - `STID` leading `u32` (always 1 in corpus).
+
+## PCM media replacement — VERIFIED in-game (Universal Modder)
+
+The runtime plays **PCM** WEMs with no Wwise authoring tool — this is
+how the "Falmer tribe" note swapped captain voices:
+
+- Voice banks are v118 banks with **embedded** 48 kHz mono Vorbis WEMs
+  (plugin `0x00040001`). A HIRC type-2 (Sfx) object holds
+  `{pluginID, streamType, sourceID, inMemoryMediaSize, bits}`.
+- Per media: write a RIFF/WAVE with a 24-byte `fmt ` chunk
+  (`0xFFFE` extensible, 16-bit, channel config `0x00004101` =
+  mono/front-centre) + `data`, re-lay out `DIDX`/`DATA`, set the
+  Sound's plugin to `0x00010001` and its in-memory size. Update the
+  size in the `.bndl` listing the bank.
+- PCM banks run ~10–25× larger — mind bundle-type budgets (`Sound_5`
+  = 5 MB, `Presentation` = 10 MB).
+- Per-language presentation archives hold one bank per `.embb`
+  (type `Presentation`, Oodle-compressed — extract via QuickBMS).

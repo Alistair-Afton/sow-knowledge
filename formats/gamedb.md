@@ -70,6 +70,48 @@ its first bytes are the u16-length-prefixed self path
 (9,353,656)`, `+0x1c → field descriptors (395,395)` — allocation
 ≈100 MB runtime, consistent with the documented section sizes.
 
+## Writer-level layout (Universal Modder, verified in-game)
+
+Field-note detail from the "Goblins of War" / "Falmer tribe" projects
+(Universal Modder kb, MIT), whose C# writer round-trips `game.gamedb`
+byte-for-byte and whose rebuilt DBs load and persist in-game. Where it
+overlaps our own parse the two agree.
+
+- Heap base is file offset `0x47`; every text/blob reference is a u32
+  offset from `0x47` (4-aligned). Offset `0x4C` is the empty string.
+- **Layout table**: `layoutCount` × **15-byte** entries, one per
+  attribute of a record shape:
+  `u32 nameHash, u32 hashOfSortedSlot, u8 attrIndex, u8 sortedIndex,
+  u8 kind, u16 valueCount, u16 firstValue`.
+  Kind codes observed: `01` any 32-bit (float/bool), `02` float,
+  `03` int, `04`/`07`/`44` string/path, `0A` link, `0B` struct link —
+  matching the `k=` tags our own record dumps show.
+  **Identical value runs are shared between attributes** — rewrite a
+  record by re-laying it out (append a new layout), never by poking
+  one slot in place.
+- After the layout table: `u32 0, u32 categoryCount`, then categories
+  to EOF. Category header: `{path str, type str, file str,
+  unnamedCount, namedCount, hash}` (folder categories look like
+  `Path/Name, Dotted.Type, \Path\gdb.category06, 0, N`; struct
+  categories `_StructuresX, X, "", instances, 1`).
+- Unnamed struct instances first (`{hdr, type, values}`), then named
+  records (`{nameOff, hdr, type, values}`).
+  `hdr = u16 valueCount | u8 attrCount << 16 | u8 layoutLo << 24`;
+  layout index = `(type & 0xFFFFFF) << 8 | layoutLo`.
+- **Named records in every category are sorted by `name_hash(name)`**
+  and the game **binary-searches** them when resolving references.
+  A record appended unsorted is silently invisible to lookups —
+  the "new records come back as another record or vanish after
+  reload" symptom. Rewriting must re-sort touched categories and
+  re-point every `catIdx<<20|recIdx` link file-wide.
+- Header named/unnamed totals are **off by 2** from a record walk;
+  preserve the original delta when rewriting.
+- The same `name_hash` (`h = h*0x397 + FOLD[c]`) keys both attribute
+  names and `string.strdb` entries — new localisation keys are added
+  by inserting `{hash, char_index}` pairs sorted by hash (verified:
+  `TribeDef_Goblin` → `0xE2D0F0F6`, `TribeDef_Machine` →
+  `0xEBB642C8`; our `name_hash` reproduces both exactly).
+
 ## Attribute names — PARTIAL, structural limitation
 
 Attribute *names are not serialized* — each attribute slot is a hash.
@@ -142,5 +184,9 @@ A mod that edits `game.gamedb` can retune any formula, stat, meter,
 input binding, HUD widget linkage, or perception record without
 touching the executable — provided the tool preserves link indices,
 layout records, and the string heap. This is the single most
-powerful modding surface in the game. Nobody has yet shipped a
-robust GADB writer (OPEN).
+powerful modding surface in the game. A working GADB writer exists —
+the Universal Modder project's C# reader-writer round-trips
+byte-for-byte and its rebuilt databases ship working mods in-game
+(new tribes, records, roles) — proving the format is fully writable
+given the sort-by-hash and link-repointing rules above. Andúril's
+own writer is still OPEN tooling.
