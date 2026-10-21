@@ -355,6 +355,24 @@ most of the "SimEvent producer" OPEN below.
   `Faction.Purpose`, `PurposeEvent`, `PurposeList` exist only as
   schema stubs — purpose records are runtime-created, not
   authored data.
+- **The authored outcome bundles are `Faction/Events/Events`
+  records** (VERIFIED-DATA, 2039 records): SimEvent cell 12 links
+  each SimEvent to its lifecycle `*_Simulate`/`*_Clear`/`*_End`
+  Event records (~1,231 refs across 431 SimEvents), and each Event
+  record carries ~33 attr-named outcome fields — `LevelsToAdd`,
+  `LevelsToAddFollower`, reward-list grants → `Faction/Rewards/Lists`
+  (558 records grant; e.g. `2C_Base_Sub_Died` → `PS_RewardUI_Killed`
+  + 1 level to the killer, `DLC4_OverlordArmSever_GrantClawArm` → a
+  list whose `ItemsToGive` carries the claw arm + body-scar items),
+  XP awards → `Faction/PlayerBasedXPLevel/EventAwards` (split
+  enemy-vs-follower attrs), `ScarType`, `Toast` refs (rare on
+  Event records — 1 corpus-wide), `HijackSettings`,
+  `RelationshipTypes` (`Nemesis`/`BloodBrother`), `PurposeEvent`
+  chains, and bool flags (`Resurrect`, `ToggleIsPlayerFollower`,
+  `SetIsPrisoner`, `ForceLevelUp`, …). **Layout caveat:** retail
+  ships two Event layout variants — attr names are reliable on
+  int cells but misleading on ref cells; refs classify by resolved
+  list only.
 
 `FUN_140353ec4` is a level-change notifier on a wrapper object
 (byte level at `+0x51a`): on level increase it updates the level
