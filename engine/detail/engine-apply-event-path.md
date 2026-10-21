@@ -344,12 +344,17 @@ most of the "SimEvent producer" OPEN below.
   `PTR_DAT_14266a230` = the `Faction.EventToast` class descriptor.
   `Faction/Events/Toast` decls — Promoted, Escaped, Revenge,
   Killed, Dominated, Succeeded, Failed + `*NonSim` variants — are
-  the SimEvent OUTCOME ops: teardown (`FUN_14061db24`) resolves
-  the SimEvent's toast field and enqueues `{member_key,
-  toast_record}`; the interpreter applies the outcome's
-  participant/relation/effect fields. `Faction.Purpose`,
-  `PurposeEvent`, `PurposeList` exist only as schema stubs —
-  purpose records are runtime-created, not authored data.
+  the SimEvent OUTCOME ops: teardown (`FUN_14061db24`) reads a
+  field off the purpose's `+0x48` creating-record (named-field
+  read `FUN_14115ae24`) to resolve the follow-up record and
+  enqueues `{member_key, record}`; the interpreter applies the
+  outcome's participant/relation/effect fields. NOTE: SimEvent
+  decls carry **no** `Faction/Events/Toast` cell refs (db
+  tally-verified) — `purpose+0x48` is a runtime op record, not a
+  SimEvent decl; the toast link is a runtime field.
+  `Faction.Purpose`, `PurposeEvent`, `PurposeList` exist only as
+  schema stubs — purpose records are runtime-created, not
+  authored data.
 
 `FUN_140353ec4` is a level-change notifier on a wrapper object
 (byte level at `+0x51a`): on level increase it updates the level
