@@ -107,6 +107,36 @@ invasion system. `Faction/Ambush/*` and `Combat/XP/EventQuest`
 (`Bruz_Side01..04`) show side quests reusing ambush and XP systems
 with quest keys.
 
+## The Savior system — story characters in a death-rescue verb
+
+The PreDeath/Last-Chance "savior" moment is one generic system
+with per-source channels, mixing ambient and story-cast rescuers
+(VERIFIED records):
+
+- Dice roll: `Calculate_Forthog_Chance` / `Oper_Forthog_SaveChance`
+  formulas over `SaviorChance`, `SaviorForthogChance`,
+  `SaviorNonDLCForthogChance`, `SaviorDLC4Chance`,
+  `SaviorDLC4SerkaChance` value options and the
+  `Float_Difficulty_PlyrSaviorChanceBase_PCT`,
+  `Float_SaviorNonDLCForthogChance_PCT`,
+  `Float_SaviorDLC4SerkaChance_PCT` difficulty vars.
+- Rescuers by channel: player followers/bodyguards
+  (`PreDeath_Savior_Existing_Follower_*`, `Bodyguard_*`),
+  **Forthog** (`Savior_ForthogOrcSlayer`, gated by `DLC_Forthog`
+  + `ForthogCooldown` timer items), **Serka** (DLC4, own cooldown),
+  **Bruz** (`PreDeath_Savior_Existing_Bruz_*`), **Eltariel**
+  (Blade2), **Idril/Baranor** (`dx_pr_sh_NPCSavior_*`), Merc
+  (DLC4) and Enchanted (DLC3) variants — each with dedicated
+  spawn/attack/despawn presentation events
+  (`PreDeath_Savior_Spawning_Forthog_EVT`, `…_SerkaDLC4_EVT`,
+  `…_EnchantedDLC3_EVT`, …) and `Quest/Jobs` SFM jobs per channel.
+- Controls: `Gameplay_Saviors` menu checkbox,
+  `DisallowSavior{,_NPC}`/`DisallowForthog` tags,
+  `PreDeath_Savior_Exclude_IG`/`Prevent_IG` item groups,
+  `AI_DoNotSaviorInstakill` buff list, and
+  `Savior_PreventTargetCheatDeath_IG`/`Savior_PreventTribe_IG`
+  predicates limiting which killers/targets a savior may hit.
+
 ## Open ends
 
 - Which quest records *call* the Zog/Bruz/guuntlet events is

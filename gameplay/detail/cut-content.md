@@ -55,14 +55,29 @@ not just the name.
   `InvasionMtnPass`, including a `volcano_row_overlord_Demo` seat —
   leftovers of a demo/invasion board variant shipped with the
   retail data.
-- **Forthog Orc-Slayer assets (VERIFIED present).**
-  `orc_head_forthog.bndl`, `orc_head_forthog.embb`, and the
-  `dx_pr_sh_savior_*` / `dx_pr_sh_ambsavior_*` presentation bundles
-  ship in retail. The `Savior_ForthogOrcSlayer` role list exists in
-  GameDB but never feeds the board pool (VERIFIED — no
-  FactionMemberBuilder draws it). Historical context: the Forthog
-  character was a memorial DLC pulled from sale and later made
-  free; the data remains in the base install.
+- **Forthog Orc-Slayer — USED, not cut (VERIFIED).** Forthog is
+  the Savior: during the PreDeath/Last-Chance sequence a dice roll
+  (`Calculate_Forthog_Chance` formula over
+  `SaviorForthogChance`/`SaviorNonDLCForthogChance` value options,
+  `Float_SaviorNonDLCForthogChance_PCT` difficulty var,
+  `DLC_Forthog` game-data var, `Predeath_Savior_ForthogCooldown`
+  timer items) can spawn `Savior_ForthogOrcSlayer` to rescue the
+  player from an orc/olog. Full support chain ships: model
+  (`Orc_Forthog` + `Forthog_Head`), AI tree (`AI_Forthog`),
+  personality table, `Forthog_Despawn` combat state, dedicated
+  sever actions, `dx_pr_sh_savior_*` dialog, `Denizens_Forthog`
+  appendix entry, and `DisallowForthog` tags. The Savior system is
+  generic — Forthog is one channel next to Serka (DLC4),
+  Eltariel/Idril/Baranor NPC saviors, follower/bodyguard saviors,
+  and GP story saviors (see `story-locked.md` for the mechanic;
+  `Gameplay_Saviors` menu checkbox controls it). Historical
+  context: the Forthog DLC was pulled from sale and made free —
+  the `SaviorNonDLCForthogChance` var is the non-DLC fallback
+  chance left in data.
+  - Leftovers inside the feature (INFERRED dev residue):
+    `PreDeath_Savior_SyncRefocus_Forthog_ELMbackup`, `DEMO_Savior_*`
+    presentation predicates, `PreDeath_Savior_Debug_AlwaysSave*`
+    item groups, and `RangedSaviorTestbed` find-perch predicate.
 
 ### Dev / demo assets (VERIFIED present, unused at runtime)
 
