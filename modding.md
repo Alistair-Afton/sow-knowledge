@@ -65,11 +65,14 @@ nemesis tables. Editing it changes game rules without code — and it
 is *proven* writable: the Universal Modder notes rebuilt it to add a
 working tenth tribe (records, roles, strdb keys; see gamedb.md for
 the sort-by-hash and link-repoint rules that make rebuilds stick).
-Readers exist in both projects; Andúril's writer is still OPEN.
+Readers exist in both projects; a merged-file writer exists and a
+rebuilt `game.gamedb` has booted in-game via the loose route.
 The engine also natively loads a `database\game\game.gamedb_patch`
-sibling (one layer, matched against the base header's `+0x20` stamp; enable
-flag on in retail) — format beyond the GADB header is OPEN, but it is
-the only overlay route the game itself supports.
+sibling (one layer deep, matched against the base header's `+0x20`
+identity stamp, records appended to same-named tables; enable flag
+on in retail) — the merge semantics are decoded end to end; the
+practical how-to (requirements, file naming, tooling, caveats) is in
+[`formats/gamedb-patch.md`](formats/gamedb-patch.md).
 
 ## 4. Online services / offline testing
 

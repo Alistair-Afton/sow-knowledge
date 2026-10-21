@@ -34,7 +34,7 @@ delivery model splits by granularity:
   record-level merging — either in memory at load (hooking the
   GADB/SKDB loaders, as THaych's Player Skins Overhaul does), through
   native mutation paths after load, or via the native
-  `.gamedb_patch` sibling (see `formats/gamedb.md`). A rebuilt
+  `.gamedb_patch` sibling (see `formats/gamedb-patch.md`). A rebuilt
   `string.strdb` served from a loose `Mods/` folder renders in game
   (verified 2026-09-24).
 

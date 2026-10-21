@@ -13,6 +13,7 @@ individual semantics may still be PARTIAL inside a "verified" format.
 | `.arch06` | `LTAR` v4 | game archive (VFS container) | CONFIRMED structure |
 | `.bndl` / `.embb` | `BNDL` v6 / `EMBB` v5 | bundle manifest + payload | CONFIRMED structure |
 | `.gamedb` | `GADB` | master record database (57 MB) | CONFIRMED structure; attribute names hashed |
+| `.gamedb_patch` | `GADB` | sibling DB patch layer (one level, merged by table name) | loader VERIFIED — see [`gamedb-patch.md`](gamedb-patch.md) |
 | `.bvr` | `GADB` | per-character blend/behavior database | CONFIRMED structure; semantics PARTIAL |
 | `.mesh` | `MMSH` | character/prop mesh (skinned) | CONFIRMED structure + attributes |
 | `.skel` | `SKEL` | skeleton, bind pose, LOD groups, sockets | CONFIRMED (8 known bad files) |

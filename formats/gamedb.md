@@ -87,8 +87,9 @@ the entire file into memory. Because a file whose self path already
 ends in `gamedb_patch` never looks for its own patch, a well-formed
 chain is **one layer deep (base → patch)** — an earlier revision of
 this doc claimed patch-of-patch chains; the extension guard rules
-that out. No `.gamedb_patch` ships with retail, and its exact file
-layout beyond sharing the GADB header is OPEN. (A community note
+that out. No `.gamedb_patch` ships with retail; the practical
+how-to (patch requirements, merge-by-table-name semantics, tooling
+routes) is in [`gamedb-patch.md`](gamedb-patch.md). (A community note
 words the stamp check as "patch `+0x20` == base `+0x2c`"; in the
 decompile the base's own header `+0x20` is compared against `+0x2c`
 of the *loaded patch object* — the reading above.)
@@ -321,5 +322,7 @@ hooks the GADB loaders and patches the database **in memory as it
 loads** (symbolic patch keyed by category + record name, refusing to
 apply when an expected record/layout is missing) — no game file is
 replaced, so it coexists with archive mods. The native
-`.gamedb_patch` sibling path (header section above) is a third,
-still-unexploited route.
+`.gamedb_patch` sibling path (header section above) is a third
+route — loader and merge semantics fully decoded in
+[`gamedb-patch.md`](gamedb-patch.md); a crafted patch has not been
+booted yet.
