@@ -128,11 +128,17 @@ list of loot tables** plus a predicate ref; e.g. one group is
 Equip_LegendaryEquipment_Drops, …_RevengeMission, …_DeathThreat,
 …_DeathThreat_Ambush, Equip_Zog_CarnanSide6`, a sibling group the
 `_NoRing` variants, others DLC3/DLC4/treasure-orc/Mirian tables. The
-active setup is fetched by `FUN_140f84870` (a `LootSetup` field on a
-`Global`-named record, with three override setups chosen by member
-`+0x508` bits 48–50 — `FUN_140f87840`). Members spawn with their
-setup preloaded (`FUN_140356370`). That `Default` is the setup
-normally active is INFERRED.
+active setup is fetched by `FUN_140f84870`: mode 0/1/2 dispatch to
+three hash-keyed field accessors (`FUN_140f86ee0`/`FUN_140f87200`/
+`FUN_140f87520`, field hashes `0x338a9b`/`0x338b4a`/`0x23497d4`) on a
+runtime `Global` object resolved through the `DAT_142701a78`
+name→instance map — the slot→setup binding is runtime-resolved, not
+static in the db (no db record links 2+ `Faction/Loot/Setup`
+records). The mode comes from `FUN_140f87840` on member `+0x508`
+(VERIFIED decode): bit 29 must be set or nothing drops; bits
+48/49/50 select mode 0/1/2 with first-set precedence; none set → no
+setup. Members spawn with their setup preloaded (`FUN_140356370`).
+That `Default` is the setup normally active is INFERRED.
 
 **Drop entry** `FUN_1404f2748` (per dying member):
 
