@@ -145,9 +145,21 @@ overlaps our own parse the two agree.
   `Presentation/Bundles/Facialanims:facialanims` (exactly its cell
   count). A `u8 count, u8 pad` reading of those bytes (seen in
   another community note) only works below 256.
-  Kind codes observed: `01` any 32-bit (float/bool), `02` float,
+  Kind codes observed: `01` **packed bool** (see below), `02` float,
   `03` int, `04`/`07`/`44` string/path, `0A` link, `0B` struct link —
   matching the `k=` tags our own record dumps show.
+- **Kind `01` attributes are bit-addressed booleans, not value
+  cells** — VERIFIED-STATIC (the engine's bool reader extracts
+  `word >> (firstValue & 31) & 1`) and CONFIRMED corpus-wide:
+  `firstValue` is a *bit index*; the value lives in
+  `cells[firstValue >> 5]`, bit `firstValue & 31`; `valueCount` is
+  always 1; the bool words are a record's leading cells and no other
+  attribute claims them. 307,914 records carry `01` attributes and
+  38,053 have bit indices beyond their cell count — the tell that a
+  cell-indexed reading is wrong. Writers must read-modify-write the
+  containing word (a bit-indexed "cell write" corrupts unrelated
+  flags, and `catIdx<<20|recIdx`-shaped values there are bits, not
+  links).
   **Identical value runs are shared between attributes** — rewrite a
   record by re-laying it out (append a new layout), never by poking
   one slot in place.
