@@ -14,6 +14,20 @@
   `10_to_20_levels`); `CLI level=N` sims the board baseline.
 - Board mixes levels widely (live endgame: lv0-84, dominant cohort
   lv76+; earlier capture lv20-43).
+- **Per-seat `InitialLevels` — VERIFIED (real `Faction/Rows`)**:
+  each row record refs ordered `_StructuresFactionInitialXPLevel`
+  struct entries; first match wins:
+  1. `GlobalVarPredicate`-gated (`ShadowWarUnlocked` — the late-game
+     flag) → resolves a `PlayerBasedXPLevel` delta record instead
+     of a fixed band (`snowMtn_Row_Overlord` → `PlayerLevel_Plus5`,
+     `desert_Row_Captain_0` → `PlayerLevel_Minus5ToPlus5`);
+  2. `MustHaveKilledPlayer`-gated entries (post-kill respawns);
+  3. `Act1`-gated early-game band (e.g. 4–8);
+  4. ungated fixed `LevelMin..LevelMax` fallback (verified:
+     `snowMtn_Row_Overlord` 34..34, `desert_Row_Captain_0` 34..41).
+  All entries carry `DifficultyVarLevelOffset` =
+  `Difficulty_Captain_BonusLevels` (DefaultValue 0 at stock
+  difficulty).
 
 ## `spawn` level — the accrual window (INFERRED)
 
