@@ -143,3 +143,23 @@ resolves dialogue (`dx_*`), mixes (`mix_*`, `st_glb_mix_*`) and music
 against gameplay video (frames every few seconds + per-second audio
 level to find speech), then hash candidate line names and read the
 subtitle from the English `string.strdb` (THaych's workflow).
+
+## Duplicate line keys — the same recording under two names
+
+**VERIFIED (strdb 2026-11):** the line "Be my sword!" is keyed twice:
+
+- `dx_pr_dm_CommDefend_cb_08` — in the `pr_dm_CommDefend`
+  (Domination "command defend") Celebrimbor family. Verified set:
+  `cb_04` "Fight by my side!", `cb_05` "Slay my enemies!", `cb_06`
+  "To war!", `cb_07` "Fight for the Bright Lord!", `cb_08` **"Be my
+  sword!"**, `cb_09` "Protect your lord!", `cb_10` "Gird yourself
+  for battle!" (`cb_01..03` have no strdb entry).
+- `dx_sbx_CeleActivate_cele_02` — in the `sbx_CeleActivate`
+  (Celebrimbor "Activate" lines) family, a 20-entry set
+  `cele_01..20` of domination-activation barks ("You shall abide!",
+  "Bring Light!", "Serve my will!", … "My eyes are yours!").
+
+So the same line was recorded/registered under both a (reportedly
+cut) command-defend context and the activate-bark pool — when
+tracing a line by name, expect strdb text to collide across `dx_*`
+families; the key names the *hook context*, not a unique recording.
