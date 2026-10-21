@@ -96,15 +96,22 @@ and `NG_1Sword_E_AllHealthMightLC_4E`, whose fields are
 - Inside a list, gear needs a **tag matching the captain's context**
   (an empty `Tags` list is *not* unrestricted — a gear with no
   matched tag is rejected `"Is NOT Valid"`). The captain's tag set
-  is built by `FUN_140646b40` from member record lists (traits,
-  tribe, role, personality…); each `GearTagWeight_<kind>_<name>`
-  record (`{weight:f32, index:u32, GearTag ref}`) contributes one
-  `{tag, weight, index}` triple.
+  is built by `FUN_140646b40` (VERIFIED field map): `+0x318` (gated
+  by `+0x510` bit3) and `+0x328` record-ref lists, `+0x1b0/+0x1b8`
+  and `+0x198/+0x1a0` object vectors each expanding nested tag
+  lists, `+0x300/+0x308` pairs, `+0x2c0` (tribe record), `+0x48` →
+  `+0x26a8` (global/owner tags), `+0x50` inline, and `+0x2d8` —
+  the member's equipped items contribute tags too. Each
+  `GearTagWeight_<kind>_<name>` record (`{weight:f32, index:u32,
+  GearTag ref}`) contributes one `{tag, weight, index}` triple.
 - Scoring: a gear's score = Σ matched `GearTagWeight` weights and
   its "BestIndex" = the first matched tag's index. The winner is the
   **lowest** BestIndex, ties by **higher** score, then a random
-  pick among remaining ties. A gear sharing an affix with an
-  already-generated item is rejected (`"duplicate Affix"`).
+  pick among remaining ties (`FUN_140426840` index over the tied
+  candidate list). The picker DOES contain a duplicate-affix check
+  (`"duplicate Affix"` — the candidate's `NemesisAffix` is
+  binary-searched against an affix set) but the drop path calls it
+  with a null set, so it never rejects there.
 - A list with no valid/buildable gear is removed and the draw retried.
 - **Type weights rotate.** `Faction/Loot/Type` carries
   `InitialWeight`, `OnDropOtherAdjustment`,
