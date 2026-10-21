@@ -64,11 +64,21 @@
   `Picker_GangOfDoppelgangers` and `ForceCharacterAudioUpdate` —
   retail's condition gates hold it outside its story window, and
   live boards show 0 copies.
-- **`Faction/Rows` = the board seat template — NEW, verified shape**:
-  each row record carries region, `RowRanks` seat, a
-  `SimEventGenerationSetup` ref (the member's purpose — the likely
-  producer of the runtime SimEvent object at member+0x4f0), ambient
-  `SpawnAmbient/Locations`, reward lists (`Default_BloodBrother`),
+- **`Faction/Rows` = the board seat template — verified**: each
+  region carries `{Captain_0, Captain_1, Captain_2, Outer_Warchief,
+  Inner_Warchief, Overlord}` rows; `ColumnMax` caps the seats per
+  row (~4/8/7/4/2/1). A live board census (n=562) matches ColumnMax
+  almost exactly per rank AND shows **63.3% of members hold no row
+  seat** — most nemesis members are unseated roamers. Seat shares
+  of the total board: Captain_0/1 17.1%, Captain_2 10.0%, WC_Outer
+  5.9%, WC_Inner 2.3%, Overlord 1.4%. Builder `RowRanks` refs are
+  tier CONSTRAINTS (36% of builders are Outer-tier but only 5.9%
+  of the board sits Outer), not seat assignments — seats fill from
+  matching-tier candidates. Rows also carry region, `RowRanks`
+  seat, a `SimEventGenerationSetup` ref (the member's purpose —
+  the likely producer of the runtime SimEvent object at
+  member+0x4f0), ambient `SpawnAmbient/Locations`, reward lists
+  (`Default_BloodBrother`),
   optional seat `RoleLists` (exclusion filters
   `Roles_disallowed_*` for Warchief/Overlord seats; draw pools for
   `_2` captain seats), and `_StructuresFactionInitialXPLevel` entries
