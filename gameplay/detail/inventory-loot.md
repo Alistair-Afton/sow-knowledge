@@ -87,15 +87,24 @@ and `NG_1Sword_E_AllHealthMightLC_4E`, whose fields are
 `UpgradeTiers`. Native list naming: `NemGearList_<n><Rarity>_<slot>`
 (`3Rare`, `4Epic`, `5Lgnd`; `_All`, `_NoRing` variants).
 
-**Selection** (LordMonstey, from the inspected native logic):
+**Selection** (LordMonstey's reading, now VERIFIED-STATIC against
+`FUN_140648214`/`FUN_140579f90`/`FUN_14057b024`/`FUN_140648db8`):
 
 - A draw picks a gear list from the entry's candidates by type weight:
   `P(list) = weight / Σ weights`; a null `LootTypeWeight` counts as 1.
+  The weight is the tracker's *current* value, not `InitialWeight`.
 - Inside a list, gear needs a **tag matching the captain's context**
-  (an empty `Tags` list is *not* unrestricted); candidates are ranked
-  and ties chosen uniformly. Context tags come from `LootTags` /
-  `AddLootTags` on `Faction.Tribe` and `Faction.TraitMarker`, via
-  `Faction/Loot/TagWeight` → `Tag`.
+  (an empty `Tags` list is *not* unrestricted — a gear with no
+  matched tag is rejected `"Is NOT Valid"`). The captain's tag set
+  is built by `FUN_140646b40` from member record lists (traits,
+  tribe, role, personality…); each `GearTagWeight_<kind>_<name>`
+  record (`{weight:f32, index:u32, GearTag ref}`) contributes one
+  `{tag, weight, index}` triple.
+- Scoring: a gear's score = Σ matched `GearTagWeight` weights and
+  its "BestIndex" = the first matched tag's index. The winner is the
+  **lowest** BestIndex, ties by **higher** score, then a random
+  pick among remaining ties. A gear sharing an affix with an
+  already-generated item is rejected (`"duplicate Affix"`).
 - A list with no valid/buildable gear is removed and the draw retried.
 - **Type weights rotate.** `Faction/Loot/Type` carries
   `InitialWeight`, `OnDropOtherAdjustment`,
