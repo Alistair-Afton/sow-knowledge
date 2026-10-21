@@ -53,11 +53,13 @@
   `Roles_who_are_unimportant` (369 roles, zero ub weight); the
   veteran/prestige re-draw pool is `RolesWhoShouldNotBeLowLevel`
   (99 roles; `Role_Pretender`=14.1% of weight → `Quirk_Unbreakable`).
-  Retail trigger is seat-tier (only `*_Row_Captain_2` rows in
-  MtnPass/MinasIthil carry it as a direct `RoleLists` cell) or a
-  career "no longer low level" re-draw — exact trigger OPEN (needs
-  the RoleSelect consumer or row-seat modeling); sim approximates
-  with a level≥30 re-draw and lands at 15% vs live ~10–17%.
+  RESOLVED (2026-10-22): the pool is a **seat-tier draw pool** —
+  `*_Row_Captain_2` rows carry it as their `RoleLists` cell, which
+  the pick ctx consumes as its secondary (`ctx+0x188`) candidate
+  list. No career re-draw exists; members seated on `_2` rows draw
+  prestige roles at spawn/fill. The sim still approximates with a
+  level≥30 re-draw (lands ~15% vs live ~10–17%) pending seat
+  modeling.
 - **`Faction/Rows` = the board seat template — NEW, verified shape**:
   each row record carries region, `RowRanks` seat, a
   `SimEventGenerationSetup` ref (the member's purpose — the likely
@@ -102,9 +104,12 @@
   markers), bumps the global census, applies a role-carried
   Personality record to `member+0x270`, and broadcasts a
   SimEvent. 7 call sites: the builder, a wrapper, three
-  `SetRole` command handlers, and `FUN_140f859a0` — which is the
-  **fill-unroled** path (early-returns when `+0x318 != 0`), not
-  the prestige re-draw.
+  `SetRole` command handlers, and `FUN_140f859a0` — the
+  **fill-unroled** path (early-returns when `+0x318 != 0`).
+  No caller re-draws a roled member's role: the prestige pool
+  is a seat-tier pool (`*_Row_Captain_2` seat RoleLists feed the
+  ctx `+0x188` candidates) — prestige members are drawn prestige
+  at spawn/fill, not re-drawn.
 
 ## OPEN
 
