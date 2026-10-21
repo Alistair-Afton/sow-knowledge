@@ -81,6 +81,11 @@ mount order)
   consistently or the engine picks up mismatched mip strips.
 - `Flair_*MB` bundle-type strings are per-budget pools the loader uses
   for flair streaming.
+- **New resources must be bundle-listed.** A new UI texture path
+  shows **magenta** in game unless a loaded bundle lists it; adding
+  the path + size to `interface\bundles\ingame_tex.bndl` (type ending
+  in `UI_Textures`) makes it load (THaych, in-game — patched in
+  memory via the BNDL loader hook).
 
 ## Verification
 

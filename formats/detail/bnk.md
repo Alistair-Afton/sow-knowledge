@@ -15,6 +15,11 @@ N × chunk { char[4] tag, u32 size, u8[size] data }   → EOF (no padding)
 
 - `headerSize` counts only the payload after the size field; chunks start
   at `8 + headerSize`.
+- `bankId` is the 32-bit **FNV-1 of the lowercase bank name**
+  (offset basis `0x811C9DC5`, prime `0x01000193`, multiply-then-xor) —
+  CONFIRMED on `amb_rain`, `amb_rain_canvas`, `amb_rain_stone`
+  (e.g. `amb_rain` → `0xC4D128AC`). All Wwise object/event IDs use the
+  same hash, so a name can be checked against any ID offline.
 - Corpus header sizes: **20, 24, 28, 32** bytes — the tail carries
   project/feedback identifiers (semantics undocumented). Parse `version`
   and `bankId` from the first 8 payload bytes; keep the rest opaque.

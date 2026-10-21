@@ -30,14 +30,13 @@ delivery model splits by granularity:
   Conflicts only arise when two mods replace the *same* asset, which is
   inherent.
 - **Record-level content** (gamedb records, strdb strings, script
-  functions): mods ship **deltas**, not file copies — e.g.
-  `Mods/<name>/db/<list>.toml`, `strings/<lang>.strdelta`. The
-  framework merges them post-load through the native mutation paths
-  (`sdk.db.setcell`, runtime strdb patch, script VM injection) with a
-  defined conflict policy (explicit priority, warn on overlap).
-  **Strings are working today**: `tools/strdb_patch.py` merges
-  `.strdelta` files (`set`/`replace`/`del`) into a rebuilt strdb and
-  `Mods/` serves it — verified in-game 2026-09-24.
+  functions): whole-file overrides collide, so composable mods need
+  record-level merging — either in memory at load (hooking the
+  GADB/SKDB loaders, as THaych's Player Skins Overhaul does), through
+  native mutation paths after load, or via the native
+  `.gamedb_patch` sibling (see `formats/gamedb.md`). A rebuilt
+  `string.strdb` served from a loose `Mods/` folder renders in game
+  (verified 2026-09-24).
 
 This is a design constraint on the modding layer, not just a VFS
 question: the loose-file mechanism matters most for assets; the merge
@@ -55,6 +54,19 @@ layer is what makes record content composable.
   LTAR member, VFS-rooted path `/archivepatchloosefiles.txt`) and is a
   per-archive index of paths that may resolve loose on disk — the
   engine's own shipped loose-override mechanism. `VERIFIED-STATIC`.
+- **File layout** (CONFIRMED by parsing the installed copies; matches
+  THaych's notes): `u32 version (=1)`, `u32 strtab_size`, then
+  `strtab_size` bytes of NUL-separated paths, `u32 n`, then
+  `n × {u32 name_hash(path), u32 strtab_offset}` **sorted by hash**
+  (entries hash the full backslash path with the engine name hash —
+  checked on all entries of the installed winning copy). No tail.
+- **Mod archives list their payload here.** THaych reports (in-game)
+  that a mod archive's files only override/appear when its own
+  `archivepatchloosefiles.txt` lists them. Consistent with this
+  install: every functional mod `.arch06` (`Patch_IncreasedCap`,
+  `orcgrenades_all`, `primalroar`, the orc-eyes mod) ships one
+  listing exactly its payload; only empty 1-file stubs lack it.
+  `VERIFIED` (external, in-game) + consistent locally.
 
 ### Native mount/lookup path (disasm, 2026-09-24)
 
@@ -334,11 +346,10 @@ u32  count            (= number of paths)
    root is known. `.bndl`/`.tex`/`.vib`/`.embb`/`.bnk` probes all
    observed firing against runtime sources in the 2026-09-28 trace.
 5. **Marker visual confirmation** — superseded by a stronger result:
-   a **writer-produced** merged strdb (68,547 entries via
-   `tools/strdb_patch.py` + a `.strdelta` file) was deployed to
+   a **writer-produced** strdb (68,547 entries) was deployed to
    `Mods/` and the game rendered all UI text perfectly (verified
-   2026-09-24, WBPlay Newsletter + menus). Parser + writer + delta
-   merge + loose override are all proven end-to-end. The
+   2026-09-24, WBPlay Newsletter + menus). Parser + writer + loose
+   override are all proven end-to-end. The
    `NEMESIS LOOSE OVERRIDE` marker was set on the title-prompt string
    but that string rotates with promos — cosmetic confirmation only.
 
@@ -352,7 +363,7 @@ u32  count            (= number of paths)
 | `.bndl` (bundles) | **yes** — probed against runtime sources live | yes (extractor exists: `tools/ltar.py`) | indexed (~25k paths); probe firing `VERIFIED-INGAME` 2026-09-28 |
 | `.vib` (video) | **yes** — served from `plugins\nemesis\files` | yes | `VERIFIED-INGAME` 2026-09-28 — full probe→hit→open chain in Options→Sound |
 | `.bvr` (behavior) | UNVERIFIED | yes (`tools/bvr.py`) | 305 indexed |
-| `.strdb` (strings) | **yes** — `Mods/` mounted via archcfg | yes (`tools/strdb_dump.py`, `tools/strdb.py`, `tools/strdb_patch.py`) | `VERIFIED-INGAME` 2026-09-24 — read **and write** proven in-game; prefer `.strdelta` merges over whole-file copies |
+| `.strdb` (strings) | **yes** — `Mods/` mounted via archcfg | yes (`tools/strdb_dump.py`, `tools/strdb.py`, `tools/strdb_patch.py`) | `VERIFIED-INGAME` 2026-09-24 — read **and write** proven in-game |
 | `.gamedb` | UNVERIFIED | yes | Runtime mutations go through `sdk.db`, not file overrides |
 | textures/models | UNVERIFIED | container-internal | `.tex0`/`.mat` already indexed loose — promising |
 

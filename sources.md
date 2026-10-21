@@ -52,6 +52,18 @@ those sourced from his notes say so.
   Where their claims overlap ours we verified independently; the one
   disagreement (`.tex0` "top three mips" vs our strip-top-mips
   reading) is noted inline in `formats/detail/tex.md`.
+- **THaych — Player Skins Overhaul** (Nexus mod; v4 is a CRT-free
+  DLL that patches the database, string tables and UI bundle in
+  memory as they load) — shared his project briefing. Credited inline
+  for: GADB header word map and block taxonomy, the
+  append-only-if-hash-sorts-last rule, loader entry points + the
+  engine stream vtable, `archivepatchloosefiles.txt` layout and the
+  "mod archives must list their payload" rule, Wwise API anchors,
+  bundle-listing (magenta) rule, skin record chain semantics, and
+  audio-hook runtime behavior. We re-verified the header map,
+  pool base, loose-index layout, Wwise FNV-1 IDs, skin/audio record
+  shapes and the patch-path logic on the installed build; the rest is
+  labeled as his in-game evidence.
 - **SoW Modding Community** — `ImHex-Patterns` and `MeshParser`
   (binary format references).
 - **LordMonstey** — MIT-licensed Monstey Mesh Publisher and

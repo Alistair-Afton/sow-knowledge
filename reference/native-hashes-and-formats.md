@@ -107,22 +107,12 @@ strbuf: UTF-16LE chars; str = strbuf + char_idx*2. NO flag bits —
 
 - Loader `0x141d23228`; lookup `0x140472104` = `strbuf + off*2`;
   manager `0x140472090` walks the db list newest-first.
-- `tools/strdb.py` — load/build; `tools/strdb_dump.py` — TSV dump;
-  `tools/strdb_patch.py` — `.strdelta` → merged strdb (all verified
-  live: dumped → rebuilt → booted → text renders).
-
-### `.strdelta` — mod-friendly delta format
-
-```
-keyhash=0x0123abcd
-"0x0123abcd"="replacement text"
-"old text"="new text"          # find by content
-""="brand new string"          # add (hash auto-minted)
-```
-
-`sdk.strings.set/unset/apply/get/clear/register` is the live runtime
-equivalent (no file write — a synthetic db object spliced into the
-manager's list; newest db wins lookups).
+- A rebuilt strdb (dumped → rebuilt → booted) renders correctly in
+  game — the format is fully writable.
+- Because the string manager walks its db list newest-first, a
+  db object spliced into that list at runtime overrides lookups
+  without any file write (shown by Project Nemesis' runtime string
+  API).
 
 ## `.bvr` — object schema format
 

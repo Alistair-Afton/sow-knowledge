@@ -1,0 +1,73 @@
+# Player skins — menu, model, profile chain
+
+> **Status:** **verified** — record chain and field names CONFIRMED on the installed `game.gamedb`; skin-behavior semantics from THaych's Player Skins Overhaul (shipped mod, tested in-game).
+> **Provenance:** Andúril gamedb dumps (field names via attr-name hashes) + THaych's Player Skins Overhaul notes (external, in-game).
+
+A playable skin is three linked GADB records: a menu node, a
+character model, and a combat profile. Everything about how a skin
+looks, sounds and fights hangs off that chain — no code involved.
+
+## Record chain — CONFIRMED
+
+```
+Interface/Menu/MenuTreeNode/Skin:<node>     (9 retail nodes)
+  └─ [9] CharacterModel ─▶ Character/Models:<model>
+                              ├─ [49] CombatTree ─▶ Combat/Tree:<profile>
+                              └─ [65] CharacterModelPicker ─▶ Character/Models/ModelPicker
+```
+
+**Skin node fields** (`Interface/Menu/MenuTreeNode/Skin`, e.g.
+`Skin_DarkTalion`): `0 SkinName` (string key), `1 IconTexture`
+(`.tex` path), `2 SkinLockedDescription`, `3 LockedTexture`,
+`4 SkinDescription`, `5 NotificationStorage`, `6 RequiredDLC`,
+`7 SkinUnlockedStorage`, `8 HasBeenViewedStorage` (the three
+storage refs are `Profile/GlobalOptions` flags), `9 CharacterModel`,
+`10 PrimaryState`, `11 CreationPredicates`, `12 LockCommonPredicates`.
+
+**Endgame variants.** After the Shadow Wars ending, skins switch
+model through their `ModelPicker` (`ShadowWarUnlocked ⇒ …_ShadowWar`
+variant; e.g. `PlayerSkin_DarkTalion_Main` → picker `TalionSkin_Dark`).
+The `_ShadowWar` profiles grant the `PC_IsDarkTalion` buff that
+drives the green Dark-Talion presentation (THaych).
+
+## Skin menu layout — CONFIRMED
+
+`Interface/Menu/MenuTreeBase:SkinSelect_OverviewTree` lists the
+selectable nodes in `BaseNodes` (8 slots retail). Node spacing
+(`HighlightedNodeGap`, `IdleNodeGap`) are **vec2 pool constants**
+(kind `0x07`) — and retail **shares one constant between both
+fields** (same pool offset). Constants are often shared across
+records, so give a record its own copy before changing one. Menu
+stage is 1280×720; the selection frame is fixed, so adding slots
+means shrinking the step (THaych fit 10 icons by 70 → 55).
+
+Skin icons are 128×128 DXT5 `TEXR` textures, one mip, under
+`interface\textures\hud\questicons\new\…`. A UI texture that is not
+listed in a loaded bundle (`ingame_tex.bndl`, type `…UI_Textures`)
+renders **magenta** (THaych).
+
+## Profile semantics (THaych, in-game)
+
+- **VFX lookup keys:** 1 = Talion (blue), 12 = DarkTalion (green),
+  14 = Celebrimbor.
+- **Ultimates:** Elven Rage (`PC_GC_Initiate`) requires
+  `PC_IsDarkTalion` **absent** plus `PS_CBGameChanger_SKILL`;
+  Ringwraith (`PC_GC_2_Initiate`) requires it **present**.
+- **Raise Dead:** the 13 `NecroAoE_Attack_*` records gate on
+  `PC_IsDarkTalion`.
+- **Buff fields:** 5 visual tag, 8 animation tag, 19/57 audio keys
+  on remove/apply.
+- The hand ring (`Talion_Isildur_Ring` → appearance
+  `AD_Talion_Isildur_Ring`) picks its model by **body type**
+  (6 = all Talion skins, 8 = Baranor/Serka, 10 = Celebrimbor), so it
+  cannot vary per Talion skin through data alone — body-type changes
+  also swap armour.
+
+## Making a new skin (proven recipe)
+
+Spare/unused `Character/Models` + `Combat/Tree` records (layout
+checked), a new `MenuTreeNode/Skin` record **whose name hash sorts
+last** (appendable without renumbering — see `formats/gamedb.md`),
+an icon texture + its bundle entry, string keys for title and
+description, and a `BaseNodes` slot. THaych shipped two skins this
+way.

@@ -28,18 +28,57 @@ gameplay data is typed GADB records linked by index.
   0x11 with one category `ObjectDB` of `ObjectRec` records.
 - Readers exist in Andúril and sow-rs.
 
+**Header (0x2C bytes; CONFIRMED on the installed `game.gamedb`, word
+meanings cross-checked with THaych's Player Skins Overhaul notes):**
+
+| Offset | Meaning | Installed value |
+|---|---|---|
+| `+0x00` | `GADB` | |
+| `+0x04` | version `0x11` (17) | |
+| `+0x08` | string-pool size (bytes) | `0x9EE380` |
+| `+0x0C` | categories + struct arrays | 2,742 |
+| `+0x10` | named records (incl. default records) | 278,865 |
+| `+0x14` | unnamed struct records | 415,767 |
+| `+0x18` | total value words | 8,544,670 |
+| `+0x1C` | layout descriptors (15-byte entries) | 361,939 |
+| `+0x20` | content hash (checked by `.gamedb_patch`) | `0xD186F247` |
+| `+0x24` | 0 | |
+| `+0x28` | offset of the self-path (`0x2C`) | |
+
+At `0x2C` a `u16`-length-prefixed **self path**
+(`database\game\game.gamedb`) follows; the string pool begins right
+after it (`0x47` on retail) and runs exactly `+0x08` bytes — the
+layout table starts at `0x47 + pool_size` (CONFIRMED: the first
+15-byte layout entry sits exactly there). String fields are offsets
+relative to the pool start.
+
 **Retail read path (Ghidra `FUN_140503694`, byte-verified):** the
 loader reads the 0x2C header in one shot, checks `GADB` +
-`version==0x11`, then reads a **0x100-byte path buffer** before the
-blob data and compares it against the literal `"gamedb_patch"` —
-patch gamedbs are recognized by *file path*, merged in-place by the
-same loader, and rejected when the patch's `+0x2c` field doesn't
-match the base DB's `+0x20` content hash. A second consumer
-(`FUN_1417662b0`) is the **recursive patch-chain loader**: given any
-`.gamedb` path it synthesizes a `"gamedb_patch"` variant, opens it
-through the VFS, and calls *itself* — the result is a **linked list
-of DB layers**, so patches can themselves be patched and the chain
-resolves base→patch→patch-of-patch.
+`version==0x11`, reads the self path through the stream's
+string-reader slot into a **0x100-byte buffer**, then reads
+`+0x08` bytes of pool. If the self path's **extension** is not
+`gamedb_patch` (and the path is non-empty) and a global enable byte
+(`DAT_14266cd70`, statically `1` in retail with no code writers) is
+set, it accepts an optional second stream — the patch — and drops it
+unless the loaded patch's `+0x2c` field equals this file's header
+`+0x20` content hash; an accepted patch's extra table/record counts
+are added to the allocation and its tables merge into the base by
+name hash (see body layer below).
+
+`FUN_141c3ff20` (the `database\game\game.gamedb` open) builds the
+patch path by **replacing the extension with `gamedb_patch`**
+(`FUN_14017aa78` — appends `.gamedb_patch` when the path has no
+extension) → `database\game\game.gamedb_patch`, and opens base +
+patch as a stream pair. `FUN_1417662b0` is the **whole-file blob
+loader** used at startup: it peeks the header + self path, and for a
+non-patch file opens the `.gamedb_patch` sibling and calls itself on
+it, linking the result as a second layer, then rewinds and reads
+the entire file into memory. Because a file whose self path already
+ends in `gamedb_patch` never looks for its own patch, a well-formed
+chain is **one layer deep (base → patch)** — an earlier revision of
+this doc claimed patch-of-patch chains; the extension guard rules
+that out. No `.gamedb_patch` ships with retail, and its exact file
+layout beyond sharing the GADB header is OPEN.
 
 The body layer (decoded via `FUN_1404b9b50` → `FUN_1404ba07c`):
 `{u32 schema_off, u32 n_tables}`, then per-table 0x18 headers
@@ -61,14 +100,14 @@ constant aggregates (FloatRange/vec3), not scalars.
 
 
 
-Byte-check vs real `patch04/game.gamedb` (58 MB): the blob spans
-`[0x2c, 0x2c+strsz)` exactly (ends on a NUL-terminated string), and
-its first bytes are the u16-length-prefixed self path
-`database\game\game.gamedb` + `GameDatabase`. Header counts map
-`+0x0c → n_tables(2,435)`, `+0x10 → n_records(233,110)`,
-`+0x14 → paired pool (354,979)`, `+0x18 → value-word slots
-(9,353,656)`, `+0x1c → field descriptors (395,395)` — allocation
-≈100 MB runtime, consistent with the documented section sizes.
+Byte-check vs `patch04/game.gamedb` (58 MB, an older build): the
+same header word meanings hold (`+0x0c` 2,435 tables, `+0x10`
+233,110 named records, `+0x14` 354,979 struct records, `+0x18`
+9,353,656 value words, `+0x1c` 395,395 layout descriptors) —
+allocation ≈100 MB runtime. Correction: the pool does **not** start
+at `0x2c` — the self path occupies `0x2c..0x47` and the pool begins
+after it (an earlier revision placed the pool at `0x2c`, which ends
+mid-string on the installed DB).
 
 ## Writer-level layout (Universal Modder, verified in-game)
 
@@ -83,6 +122,11 @@ overlaps our own parse the two agree.
   attribute of a record shape:
   `u32 nameHash, u32 hashOfSortedSlot, u8 attrIndex, u8 sortedIndex,
   u8 kind, u16 valueCount, u16 firstValue`.
+  `valueCount` is a true **u16** — CONFIRMED: 38 retail entries
+  exceed 255 values, the largest 20,418 on
+  `Presentation/Bundles/Facialanims:facialanims` (exactly its cell
+  count). A `u8 count, u8 pad` reading of those bytes (seen in
+  another community note) only works below 256.
   Kind codes observed: `01` any 32-bit (float/bool), `02` float,
   `03` int, `04`/`07`/`44` string/path, `0A` link, `0B` struct link —
   matching the `k=` tags our own record dumps show.
@@ -106,6 +150,23 @@ overlaps our own parse the two agree.
   re-point every `catIdx<<20|recIdx` link file-wide.
 - Header named/unnamed totals are **off by 2** from a record walk;
   preserve the original delta when rewriting.
+- Block taxonomy after the layout table (THaych's Player Skins
+  Overhaul notes, in-memory patcher shipped and tested in-game):
+  struct-array blocks (24-byte header, entries `8 + 4·nf`), **default
+  records** (`DEFAULT_RECORD_NAME…`, `12 + 4·nf`, counted inside the
+  header's named total), and categories (24-byte header; records
+  `{u32 name, u16 nf, u8 ndesc, u24 layout id, u8 0x08}` + `4·nf`).
+  Links address non-default blocks only. Data after the layout table
+  must stay **4-byte aligned** — pad pool growth.
+- **Appending without renumbering:** a new record can be appended to
+  the end of a category without re-pointing any link *only if its
+  name hash sorts last* in that category (THaych picked a menu-node
+  name whose hash sorts last for exactly this reason). Otherwise the
+  full re-sort + link rewrite above applies.
+- Growing a record's field count is safe when the new shape reuses a
+  layout the DB already contains (THaych grew two `Combat/Tree`
+  profiles 311 → 321 fields by reusing an existing 321-field
+  layout).
 - The same `name_hash` (`h = h*0x397 + FOLD[c]`) keys both attribute
   names and `string.strdb` entries — new localisation keys are added
   by inserting `{hash, char_index}` pairs sorted by hash (verified:
@@ -188,5 +249,11 @@ powerful modding surface in the game. A working GADB writer exists —
 the Universal Modder project's C# reader-writer round-trips
 byte-for-byte and its rebuilt databases ship working mods in-game
 (new tribes, records, roles) — proving the format is fully writable
-given the sort-by-hash and link-repointing rules above. Andúril's
-own writer is still OPEN tooling.
+given the sort-by-hash and link-repointing rules above. A second,
+non-file route is proven too: THaych's Player Skins Overhaul plugin
+hooks the GADB loaders and patches the database **in memory as it
+loads** (symbolic patch keyed by category + record name, refusing to
+apply when an expected record/layout is missing) — no game file is
+replaced, so it coexists with archive mods. The native
+`.gamedb_patch` sibling path (header section above) is a third,
+still-unexploited route.

@@ -11,6 +11,12 @@ kept.
 
 ## Formats
 
+- **`.gamedb_patch` file layout.** The loader path is mapped (one
+  layer, `+0x2c` of the loaded patch must equal the base header's
+  `+0x20` content hash, tables merge by name hash) but no retail
+  patch exists to read. Start: `FUN_1404baebc` (patch object build
+  from the stream) and `FUN_14176625c` (accept check), then craft a
+  minimal patch and test offline.
 - **PRFB descriptor fields** `+0x1C`, `+0x20`, `+0x2C`, `+0x30`, and
   header counts `b`, `g`, `h`; node-table runtime semantics.
   Start: follow the PRFB loader past the mesh blob (`0x14058A26C`).

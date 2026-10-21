@@ -12,6 +12,7 @@
 
 ## detail/
 
+- [`audio-hooks.md`](detail/audio-hooks.md) — Audio hooks — keys, hooks, conditions, Wwise IDs
 - [`combat.md`](detail/combat.md) — Combat data model — formulas, attacks, fight circle
 - [`faction-generation.md`](detail/faction-generation.md) — Faction generation — captain build rules, event grammar, live roster
 - [`faction-lifecycle.md`](detail/faction-lifecycle.md) — Spec: Faction member lifecycle — rarity, promotion, resurrection, seating
@@ -21,4 +22,5 @@
 - [`hud-map.md`](detail/hud-map.md) — HUD — gamedb records, Scaleform movies, widget map
 - [`moveset.md`](detail/moveset.md) — Talion moveset — skills, meters, ranged, and move chains
 - [`nemesis-data.md`](detail/nemesis-data.md) — Nemesis data layer — faction categories in `game.gamedb`
+- [`player-skins.md`](detail/player-skins.md) — Player skins — menu node → model → combat profile chain
 - [`traversal.md`](detail/traversal.md) — Traversal — movement constants, CADB context actions, locomotion

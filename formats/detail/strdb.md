@@ -1,12 +1,12 @@
 # `string.strdb` — SKDB v9 string database
 
-> **Status:** **proven** — full-corpus read + `.strdelta` merge
-> **Provenance:** full `.strdb` corpus read + `.strdelta` merge on the real install.
+> **Status:** **proven** — full-corpus read; rebuilt tables render in game
+> **Provenance:** full `.strdb` corpus read on the real install; writer routes from Universal Modder + THaych (Player Skins Overhaul).
 
 Per-locale table mapping `key_hash -> UTF-16LE text`, found at
-`database/string/<locale>/string.strdb` inside the archives and
-overridable via `Mods/database/string/<locale>/string.strdb`.
-Implemented in `anduril-strdb`.
+`database/string/<locale>/string.strdb` inside the archives;
+overridable like any VFS path (a later archive or loose folder in
+`default.archcfg`). Implemented in `anduril-strdb`.
 
 ## Layout
 
@@ -76,22 +76,19 @@ implements it.
   high byte against the next string's terminator.
 - Index entries must stay sorted by hash for binary search.
 
-## String deltas (`.strdelta`)
+## Adding strings (retail)
 
-Mods ship mergeable deltas under `strings/**/*.strdelta` instead of
-whole strdb copies, so multiple mods can patch strings. One directive
-per line; `#` comments and blank lines are fine; fields are
-tab-separated with `\t` `\r` `\n` `\\` escaping:
+The retail loader reads only SKDB files — there is no native
+string-delta format. New keys are added by inserting
+`{name_hash(key), char_index}` into the index (kept sorted) and
+appending the UTF-16 text. Two proven routes: ship a rebuilt
+`string.strdb` per locale (Universal Modder), or patch every locale
+table in memory as it loads by hooking the SKDB loader (THaych's
+Player Skins Overhaul patches all 14 language tables that way).
 
-```
-set      0x<hash>   <text>          add or replace an entry
-del      0x<hash>                   remove an entry
-replace  <old text> -> <new text>   rewrite every entry with that text
-```
-
-Warnings are emitted for `set` over an existing different text, `del`
-of an absent hash, and `replace` matching nothing. Applied in mod
-load order — later mods win.
+**Identifying a voice line from a subtitle:** hash candidate line
+names with the engine name hash and look them up in the English
+table (THaych's technique).
 
 ## Verification notes
 

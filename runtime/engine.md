@@ -50,6 +50,30 @@ ShadowOfWar.exe
 | `0x141e6b1b0` | `archivepatchloosefiles.txt` string, used by the loose-index lookup at `0x140c28a57` |
 | `0x142a58bc0` | console registry singleton — `vtable+0x60` node-reg, `+0x10` fn-reg (console-commands.md) |
 | `manager+0xa4e70` | name→record intern map (find-or-insert `0x140189898`; gamedb.md) |
+| `0x141c3fefc` → `0x141c3ff20` | `database\game\game.gamedb` open (+ `.gamedb_patch` sibling) |
+| `0x1417662b0` | GADB whole-file blob loader (startup `game.gamedb` path) |
+| `0x140503694` | GADB stream parser (`rdx` = optional patch stream) |
+| `0x141d23228` | SKDB string-table loader (stream in `rdx`) |
+| `0x140504c70` | BNDL loader (stream in `rdx`) |
+| `0x1403ADBC0` | Wwise `GetIDFromString` — **don't detour**: callers rely on `r9`–`r11` surviving (THaych) |
+| `0x1403AD54C` / `0x1412F4AEC` / `0x1406C27CC` / `0x1403AEBCC` | Wwise `PostEvent` / `SetState` / `SetSwitch` / `SetRTPCValue` (THaych) |
+
+The four loader entry points each start with a 15-byte prologue
+free of RIP-relative code, so they're cleanly detourable
+(`jmp [rip+0]` + trampoline) — THaych's in-memory patcher hooks all
+four and verifies the prologue bytes first.
+
+**Engine stream interface** (vtable of the file stream class at
+`0x142301620`; loaders call it generically — confirmed against the
+GADB loader decompiles, which use `+0x08`, `+0x18`, `+0x20`,
+`+0x28`, `+0x30`, `+0x40`): `+0x00` release, `+0x08`
+`int read(buf, u32 n)` (0 = ok; on failure zero-fills and sets the
+error flag), `+0x10` error flag, `+0x18` valid, `+0x20` seek (file
+stream: to the given position — the blob loader rewinds to a saved
+`tell`), `+0x28` `u64 tell`, `+0x30` `u64 size`, `+0x38`/`+0x40`
+wide/narrow string readers (`u16` length + chars via `+0x08`),
+`+0x48` deleting destructor, `+0x50` write. A plugin can feed any
+loader an in-memory stream by implementing this table.
 
 ## Content layer
 
@@ -64,6 +88,10 @@ ShadowOfWar.exe
 ## Existing mod ecosystem (the install we live inside)
 
 Mod Menu (GENETICZZ2K) resolves 52 offsets at runtime; plugins load via
-`bink2w64` proxy → `ShadowOfWarDllLoader` → `x64/plugins/*.dll`. Loose
+`bink2w64` proxy → `ShadowOfWarDllLoader` → `x64/plugins/*.dll`.
+The loader's `DllMain` starts a thread that `LoadLibrary`s every
+plugin, so plugins are resident long before the database load
+(~8–10 s after launch) — early enough to hook the GADB/SKDB/BNDL
+loaders (THaych: hooks installed at 0 ms in the plugin log). Loose
 `.arch06` mods mount from the install root by wildcard. Details:
 `docs/evidence/engine/initial-recon.md`, `modding-ecosystem.md`.

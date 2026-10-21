@@ -46,6 +46,17 @@ add console commands, and run Lua against engine APIs (see Project
 Nemesis for the native API surface — engine functions/offsets are
 mapped there and in the Ghidra project).
 
+**In-memory loader patching** (CONFIRMED by a shipped mod — THaych's
+Player Skins Overhaul): a plugin hooks the GADB, SKDB and BNDL loaders
+(addresses in `runtime/engine.md`), reads the incoming stream,
+patches the bytes, and hands the original loader an in-memory stream
+implementing the engine stream interface. No game file is replaced,
+so record-level edits coexist with archive mods: same record but
+different fields → both survive; same field → the last applier wins;
+a reshaped or missing record → a careful patcher refuses and the game
+runs unmodded. Plugins load early enough (before the ~8–10 s database
+load) for this to work.
+
 ## 3. Gamedb overlays — CONFIRMED data path
 
 `game.gamedb` is the behavior database: stats, formulas, skills,
@@ -55,6 +66,10 @@ is *proven* writable: the Universal Modder notes rebuilt it to add a
 working tenth tribe (records, roles, strdb keys; see gamedb.md for
 the sort-by-hash and link-repoint rules that make rebuilds stick).
 Readers exist in both projects; Andúril's writer is still OPEN.
+The engine also natively loads a `database\game\game.gamedb_patch`
+sibling (one layer, content-hash checked against the base; enable
+flag on in retail) — format beyond the GADB header is OPEN, but it is
+the only overlay route the game itself supports.
 
 ## 4. Online services / offline testing
 
@@ -89,6 +104,15 @@ details in `engine/detail/hydra-online-services.md`.
 
 - **Never modify stock archives or the exe** in place — write
   override archives / rebuild copies.
+- **Mod archives need their own `archivepatchloosefiles.txt`**
+  listing every payload path (layout in `runtime/vfs.md`) — files not
+  listed don't override (THaych; every working mod archive in a
+  reference install carries one).
+- **Never write the player's save from a buff/data mod, and never give
+  a buff an `InventoryItemRemove` on a story item** — THaych lost
+  `Talion_Isildur_Ring` from a save this way.
+- Nexus flags script installers (`.bat`) — ship DLL + archive +
+  README.
 - **Oodle** is proprietary: use the install's `oo2core_5_win64.dll`
   at runtime; do not redistribute it.
 - **Naming:** VFS paths hash case-insensitively with backslashes;
@@ -116,6 +140,14 @@ released — cited as evidence sources):
   `-sim/-wcl/-terr` (world/simulation). Its CLI has per-format dump
   and render commands (`inst`, `mesh`, `anix`, `tex`, `mat`,
   `objres`, `wldclnt`, `sim view`).
+- **Player Skins Overhaul** (THaych, Nexus) — reference
+  implementation of in-memory GADB/SKDB/BNDL patching from a CRT-free
+  plugin DLL (symbolic patch keyed by category + record name, refuses
+  on unexpected shapes).
+- **SoW Community Edition** — another plugin framework
+  (`x64\plugins\sowce_bootstrap.dll` + `Mods\*.hotswap` folders);
+  coexists with loader-hooking plugins per THaych. Its `.hotswap`
+  mechanism is undocumented here (OPEN).
 - **sow-rs** — Rust/Bevy reimplementation by **OnSight**; his field
   notes are what this corpus draws on (all-codecs anix decode, CADB
   traversal maps, material censuses, combat/movement records).
