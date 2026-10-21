@@ -24,5 +24,6 @@
 - [`inventory-loot.md`](detail/inventory-loot.md) — Inventory items and nemesis loot — item graph, loot route, weights
 - [`moveset.md`](detail/moveset.md) — Talion moveset — skills, meters, ranged, and move chains
 - [`nemesis-data.md`](detail/nemesis-data.md) — Nemesis data layer — faction categories in `game.gamedb`
+- [`story-locked.md`](detail/story-locked.md) — Story-locked slices of systemic mechanics (Bruz/Zog/Gauntlet, quest sim events, act gating)
 - [`player-skins.md`](detail/player-skins.md) — Player skins — menu node → model → combat profile chain
 - [`traversal.md`](detail/traversal.md) — Traversal — movement constants, CADB context actions, locomotion
