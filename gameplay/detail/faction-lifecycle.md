@@ -57,12 +57,21 @@
   Flat across seat tiers (Captain_0 19%, _1 19%, _2 14%, Outer WC
   30%, Inner WC 15%, Overlord 14%) and classes — seat, not rank
   or class, is the trigger.
-- Residual region spread on fresh unseated (18% MinasIthil →
-  55% desert) — UNVERIFIED; probably tracks board fill order /
-  player level at spawn rather than region identity.
-- No record removes it at data level → engine-side seat/lifecycle
-  strip. Sim models: flat keep roll p≈0.42 at spawn, ~57% strip on
-  seating (keep 0.43), re-grant on return.
+- **The gate is decoded**: the `Picker_Follower_GrabAndThrow` entry
+  carries `RequirePlayerFollower=True` (VERIFIED record field) —
+  the trait only lands on follower-eligible members (ambient/event
+  follower-candidate spawns, returns). It is NOT a random keep or
+  an outright seat strip: board-fill seats are just rarely
+  follower-flagged.
+- Corollaries that now resolve: region spread on fresh unseated
+  (18% MinasIthil → 55% desert) = follower-flag share per board
+  (fill path mix), not a level mechanic; `Default_Act1` members
+  carry it less (30% vs 46%) because Act1 board fill is
+  non-follower; `Quirk_IronWill` anti-correlates (3/140 vs 53/100)
+  — INFERRED same-path exclusivity.
+- Sim models: flat eligibility roll p≈0.42 at spawn, seat keep
+  0.43 (≈ seated follower-flag share), re-grant on return.
+  Residual region spread UNVERIFIED at mechanism level.
 
 ## Resurrection return package (VERIFIED — 58-member diff)
 
