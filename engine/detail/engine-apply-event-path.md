@@ -296,7 +296,49 @@ The object is **runtime-only** (never deserialized; the save key
 literally says so) — created by the sim-event system when an
 event involving this member activates. Bind-to-member at spawn:
 `FUN_141bc2fd4` → `FUN_140596bc4`. No direct store to
-`member+0x4f0` exists in .text (full-binary scan).
+`member+0x4f0` exists in .text (full-binary scan) — the producer
+writes through the object-creation helpers below, which is why
+offset scans come up empty.
+
+## SimEvent/purpose lifecycle — the producer chain (VERIFIED-STATIC)
+
+Decompiled 2026-10-19 (Ghidra headless `Decomp.java`); this closes
+most of the "SimEvent producer" OPEN below.
+
+- `DAT_1426ffaa8+0x6c68` = the **global faction/nemesis manager**:
+  `+0x98` = map record → member node (node `+0x90..0x98` = vector
+  of purpose objects); `+0xf8` = 0x20-stride `{record_ptr@0,
+  state@8}` slot array indexed by record ordinal
+  (`FUN_141156510`, "Bad record index" guard, `+0x108` = expected
+  record-table id); `+0x1f0` = pending op queue; `+0x208` =
+  reentrancy flag (`FUN_140185fe0`).
+- `member+0x280` (`purpose_levelremap_record`) is a **record
+  pointer** — `FUN_141156510` validates it and returns the
+  record's runtime state slot, which the XPLevel row-match
+  predicate (`FUN_1403530f0`) reads to select the
+  `TraitLevelOffset_*` table.
+- **Application queue**: `FUN_14040c0ac` flushes `manager+0x1f0`;
+  each op goes through `FUN_14040c13c`, which resolves the op's
+  record in the `+0x98` map and calls **`FUN_14062e670` — the
+  event interpreter**: reads the event record via the
+  `FUN_140791xxx`/`FUN_14062fxxx` typed-cell accessors, resolves
+  subject+object members (`FUN_14018ddcc`), deactivates the
+  member's current `+0x4f0` SimEvent if its record differs
+  (`FUN_14061db24`), merges same-record instances
+  (`FUN_14062258c` — new record at `purpose+0x78`), and calls
+  `FUN_141b5f33c` to link the two member records in the manager
+  map (vendetta/blood-brother-style relations). Type-0xd cells in
+  the op record are member refs.
+- **Teardown**: `FUN_14061db24` unregisters the instance
+  (`FUN_14061ee0c`), iterates its 0x40-stride participants, runs
+  per-member effect removal (`FUN_141bb7578`), and **enqueues
+  follow-up ops via `FUN_14040c0ac`** keyed on member record
+  identities — events chain: resolution spawns the next event.
+- Consumers confirmed: level-up draw `FUN_1403513dc` (participant
+  `+0x18` Reward refs → row blocklist), SimEvent matcher
+  `FUN_1418ab270` (`FUN_1418ae198` = "member has a participant
+  entry keyed by record X"), Orders/intel UI `FUN_14189a31c`,
+  member tooltip `FUN_1418a36b8` ("involved in active quest").
 
 `FUN_140353ec4` is a level-change notifier on a wrapper object
 (byte level at `+0x51a`): on level increase it updates the level
@@ -315,20 +357,22 @@ serializer — complements the inspect-dumper map below):
 ## OPEN
 
 - What populates a participant's `Reward` exclusion refs — i.e.
-  which SimEvent records/scripts carry the per-participant
-  reward blocklist (the `+0x290` purpose-assignment path is the
-  prime suspect; store scan `ScanWriters 290` in flight).
-- **SimEvent producer — new lead (VERIFIED GameDB)**: `Faction/Rows`
-  seat records each carry a `Faction/Events/SimEventGenerationSetup`
-  ref (e.g. `MtnPass_Row_Captain_2` → `MtnPass_Captain`), which is a
-  list of `Faction/Events/SimEventGenerationType` entries
-  (`Hunting`, `Location`, `MP_Outpost_OP1/OP2`, …) — the board seat
-  assigns each member its event-generation profile, the most likely
-  path that activates the member's `+0x4f0` SimEvent instance. Rows
-  also carry seat `RoleLists` (disallowed filters for
-  Warchief/Overlord seats; draw pools `RolesWhoShouldNotBeLowLevel`
-  on `*_Row_Captain_2`) and `_StructuresFactionInitialXPLevel`
-  act-gated player-relative level bands.
+  which SimEvent record cells fill `entry+0x18` (the blocklist
+  write is inside `FUN_140630644`/`FUN_141c25500`, undecompiled).
+- **SimEvent producer — largely resolved** (see lifecycle section
+  above): the op queue + `FUN_14062e670` interpreter is the apply
+  path; `Faction/Rows` seat records carrying
+  `Faction/Events/SimEventGenerationSetup` refs (e.g.
+  `MtnPass_Row_Captain_2` → `MtnPass_Captain`, a list of
+  `SimEventGenerationType` entries `Hunting`, `Location`,
+  `MP_Outpost_OP1/OP2`, …) remain the most likely source of the
+  ops that activate a member's `+0x4f0` instance. Rows also carry
+  seat `RoleLists` (disallowed filters for Warchief/Overlord
+  seats; draw pools `RolesWhoShouldNotBeLowLevel` on
+  `*_Row_Captain_2`) and `_StructuresFactionInitialXPLevel`
+  act-gated player-relative level bands. Still OPEN: which GameDB
+  record class the `FUN_140791xxx`/`FUN_14062fxxx` accessors read
+  (fingerprint work), and the `FUN_14040c13c` op-record schema.
 - `DAT_14202e5a0`: the float seed driving the two-chance row
   probability test — where it is re-randomized (per draw loop?
   per level?) determines whether retail rolls are per-row
