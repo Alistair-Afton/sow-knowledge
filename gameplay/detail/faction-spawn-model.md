@@ -73,6 +73,36 @@
   warchief seat share may be too low, or ExtraBodyguards has a
   promotion-time grant path.
 
+### RoleSelect decode (VERIFIED — binary)
+
+- **`FUN_141bbf928` = the member builder.** Its ctx (`param_3`)
+  carries an explicit role override at `ctx[0x29]`; otherwise
+  `FUN_141bd6a48` builds the role-pick context and
+  `FUN_141bd7934`/`FUN_141bd7b00` drive the draw into `SetRole`.
+- **Candidates** come from two ctx lists (primary `ctx+0x130/0x138`;
+  secondary `ctx+0x188` behind a flag — the seat RoleList). On
+  total failure `ctx+0x150` is cleared and both passes re-roll —
+  a guaranteed fallback.
+- **`FUN_141bd8144` = the per-candidate scorer**, gated on:
+  ctx exclusion vector/list, a record-condition gate, a
+  **global role census** (`{count, decrement}` per role), a
+  min-level/prestige integer gate vs `ctx+0x180` (matches
+  `RolesWhoShouldNotBeLowLevel`), four predicate gates, and two
+  optional ctx-flagged gates.
+- **Effective weight = role weight penalized by board census**:
+  `w_eff = base − count×decrement`, clamped — roles already on
+  the board lose weight (diminishing returns). Selection goes
+  through `FUN_1401b3b90` on the `DAT_14202e8xx` RNG family;
+  exact accept semantics (reservoir vs sequential) INFERRED.
+- **`FUN_141bc63f8` = `SetRole`** — the only direct
+  `member+0x318` writer outside save/load/ctor. Swaps
+  `PreviousRole←Role`, grants the role's child records into
+  `member+0x158` (trait/marker container — how roles carry
+  markers), bumps the global census, applies a role-carried
+  Personality record to `member+0x270`, and broadcasts a
+  SimEvent. 7 call sites: the builder, a wrapper, three
+  `SetRole` command handlers, and `FUN_140f859a0`.
+
 ## OPEN
 
 - True `spawn` distribution — needs the native spawn path read or a
