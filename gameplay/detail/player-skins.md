@@ -63,7 +63,8 @@ drives the green Dark-Talion presentation (THaych).
   `PC_IsDarkTalion`.
 - The story item `Inventory/Items:GP_PlayerIsDarkTalion` (owned by
   every post-ending save) **also applies `PC_IsDarkTalion`** —
-  restoring a pre-ring skin must re-point the item's buff or the dark
+  CONFIRMED: its `PassiveBuffData` links `Combat/Buffs:PC_IsDarkTalion`.
+  Restoring a pre-ring skin must re-point the item's buff or the dark
   behavior returns. THaych points it at `DoesNothingBuff`; the item
   stays so story checks still work, and it's safe because every
   *other* endgame profile grants the buff itself.
@@ -72,16 +73,18 @@ drives the green Dark-Talion presentation (THaych).
   surface in audio tests and profile lists, but the real pre-ring
   model is `PlayerSkin_Celebrimbor_Main` — nothing about SotP feeds
   the Celebrimbor skin.
-- **Raise Dead needs more than the attacks:** the 13
-  `NecroAoE_Attack_*` gate on `PC_IsDarkTalion`, *and* the animation
-  needs the `PDARKTALION` animation tag that only that buff sets.
-  THaych's fix repurposes the unused buff
-  `zOld_Krak_Graug_StaminaMeter_Default_Clear` with
-  `PC_IsDarkTalion`'s record layout but **only** the anim tag (no
-  green FX, dark audio, or Ringwraith), then swaps each attack's buff
-  requirement for a second copy of its own `CSP_RaiseWights` skill
-  requirement — the Ringwraith ultimate keeps its buff gate, so it
-  stays locked.
+- **Raise Dead needs more than the attacks:** the `NecroAoE_Attack_*`
+  records gate on `PC_IsDarkTalion` (CONFIRMED:
+  `PredicateBuffAttackerIncluded:PC_IsDarkTalion` in `Predicates`),
+  *and* the animation needs the `PDARKTALION` tag that the
+  dark-talion profile carries (CONFIRMED: `NativePredicates+0` =
+  `"PDARKTALION"`). THaych's fix repurposes the unused buff
+  `zOld_Krak_Graug_StaminaMeter_Default_Clear` (CONFIRMED present in
+  `Combat/Buffs`) with `PC_IsDarkTalion`'s record layout but **only**
+  the anim tag (no green FX, dark audio, or Ringwraith), then swaps
+  each attack's buff requirement for a second copy of its own
+  `CSP_RaiseWights` skill requirement — the Ringwraith ultimate keeps
+  its buff gate, so it stays locked.
 
 ## Skin menu layout — CONFIRMED
 
