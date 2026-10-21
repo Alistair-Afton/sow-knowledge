@@ -67,7 +67,21 @@ name (THaych).
   list order: off-hook before on-hook).
 - **Wraith grunts:** Celebrimbor's are always requested; the Dark
   Talion mix (`mix_wra_dark_talion_on/off`) mutes them. Dash sounds use
-  keys `wra_swiftness_in`, `wra_gc_wrath_dash`.
+  keys `wra_swiftness_in`, `wra_gc_wrath_dash`. The "on" mix is
+  switched **at spawn** by the hook `mix_wra_dark_talion_on_item`,
+  keyed on the `GP_PlayerIsDarkTalion` story item; the endgame skins
+  otherwise get the mix from their `PC_IsDarkTalion` buff's
+  apply/remove. Because model tests run at spawn **before** the skin
+  model is applied, a model test alone fires the mix for the wrong
+  skin — THaych disables the item hook and keys the "off" hook on
+  "NOT wearing another skin's endgame model" (buff-driven mixes keep
+  working).
+- **Pre-ring vs endgame dialogue** is picked by
+  `HasNotCompleted_GP_Finale10` / `QuestComplete_GP_Finale10` — both
+  test "is the final quest done". `CharModel_GraugOrCarnan` is an
+  unused audio condition (a spare repurposable slot — THaych rewrote
+  it to mean "wears another skin's endgame model" so Celebrimbor
+  keeps pre-ring banter after the ending).
 - **Player identity tests:** `CharModel_PlayerTalion`,
   `CharModel_Celebrimbor`, `CharModel_PlayerAny`; dead slots
   (`PlayerSkin01/02`) name no model.

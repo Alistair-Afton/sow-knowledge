@@ -53,6 +53,36 @@ variant; e.g. `PlayerSkin_DarkTalion_Main` → picker `TalionSkin_Dark`).
 The `_ShadowWar` profiles grant the `PC_IsDarkTalion` buff that
 drives the green Dark-Talion presentation (THaych).
 
+- `PlayerSkin_Celebrimbor_ShadowWar` (model **and** its
+  `Combat/Tree` profile) is referenced **only** by the Celebrimbor
+  skin — patching it changes that skin and nothing else (THaych's
+  skin-specificity seam). Its retail profile is a "Dark Celebrimbor":
+  `FXLookupKey DarkTalion` (green), `CompanionModel
+  DarkCelebrimborWraith`, `InventorySetup Player_DarkTalion` (dark
+  brand + Isildur's ring), the Ringwraith ultimate items, and
+  `PC_IsDarkTalion`.
+- The story item `Inventory/Items:GP_PlayerIsDarkTalion` (owned by
+  every post-ending save) **also applies `PC_IsDarkTalion`** —
+  restoring a pre-ring skin must re-point the item's buff or the dark
+  behavior returns. THaych points it at `DoesNothingBuff`; the item
+  stays so story checks still work, and it's safe because every
+  *other* endgame profile grants the buff itself.
+- The **Statues of the Past records are unrelated**:
+  `PlayerSkin03_StatuesOfThePast`/`Player_Character_StatuesOfThePast`
+  surface in audio tests and profile lists, but the real pre-ring
+  model is `PlayerSkin_Celebrimbor_Main` — nothing about SotP feeds
+  the Celebrimbor skin.
+- **Raise Dead needs more than the attacks:** the 13
+  `NecroAoE_Attack_*` gate on `PC_IsDarkTalion`, *and* the animation
+  needs the `PDARKTALION` animation tag that only that buff sets.
+  THaych's fix repurposes the unused buff
+  `zOld_Krak_Graug_StaminaMeter_Default_Clear` with
+  `PC_IsDarkTalion`'s record layout but **only** the anim tag (no
+  green FX, dark audio, or Ringwraith), then swaps each attack's buff
+  requirement for a second copy of its own `CSP_RaiseWights` skill
+  requirement — the Ringwraith ultimate keeps its buff gate, so it
+  stays locked.
+
 ## Skin menu layout — CONFIRMED
 
 `Interface/Menu/MenuTreeBase:SkinSelect_OverviewTree` lists the
@@ -108,6 +138,15 @@ renders **magenta** (THaych).
   record-field reader `0x140278758`) while a character is built, and
   earlier at spawn at `exe+0x4d6aad` — before the skin is known — so
   per-skin swaps need persisted state.
+- **Lessons from the shipped overhaul** (THaych): copying a model's
+  `CharacterModelPicker` link makes the model pick itself — copy only
+  look fields (bundle, path query, preloads, client FX). Model-based
+  audio tests run at spawn **before** the skin model is applied, so a
+  model test alone can't distinguish skins — drive mixes from buffs
+  instead. Never remove an item through a buff action on the ring —
+  an early experiment deleted Isildur's ring from the save
+  permanently, on every skin; the New Ring should come from the
+  normal `Player` `InventorySetup`, not by removal.
 
 ## Making a new skin (proven recipe)
 
