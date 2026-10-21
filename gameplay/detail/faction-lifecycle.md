@@ -44,15 +44,25 @@
 
 ## `Follower_GrabAndThrow` seat-strip (VERIFIED — live resolution)
 
-- NOT creation-fixed: unseated rates climb with level
-  (21% ≤20 → 29% ≤50 → 51% @51+), resurrection re-grants it
-  (88% undead vs 37% living unseated), and seating strips it
-  near-totally (**4% seated vs 44% unseated** — the only ability with
-  that signature; BodySlam/ThroatGrab are seat-invariant).
+- Fresh-spawn presence ≈ **42%** flat (live n=562 census, members
+  with no return markers: unseated 100/240 ≈ 42%). Earlier
+  level-scaling readings (21% ≤20 → 51% @51+) were *returner
+  contamination* — mature boards are dominated by returns.
+- Returns re-grant: unseated returners 68% (79/116), seated
+  returners 38% (5/13) — raise-dead/cheat-death/escape returns
+  restore it. RaiseDead holders among seated keepers: 3/39 vs
+  0/166 stripped — strongly enriched.
+- Seating strips it: fresh seated 18% vs fresh unseated 42% →
+  ~43% of carriers keep it ⇒ **chance strip, not outright remove**.
+  Flat across seat tiers (Captain_0 19%, _1 19%, _2 14%, Outer WC
+  30%, Inner WC 15%, Overlord 14%) and classes — seat, not rank
+  or class, is the trigger.
+- Residual region spread on fresh unseated (18% MinasIthil →
+  55% desert) — UNVERIFIED; probably tracks board fill order /
+  player level at spawn rather than region identity.
 - No record removes it at data level → engine-side seat/lifecycle
-  strip. Sim models: level-scaled keep roll (p ≈ 0.13 + 0.0055×level,
-  cap 0.9), permanent strip on Warchief/Overlord seat (survives
-  demotion), re-grant on undead return.
+  strip. Sim models: flat keep roll p≈0.42 at spawn, ~57% strip on
+  seating (keep 0.43), re-grant on return.
 
 ## Resurrection return package (VERIFIED — 58-member diff)
 
