@@ -57,9 +57,13 @@
   `*_Row_Captain_2` rows carry it as their `RoleLists` cell, which
   the pick ctx consumes as its secondary (`ctx+0x188`) candidate
   list. No career re-draw exists; members seated on `_2` rows draw
-  prestige roles at spawn/fill. The sim still approximates with a
-  level≥30 re-draw (lands ~15% vs live ~10–17%) pending seat
-  modeling.
+  prestige roles at spawn/fill. Note `Role_Pretender` (the pool's
+  headline weight) is a **unique story boss**, not a filler epithet:
+  its record carries a full `Tower_*` armor set,
+  `ForcedPersonality=Orc_Professional1`,
+  `Picker_GangOfDoppelgangers` and `ForceCharacterAudioUpdate` —
+  retail's condition gates hold it outside its story window, and
+  live boards show 0 copies.
 - **`Faction/Rows` = the board seat template — NEW, verified shape**:
   each row record carries region, `RowRanks` seat, a
   `SimEventGenerationSetup` ref (the member's purpose — the likely
