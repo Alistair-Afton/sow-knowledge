@@ -15,7 +15,7 @@
 - [`audio-hooks.md`](detail/audio-hooks.md) — Audio hooks — keys, hooks, conditions, Wwise IDs
 - [`combat.md`](detail/combat.md) — Combat data model — formulas, attacks, fight circle
 - [`cut-content.md`](detail/cut-content.md) — Cut/removed/dev content registry
-- [`dlc-content.md`](detail/dlc-content.md) — DLC content map — which records belong to which add-on
+- [`dlc-content.md`](detail/dlc-content.md) — Mode exclusivity — what only exists in base / Galadriel / Desolation
 - [`faction-generation.md`](detail/faction-generation.md) — Faction generation — captain build rules, event grammar, live roster
 - [`faction-lifecycle.md`](detail/faction-lifecycle.md) — Spec: Faction member lifecycle — rarity, promotion, resurrection, seating
 - [`faction-pickers.md`](detail/faction-pickers.md) — Spec: Faction picker system — gates, groups, dedupe
