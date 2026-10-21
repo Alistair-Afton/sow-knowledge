@@ -1,7 +1,7 @@
 # Audio hooks — how voice lines and sounds are chosen
 
-> **Status:** **verified** — record shapes and attr names CONFIRMED on the installed `game.gamedb`; runtime behavior from THaych's Player Skins Overhaul (shipped mod, tested in-game).
-> **Provenance:** Andúril gamedb dumps + THaych's Player Skins Overhaul notes (external, in-game).
+> **Status:** **verified** — record shapes and attr names CONFIRMED on the installed `game.gamedb`; runtime behavior per THaych (external notes; his own reports, not our observations).
+> **Provenance:** Andúril gamedb dumps + THaych's Player Skins Overhaul writeups (external — shared as notes/Discord messages; not all mechanisms may be in the shipped mod).
 
 All context-sensitive audio — barks, dialog, presentation lines,
 mix changes — is selected by data in the `AudioHooks/*` categories.
@@ -24,7 +24,7 @@ of 7 hooks — Talion recapture lines first, then Celebrimbor's
 `BrightLordOutro*` — gated by conditions such as
 `QuestComplete_GP_Finale40` and `CurrentWorld_IsNotDesert`.
 
-## Runtime behavior (THaych, in-game)
+## Runtime behavior (THaych's reports)
 
 - **Model tests:** a GameCondition with `SubStringCompare = 1`
   matches by substring ("contains"), so use full model names to avoid
@@ -61,7 +61,7 @@ two same-length string arrays of the lines — `CustomBodyAnimationList`
 `dx_b_sbx_CB_All`) is what Wwise `PostEvent` receives — not the line
 name (THaych).
 
-## Gameplay audio flows (THaych, in-game)
+## Gameplay audio flows (THaych's reports)
 
 - **Spawn hooks** run on key `CharacterSpawns_Delay` (~6 s after spawn,
   list order: off-hook before on-hook).
@@ -71,21 +71,33 @@ name (THaych).
   switched **at spawn** by the hook `mix_wra_dark_talion_on_item`
   (CONFIRMED: action `mix_wra_dark_talion_on` + conditions
   `Source_IsPlayerAny` + `HasItem_GP_PlayerIsDarkTalion`); the
-  endgame skins
-  otherwise get the mix from their `PC_IsDarkTalion` buff's
-  apply/remove. Because model tests run at spawn **before** the skin
-  model is applied, a model test alone fires the mix for the wrong
-  skin — THaych disables the item hook and keys the "off" hook on
-  "NOT wearing another skin's endgame model" (buff-driven mixes keep
-  working).
+  endgame skins otherwise get the mix from their `PC_IsDarkTalion`
+  buff's apply/remove. Because model tests run at spawn **before**
+  the skin model is applied, a model test alone fires the mix for
+  the wrong skin — THaych disables the item hook outright, leaving
+  the buff-driven on/off for the endgame skins (a skin without the
+  buff is simply never muted).
 - **Pre-ring vs endgame dialogue** is picked by
   `HasNotCompleted_GP_Finale10` / `QuestComplete_GP_Finale10` — both
-  test "is the final quest done". `CharModel_GraugOrCarnan` is an
-  audio condition THaych reports unused (record CONFIRMED in
+  test "is the final quest done". The pre-ring banter lines are
+  never removed: the recordings ship in the sound packages and the
+  ending only changes which hooks' conditions pass — so restoring
+  them is a data-only fix (THaych). His rewire changes the
+  *question itself*, not the hooks: the spare
+  `CharModel_GraugOrCarnan` GameCondition (record CONFIRMED in
   `AudioHooks/GameConditions` — it CharModel-tests `Troll_*` model
-  strings; its unusedness is THaych's read, not ours) — a spare
-  repurposable slot he rewrote to mean "wears another skin's endgame
-  model" so Celebrimbor keeps pre-ring banter after the ending.
+  strings and is unused in retail per THaych) gets its model list
+  rewritten to every *other* skin's endgame model (Talion, Dark
+  Talion, Baranor, Serka, Eltariel, … incl. Prologue Talion —
+  Celebrimbor's deliberately left out), so it asks "is the player
+  wearing another skin's endgame model?". Both Finale10 conditions
+  then point at that check, giving: pre-ending any skin → banter
+  plays; post-ending Celebrimbor → banter plays; post-ending any
+  other skin → endgame lines. Two pitfalls he hit: the condition
+  must use **the same matching mode the game's own
+  `CharModel_Player*` checks use** — the default mode also matched
+  the Celebrimbor player and muted him again; and model tests run at
+  spawn before the skin model applies (above).
 - **Player identity tests:** `CharModel_PlayerTalion`,
   `CharModel_Celebrimbor`, `CharModel_PlayerAny`; dead slots
   (`PlayerSkin01/02`) name no model.

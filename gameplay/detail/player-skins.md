@@ -1,7 +1,7 @@
 # Player skins — menu, model, profile chain
 
-> **Status:** **verified** — record chain and field names CONFIRMED on the installed `game.gamedb`; skin-behavior semantics from THaych's Player Skins Overhaul (shipped mod, tested in-game).
-> **Provenance:** Andúril gamedb dumps (field names via attr-name hashes) + THaych's Player Skins Overhaul notes (external, in-game).
+> **Status:** **verified** — record chain and field names CONFIRMED on the installed `game.gamedb`; skin-behavior semantics per THaych (external notes; his own reports, not our observations).
+> **Provenance:** Andúril gamedb dumps (field names via attr-name hashes) + THaych's Player Skins Overhaul writeups (external — shared as notes/Discord messages; not all mechanisms may be in the shipped mod).
 
 A playable skin is three linked GADB records: a menu node, a
 character model, and a combat profile. Everything about how a skin
@@ -114,7 +114,7 @@ is fixed art sized for 8 nodes at step 70. A UI texture that is not
 listed in a loaded bundle (`ingame_tex.bndl`, type `…UI_Textures`)
 renders **magenta** (THaych).
 
-## Profile semantics (THaych, in-game)
+## Profile semantics (THaych's reports)
 
 - **VFX lookup keys** (`Client/FXLookup/Table` rows `{fxPath, Key}`):
   0 Fellbeast, 1 Talion (blue), 2 Eltariel, 6 Nazgûl, 12 DarkTalion
@@ -146,7 +146,7 @@ renders **magenta** (THaych).
   record-field reader `0x140278758`) while a character is built, and
   earlier at spawn at `exe+0x4d6aad` — before the skin is known — so
   per-skin swaps need persisted state.
-- **Lessons from the shipped overhaul** (THaych): copying a model's
+- **Lessons from his overhaul notes** (THaych): copying a model's
   `CharacterModelPicker` link makes the model pick itself — copy only
   look fields (bundle, path query, preloads, client FX). Model-based
   audio tests run at spawn **before** the skin model is applied, so a
