@@ -179,13 +179,28 @@ bit the `MustHaveDeathThreat` filter tests, so a death-threat victim;
 `Rarity_EpicOrc`: `DeathThreatBonus 2.0`, `RevengeBonus 0`,
 `WeightTableOffsetScalar 4.0`). The item-level terms above are bound
 to fields the same way (structure VERIFIED-STATIC, field roles
-INFERRED). Each `Entries[]` rarity
+INFERRED). Term details: `RankBonus` rows are `{Bonus, RowRank}`
+matched to the victim's rank record; `DeathThreatBonus` is a row
+list — `FUN_14075b24c` sums each row's `Bonus` whose threat link is
+in the active-threat set (VERIFIED-STATIC); `LevelDiffBonus` rows
+(`FUN_14075b52c`) map (enemy level − player level) through
+`{in_lo,in_hi}→{out_lo,out_hi}` then a `Combat/Stat/Formula/Float`
+(returns 0 without one — VERIFIED-STATIC; row-field bindings
+INFERRED from values: `Rarity_EpicOrc`'s row reads
+`out −5…+5 over in −30…+30`). Each `Entries[]` rarity
 (`Faction/Loot/Rarity`) then gets the value
-`WeightTable[score] × PlayerLevelWeightTable[player-item level]`
-(both `Combat/Stat/Constant/FloatArray` curves, e.g. `Loot_Epic`,
-`Loot_LevelComparison_Epic`), and one rarity is picked by **weighted
-reservoir sampling** over those values (values ≤ 0 never win) (`"CalcLootRarity Rarity Type
-= %s, Value = %0.3f"` / `"Final"`).
+`WeightTable[score] × PlayerLevelWeightTable[player level]` — both
+`Combat/Stat/Constant/FloatArray` curves read by
+`FUN_1402ca0e0` = `array[clamp(index, 0, len−1)]` (a missing table
+falls back to the ≈1.0 default; the arrays are ~81 raw f32s:
+`Loot_Common` declines 0.74→0.1, `Loot_Rare` rises 0.2→1.5,
+`Loot_Epic` 0.06→0.9, `Loot_Legendary` is all-zero, and the
+`Loot_LevelComparison_*` tables stay 0 for the lowest player levels
+then rise toward ~2.75–3.5). One rarity is picked by **weighted
+reservoir sampling** over those values — `FUN_1401b3b90` keeps an
+accumulator `acc += w` and keeps the entry iff `rand×acc < w`, i.e.
+an exact weighted draw (values ≤ ~0 never win) (`"CalcLootRarity
+Rarity Type = %s, Value = %0.3f"` / `"Final"`).
 
 **Award** `FUN_140648214` — walks the table's `Items[]`
 (`FactionLootEntry`), keeping entries whose rarity list is empty or
