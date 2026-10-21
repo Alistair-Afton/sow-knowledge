@@ -47,10 +47,12 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
   record map, combat notes, HUD map, format notes) — credited inline
   per claim. Where the two projects' work overlapped, claims were
   validated against retail bytes; every overlap agreed.
-- Universal-modder field notes ("Goblins of War"), QuickBMS
-  `shadow_of_mordor.bms` v0.4, SoW Modding Community ImHex-Patterns /
-  MeshParser, LordMonstey's Mesh Publisher, WarpZephyr's
-  MordorFormats — used by upstream projects as documentation.
+- Universal Modder field notes (five SoW notes + winhttp.dll
+  stand-in source), THaych's Player Skins Overhaul briefing,
+  LordMonstey's sow-weapon-modding-guide + Mesh Publisher,
+  QuickBMS `shadow_of_mordor.bms` v0.4, SoW Modding Community
+  ImHex-Patterns / MeshParser, WarpZephyr's MordorFormats — used by
+  upstream projects as documentation.
 
 ## Reading map
 
@@ -65,9 +67,9 @@ not free text. Read `CONTRIBUTING.md` (the submission contract) and
 | `formats/materials.md` | LTMI `.mat`, TEXR/TEXA/SLVT `.tex*`, shaders, texture conventions |
 | `formats/world.md` | WDSC `.wldclnt`, OBJR `.objres`/OBJL/CADB, TERR `.terrain`, VEGG |
 | `formats/ui.md` | Scaleform `.gfx`, HUD records and widget map |
-| `formats/detail/` | Full field-level spec per format — 31 detail docs linked from `formats/index.md` |
-| `gameplay/index.md` | Gameplay index — digests + `detail/` specs (faction generation/lifecycle/pickers/spawn/XP rewards, moveset, combat, traversal, HUD map, nemesis data) |
-| `engine/index.md` | Engine index — `engine.md` digest + `detail/` specs (VFS mount order, spawn pipeline, apply-event write path) |
+| `formats/detail/` | Full field-level spec per format — 32 detail docs linked from `formats/index.md` |
+| `gameplay/index.md` | Gameplay index — digests + `detail/` specs (faction generation/lifecycle/pickers/spawn/XP rewards, moveset, combat, traversal, HUD map, nemesis data, inventory/loot, player skins, audio hooks) |
+| `engine/index.md` | Engine index — `engine.md` digest + `detail/` specs (VFS mount order, spawn pipeline, apply-event write path, Hydra online services) |
 | `runtime/index.md` | Runtime index — live-game model ported from Project Nemesis forensics (nemesis memory, spawning, console commands, script VM, UI, VFS, gamedb, engine map, `functions/` native decodes) — per-claim tags preserved; **not independently verified** |
 | `reference/index.md` | Reference index — script classes, event surface, event-subscription tables, native schema/registry + gamedb intern maps |
 | `gameplay/combat.md` | Stat formulas, evaluation rules, moveset chains, fight circle, meters |
