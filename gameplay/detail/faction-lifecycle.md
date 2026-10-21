@@ -73,6 +73,28 @@
   0.43 (≈ seated follower-flag share), re-grant on return.
   Residual region spread UNVERIFIED at mechanism level.
 
+## Row seats (VERIFIED — live roster occupancy)
+
+Each region board holds a fixed seat grid; on the mature live
+roster every row reads at the same cap, and every member beyond
+the caps carries `row='-'` (a roamer — ~63% of the board):
+
+| row | seats |
+|---|---|
+| `Row_Captain_0` | 4 |
+| `Row_Captain_1` | 8 |
+| `Row_Captain_2` | 7 |
+| `Row_Inner_Warchief` | 2 |
+| `Row_Outer_Warchief` | 4 |
+| `Row_Overlord` | 1 |
+
+≈26 seated per region. Seating is therefore a *contest for a
+finite slot*: a spawn seats only while its tier's rows have a
+hole, and a dead/shamed occupant holds the seat until the
+hole-timer path refills it. (`Faction/Rows` holds 83 unnamed row
+records — the per-row capacity field is UNVERIFIED in the schema;
+the caps above are measured occupancy, not decoded config.)
+
 ## Resurrection return package (VERIFIED — 58-member diff)
 
 `Quirk_Unbreakable` is the player-raise-dead return state: 54/54
