@@ -92,8 +92,9 @@
 - **Effective weight = role weight penalized by board census**:
   `w_eff = base − count×decrement`, clamped — roles already on
   the board lose weight (diminishing returns). Selection goes
-  through `FUN_1401b3b90` on the `DAT_14202e8xx` RNG family;
-  exact accept semantics (reservoir vs sequential) INFERRED.
+  through `FUN_1401b3b90` — VERIFIED a weighted reservoir
+  sampler: accept candidate with `w/(sum+w)`, last accepted wins
+  (distributionally = a weighted roulette).
 - **`FUN_141bc63f8` = `SetRole`** — the only direct
   `member+0x318` writer outside save/load/ctor. Swaps
   `PreviousRole←Role`, grants the role's child records into
@@ -101,7 +102,9 @@
   markers), bumps the global census, applies a role-carried
   Personality record to `member+0x270`, and broadcasts a
   SimEvent. 7 call sites: the builder, a wrapper, three
-  `SetRole` command handlers, and `FUN_140f859a0`.
+  `SetRole` command handlers, and `FUN_140f859a0` — which is the
+  **fill-unroled** path (early-returns when `+0x318 != 0`), not
+  the prestige re-draw.
 
 ## OPEN
 
