@@ -339,6 +339,17 @@ most of the "SimEvent producer" OPEN below.
   `FUN_1418ab270` (`FUN_1418ae198` = "member has a participant
   entry keyed by record X"), Orders/intel UI `FUN_14189a31c`,
   member tooltip `FUN_1418a36b8` ("involved in active quest").
+- **The op records are `Faction.EventToast` records** (VERIFIED):
+  every accessor `FUN_14062e670` calls resolves to
+  `PTR_DAT_14266a230` = the `Faction.EventToast` class descriptor.
+  `Faction/Events/Toast` decls — Promoted, Escaped, Revenge,
+  Killed, Dominated, Succeeded, Failed + `*NonSim` variants — are
+  the SimEvent OUTCOME ops: teardown (`FUN_14061db24`) resolves
+  the SimEvent's toast field and enqueues `{member_key,
+  toast_record}`; the interpreter applies the outcome's
+  participant/relation/effect fields. `Faction.Purpose`,
+  `PurposeEvent`, `PurposeList` exist only as schema stubs —
+  purpose records are runtime-created, not authored data.
 
 `FUN_140353ec4` is a level-change notifier on a wrapper object
 (byte level at `+0x51a`): on level increase it updates the level
