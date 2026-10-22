@@ -159,7 +159,12 @@ length agreement; chunk semantics below are from the external note.
   example cited from 9 offsets across the chunk) — refs to
   dead members persist after death (VERIFIED; the
   `..040000`-pattern `b` family in raw scans is a different
-  small-index layout, not a GUID).
+  small-index layout, not a GUID). Splitting on the owner
+  flagword: 339 citations are sections inside the dead
+  member's own archive record; **182 external refs** (kind
+  words 0/8/0x200/0xc0/0x800 — same vocabulary as live
+  edges) point at **119 dead members** from other entities'
+  records — relationship/mission history survives death.
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
