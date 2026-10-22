@@ -39,10 +39,16 @@ length agreement; chunk semantics below are from the external note.
   **Verified on retail**: 3 slot records per save — slot 1
   (campaign, ~1.5 MB: IVPD/WHDC-1.27MB/ASMC/CBTC/QSTD/IIUC/STOR),
   slot 2 (~655 KB: LTMR/ASMC/CBTC/LPDC/UITC), and slot 3
-  (~288 KB: IVGD/PPDC/IEUC/IVPD/WHDC-122k — a second, much smaller
-  nemesis world — plus ASMC/CBTC/LPDC/IIUC; identical byte length
-  on all six saves). Slot records are NOT 4-aligned (slot 3 begins
-  at an odd offset) — scanners must check every byte position.
+  (~288 KB: IVGD/PPDC/IEUC/IVPD/WHDC-122k plus
+  ASMC/CBTC/LPDC/IIUC; identical byte length on all six saves).
+  Slot records are NOT 4-aligned (slot 3 begins at an odd
+  offset) — scanners must check every byte position.
+- Slot-3 WHDC is the same tagged-field grammar but carries **no
+  `_NPC_` member tokens** — its head records resolve to `Player`,
+  `QuestReplay`, `BG_Ruins_Main`, `Traits_Commander`. It is a
+  player/quest-side world state (INFERRED: the quest-replay/DLC
+  world — static size across all saves suggests it has never been
+  entered on this profile).
 - Inside a slot: chunks `<4CC> <u32 ver> <u32 size> <u32 0> <u32 size-4>`.
   **Every size field changes when a chunk grows.**
 - Observed chunks (verified per-region inventory):
@@ -225,7 +231,9 @@ grouping) / `save <f> rec|ids` (record walk /
 head-id crossref) / `save <f> recdiff <fB> <NPC_n>` (cross-save
 record diff) / `save <f> roster` (TSV census: token, typeid, head
 scalars, tribe, marker/picker/event/trait counts) /
-`save <f> hex|raw <off> <len>` (dumps).
+`save <f> hex|raw <off> <len>` (dumps). `roster` and `rec` accept
+an optional trailing hex arg selecting a non-first WHDC chunk by
+its tag offset.
 Requires `ANDURIL_HASHDB` pointing at the harvested name dictionary.
 - Value tags: `04` = u32, `00` = 32-bit AttrHash name (same
   `h*0x397 + map[c]` hash as gamedb/strdb), `0c` = bool, `10` =
