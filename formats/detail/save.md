@@ -54,18 +54,28 @@ length agreement; chunk semantics below are from the external note.
   UITC v3, STOR v159`. Global-only chunks: `GOXC` v5, `PERF` v6,
   `PICB` v8, `GPDC` v5, `GMSC` v5. (`IUC0` seen on other saves;
   `SAVE` v31 is the slot inner header.)
-- The three WHDC chunks are three different world states —
-  **slot 1 (≈1.27 MB)** = live campaign nemesis world (544 member
-  tokens, 165 captain records); **slot 2 (≈488 KB)** = the
-  definition world — dense archetype tables (~35k resolved names:
-  7196 `Picker_`, 947 `Role_`, 856 `RoleMarker_`, `Traits_`,
-  `Offense_`/`Defense_`, `Orc_`/`Olog_`/`Easterling_` gear, `Tag_`,
-  `Marker_`, `NemesisForge_`, `OriginDeathTaunt_`) with **zero
-  `_NPC_` member tokens**; **slot 3 (≈122 KB)** = player/quest-side
-  world (`Player`, `QuestReplay`, `BG_Ruins_Main`,
-  `Traits_Commander`, `Role_Lithlad`, `Role_Desolation`; INFERRED:
-  the quest-replay/DLC world — identical size across all six saves
-  suggests it has never been entered on this profile).
+- The three WHDC chunks are **the three campaigns** (verified by
+  resolved names): **slot 1 (≈1.27 MB)** = base-game nemesis world
+  (544 member tokens, 165 captain records — the only slot whose
+  members use `<guid>_NPC_<n>` identity tokens); **slot 2
+  (≈488 KB)** = *Blade of Galadriel* (DLC3) world — `DLC3_Architect`,
+  `DLC3_ArchitectIsDead`, `Real_Faction_MtnPass_DLC3`,
+  `DLC3_MtnPass_Row_Overlord`, `BecomeFollower`,
+  `IsPlayerFollowerApply`, `Picker_Follower_GrabAndThrow`; **slot 3
+  (≈122 KB)** = *Desolation of Mordor* (DLC4) world — `DLC4`,
+  `DLC4_Desert_Overlord`, `Faction_desert_DLC4`,
+  `DLC4_desert_Row_Overlord`, `DLC4_Role_Overlord`,
+  `DLC4_OverlordArmSever_GrantClawArm`, `Role_Lithlad`,
+  `Role_Desolation`. Slot 3 is byte-length-identical on all six
+  saves — DoM was likely never played on this profile.
+- All three WHDC chunks open with the **same prologue**: `Player`,
+  `QuestReplay`, then a region/encounter name table (`BG_*`,
+  `SM_*`, `D_*`, `IS_*`, `MI_*`, `VC_*`, `SON_*`, …) — a shared
+  header, not per-campaign data.
+- DLC nemesis states do NOT use `_NPC_` member tokens (verified:
+  `_NPC_` occurs only in slot 1). Eltariel's allied captains and
+  Baranor's nemeses are keyed differently — probably by
+  `Role_`/`Real_Faction_`-keyed records (UNVERIFIED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
