@@ -160,6 +160,8 @@ Relationship persistence — verified negative results:
                           world ids), 0x162 tail, 0 = identity/template
                           refs (Orc_Spearman, OlogHai_Infantry) and
                           story quest-state (BruzBrothers_* on NPC_611).
+                          Also observed: cat=0x2ce empty-hash slots
+                          (NPC_611).
                           Fixed-length array (~31 slots); zero entries
                           are empty slots.
 02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
