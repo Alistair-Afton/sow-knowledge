@@ -154,6 +154,12 @@ length agreement; chunk semantics below are from the external note.
   member space ~525 vs max index 613 (the rest were purged
   transients). A live member's own faction/row/AI is the
   **first** tuple; later tuples are archive records.
+- **Dead members are still referenced**: 322/328
+  dead-member GUID64Bs appear at other WHDC sites (top
+  example cited from 9 offsets across the chunk) — refs to
+  dead members persist after death (VERIFIED; the
+  `..040000`-pattern `b` family in raw scans is a different
+  small-index layout, not a GUID).
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
