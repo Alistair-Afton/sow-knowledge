@@ -169,7 +169,9 @@ Relationship persistence — verified negative results:
 00 <Tag_* hash> +         appearance-tag counts
   08 <u32 count>
 00 <TraitLevelOffset_*>   level-offset marker
-ff ff ff …                tail (record ends at next `0f` token)
+03 ff ff ff …             tail — a `03`-tagged event slot with
+                          cat=0xffffff; every census record ends
+                          here (record ends at next `0f` token)
 ```
 
 Head scalars (roster census): the `08`+`04` pair after the two
