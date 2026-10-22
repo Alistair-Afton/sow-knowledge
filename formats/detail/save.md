@@ -47,6 +47,16 @@ length agreement; chunk semantics below are from the external note.
   probes place the live `FactionRole` roster inside), `ASMC` v8,
   `CBTC`, `GCPT`, `LPDC`, `UITC`, `LTMR`, `DIFF`, `IUC0`.
   (`PAIC` also exists in the editor's chunk model.)
+- **Full chunk-tag registry** (exe, verified static): the binary
+  carries a table of `mov eax,'TAG'; ret` thunks — 38 entries:
+  `PERF PDIC PPDC IVGD DIFF ASMC FAST WHDC CBTC IVMG IVPD IVSH ENT2
+  TTRL SAVE QSTD LPDC GPDC PICB GOXC` (main table) plus
+  `ATI1 ATI2 AUDI FOTP GCPT GMSC IEUC IIUC INVA LTMR PAIC PDCC REEL
+  STOR UITC` elsewhere. ATI*/DXT* are texture-codec tags; the rest
+  are save/subsystem chunk ids — the unobserved ones (PERF, PDIC,
+  PPDC, PDCC, IVGD, IVSH, ENT2, TTRL, GPDC, PICB, IEUC, INVA, GMSC,
+  FOTP, REEL, STOR, AUDI) mark subsystem channels retail didn't
+  emit on the investigated saves.
 
 ## WHDC captain records (verified against retail save + dictionary)
 
