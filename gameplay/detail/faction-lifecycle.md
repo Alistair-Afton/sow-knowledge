@@ -429,6 +429,20 @@ draw = the cheat-death/scar pool disparity); the player's
 can also exclude items (`ExcludedItems` → `Item_Necromancer_
 SelfRes*` on `Burns`).
 
+`Faction/Rewards/Types` is the **`Faction.DynamicWeight`** table
+(40 records) — the self-mutating weight system behind the
+one-use lockouts. Each row carries `InitialValue`,
+`OnUseThisReturnToValue`, `OnUseOtherValueDeltaAdd` and
+`OnUseOtherValueDeltaScale`: when the weight is consumed it snaps
+to `OnUseThisReturnToValue` (0 = locked out) while every other
+weight in the pool is add/scaled — a recover-over-use economy.
+The rows cover `OriginDeathTaunt_*` (21 title taunts),
+`Transformed_{Blight,Forsaken,Infested}`, `AdvancedClass_*`
+(11 classes) and `Weight_*_BlownOutInitially` starters. This is
+the "DynamicWeight 1-use lockout" the mod bypasses — the field
+names are verified retail, and `OnUseThisReturnToValue=0` on the
+`Transformed_*` rows is the serialized lockout itself.
+
 **Mod evidence (Nemesis Recurrence v1.0.0, YoRHa9S — Nexus 278):**
 the mod's in-memory patcher names nine retail code sites it
 neutralizes, which independently confirm the mechanic set:
