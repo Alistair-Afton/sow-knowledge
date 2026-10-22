@@ -97,6 +97,18 @@ finite slot*: a spawn seats only while its tier's rows have a
 hole, and a dead/shamed occupant holds the seat until the
 hole-timer path refills it.
 
+**Seat assignment serializes per member — VERIFIED (save
+WHDC):** each member's pre-token context block carries a
+`<region>_Row_<name>` ref alongside `Faction_<region>` and
+`AI_<role>`. Retail endgame census across the six region
+boards (MtnPass, volcano, snowMtn, island, desert,
+MinasIthil): Captain_1/Captain_2 carry the most refs
+(9–19/board), Outer_Warchief 6–11, Captain_0 6–11,
+Inner_Warchief 4–7, Overlord 3–4. Counts exceed seat caps
+roughly proportionally — INFERRED the row name marks the
+member's *assigned* row and persists on roamers/unseated
+members rather than denoting current occupancy.
+
 **The caps are schema, not just occupancy — VERIFIED
 (`Faction/Rows` `ColumnMax` attr, all 83 records):** Row records
 are variable-layout attribute lists; `ColumnMax` is the seat cap.
