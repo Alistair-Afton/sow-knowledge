@@ -106,6 +106,12 @@ length agreement; chunk semantics below are from the external note.
   continuation sections of the same record vs. tokenless
   archived/pool member records — a mid-gap walk stays
   self-consistent and lands exactly on the next `0f` token.
+- **Member-reference graph**: records embed `05`-blob refs to
+  other members — `<u64 a> <u64 b> <u16>` where `b` = the target's
+  GUID64B and `a` = shared army id with flag bits OR'd in. ~157
+  candidate edges on a retail save (incl. follower/story links);
+  edge types undecoded — flag bits in `a` are the leading
+  discriminator candidate (UNVERIFIED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
