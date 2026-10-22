@@ -79,13 +79,16 @@ You need a tool that can *write* GADB v17, not just read it:
   directly (the record manager supports live `setcell`-style
   writes), bypassing file formats entirely.
 
-Tooling: no public `.gamedb_patch` emitter exists today — the only
-writer that has produced a game-accepted GADB is the Andúril
-project's `db write` (merged replacement, not a patch file), and
-Andúril is not publicly released. Building a writer from the spec
-in `gamedb.md` is viable — the format is byte-for-byte decoded
-(232,319 records round-trip) and a minimal emitter is a few hundred
-lines; `../modding/authoring.md` has the recipe.
+Tooling: the Andúril project's `db patch` command emits
+`.gamedb_patch` files (clone any base record into a minimal GADB
+carrying the lineage stamp, full layout table, and category headers);
+its output parses cleanly through the reference decoder but has not
+yet been confirmed accepted by the retail loader. `db write` (merged
+replacement, Option B) remains the only game-accepted writer output.
+Building a writer from the spec in `gamedb.md` is viable — the format
+is byte-for-byte decoded (232,319 records round-trip) and a minimal
+emitter is a few hundred lines; `../modding/authoring.md` has the
+recipe.
 
 ## Checklist
 
