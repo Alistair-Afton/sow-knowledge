@@ -123,15 +123,18 @@ length agreement; chunk semantics below are from the external note.
   a `05` tag reading kind `0x104ff`). ~157 candidate edges
   on a retail save; individual kind-bit meanings undecoded
   (UNVERIFIED).
-- **Member context block** (adjacent to each `<guid>_NPC_<n>`
-  token): (a) board-context name hashes resolving to
+- **Member context block** (in the post-record gap after each
+  `<guid>_NPC_<n>` record tail): (a) board-context name hashes resolving to
   `InvasionFaction_<region>`, `Faction_<region>`, `AI_<role>`,
   `<region>_Row_Captain_<i>` — faction + board seat + AI role,
   and (b) ~0x45-stride gear entries `{name-hash,
   AD_<name>-hash, 05 blob, bools, counters}`
   (`Tracker_Shoulders`, `Fire_Helmet`, `Orc_Def_*`,
-  `Orc_Shld_*`…). UNRESOLVED: pre-token vs post-tail
-  ownership.
+  `Orc_Shld_*`…). VERIFIED **post-tail** ownership: a
+  `Faction_MinasIthil` ref sits in an a5ebbd08 (=MinasIthil)
+  member's post-record gap while the following token is a
+  different faction — the block continues the preceding
+  member's record.
 - **FORT tails serialize siege assault slots**: `Offense_nn` /
   `Defense_*` entries pair name hash + bool + `04 u32`
   **global member index** (the `n` in `_NPC_n`) — the assault
