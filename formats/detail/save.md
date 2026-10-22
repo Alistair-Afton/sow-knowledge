@@ -137,13 +137,17 @@ length agreement; chunk semantics below are from the external note.
   member's record.
 - **Archive list of dead/pool members**: after the live
   member's own context block, the post-tail gap runs tokenless
-  archive records — compact `{Faction_<r>, Faction_<r>,
-  AI_<role>?, <r>_Row_<seat>?}` tuples holding a dead member's
-  last faction/role/seat. ~800 extra `Faction_` refs ≈ 400
-  archive entries on one endgame save, consistent with dead
-  members keeping global indices (FORT `Offense_*` slots
-  reference untokened members). A member's own faction/row/AI
-  is the **first** tuple; later tuples are archive records.
+  archive records — spaced ~2 KB, each ending in a
+  `{Faction_<r>, Faction_<r>, AI_<role>?, <r>_Row_<seat>?}`
+  tuple (the dead member's last faction/role/seat). They
+  decode with the full member field grammar (`05` blobs, name
+  hashes, bools, gear-entry signatures) — complete member
+  records minus the `0f` ASCII token. ~800 extra `Faction_`
+  refs ≈ 400 archive entries on one endgame save, consistent
+  with dead members keeping global indices (FORT `Offense_*`
+  slots reference untokened members). A live member's own
+  faction/row/AI is the **first** tuple; later tuples are
+  archive records.
 - **FORT tails serialize siege assault slots**: `Offense_nn` /
   `Defense_*` entries pair name hash + bool + `04 u32`
   **global member index** (the `n` in `_NPC_n`) — the assault
