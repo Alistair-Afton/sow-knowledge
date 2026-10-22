@@ -108,6 +108,14 @@ Relationship persistence — verified negative results:
   appears on the NPC_611/NPC_612 pair (consecutive indices — spawned
   together), alongside `BruzBrothers_{Baz,Gaz,Daz}{,Dead}` quest
   markers.
+- **No shared pair-key hash.** Grouping every resolved *and* plausible
+  unresolved name-hash field by owning record finds no hash shared by
+  exactly two generated captains that could act as a bond key; the only
+  verified shared relationship tokens are story-scripted
+  (`BloodBrother_BazGaz`, `BruzBrothers_GazDead`). Shared-by-2
+  unresolved values are all field-data artifacts, not AttrHash-shaped.
+  Pairing is runtime-reconstructed from role + marker state, not a
+  serialized key.
 - Story-captain records use `Role`-containing names without an
   underscore suffix (`SQ_ZogRoleDef` — Zog, Sorcerous tribe,
   `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
@@ -119,7 +127,8 @@ CLI: `save <f> whdc` (full resolved-hash dump) / `save <f> captains`
 (clustered captain roster) / `save <f> npcs` (`_NPC_` token census) /
 `save <f> links` (cross-record guid scan) / `save <f> relscan`
 (numeric member-index scan) / `save <f> names <substr>` (resolved-name
-hits with owning record) / `save <f> hex|raw <off> <len>` (dumps).
+hits with owning record) / `save <f> pairs` (shared-marker
+grouping) / `save <f> hex|raw <off> <len>` (dumps).
 Requires `ANDURIL_HASHDB` pointing at the harvested name dictionary.
 - Value tags: `04` = u32, `00` = 32-bit AttrHash name (same
   `h*0x397 + map[c]` hash as gamedb/strdb), `0c` = bool, `10` =
