@@ -278,17 +278,23 @@ Relationship persistence — verified negative results:
                           sometimes led by Default_Act*)
 08 <u32> ×9               stat array
 03 <u24 cat> <u32 hash>   **event log — the member's nemesis memory**:
-                          `03`-tagged (category, event-name-hash) pairs
-                          grouped by log channel — 0x15f sim events
-                          (PromoteDead_*, Chase_Clear, Raid_Checkpoint_*,
-                          ActiveKillPlayer_*), 0x160 sub-events,
-                          0x161 encounter history (GuardWarCouncil_*,
-                          ActiveKilledOnSimEvent, interrogation/wraith-
-                          world ids), 0x162 tail, 0 = identity/template
-                          refs (Orc_Spearman, OlogHai_Infantry) and
-                          story quest-state (BruzBrothers_* on NPC_611).
-                          Also observed: cat=0x2ce empty-hash slots
-                          (NPC_611).
+                          `cat` is a **shared, sequenced event-instance
+                          id**, not a category — one gameplay event
+                          (e.g. cat=0x2d4: PromoteDead_BuilderTransform_
+                          Simulate → Promote → Clear) logs under the
+                          same id on every member it touched (verified
+                          across NPC_1 and NPC_2). cat=0 carries
+                          identity/template refs (Orc_Spearman,
+                          OlogHai_Infantry) and story quest-state
+                          (BruzBrothers_* on NPC_611). Observed event
+                          vocabulary: Promote, PromoteDead_*, Raid_*,
+                          HenchmenKilled,
+                          FortDefenseMoveIntoOverlordWarchief,
+                          RewSub_SubSucOth{Fled,Died}_Backup,
+                          ActiveKillNamedAI, ActiveInitialPlayerThreat,
+                          ActiveHateTriggeredDefeat, Chase_Clear,
+                          GuardWarCouncil_*, ActiveKilledOnSimEvent,
+                          interrogation/wraith-world ids.
                           Fixed-length array (~31 slots); zero entries
                           are empty slots.
 02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
