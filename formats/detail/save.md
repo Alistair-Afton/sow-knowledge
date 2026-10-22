@@ -168,6 +168,16 @@ Gondorian ally faction (`GP_Baranor`, `AI_Gondorian_*` members) and
 special records. `NPC_<n>` is the per-board member index; this token
 is the on-disk form of the `GUID64A`/`GUID64B` pair.
 
+Observed faction census on an endgame save (165 members): two
+populated boards — `2ce24c19…` (snowMtn, verified via
+`Faction_snowMtn` refs in its `_FORT_`) = 34 members and
+`a5ebbd08…` (MinasIthil/island board, INFERRED via
+`Faction_MinasIthil` + `Faction_island_QuestReplay_RB*` refs) =
+28 — plus a long tail of 3–12-member factions (story armies,
+follower pool, roamers). After the campaign most region boards
+are disbanded; only the last contested region and the player's
+own structures retain populated rosters.
+
 Relationship persistence — verified negative results:
 
 - **No guid cross-references.** A captain's full token (ASCII) and its
