@@ -148,6 +148,18 @@ length agreement; chunk semantics below are from the external note.
   slots reference untokened members). A live member's own
   faction/row/AI is the **first** tuple; later tuples are
   archive records.
+- **Transient members are deleted, not archived** (cross-save
+  diff): a save holds one extra member — an Epic Marauder
+  Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
+  fully absent from a later save (token nowhere in the
+  plaintext). `ET_CanRemove_*` members are removed wholesale
+  and their singleton group prefix disappears with them —
+  consistent with the prefix being a spawn-batch id
+  (INFERRED). Member bodies also serialize marker/picker
+  vocabularies directly: `Marker_Potential_*`,
+  `ClassMarker_*`, `PersonalityMarker_*`, `Marker_OrcRarity_*`,
+  `Marker_StatusEffect_*`, `RoleMarker_SpecializationProb_*`,
+  then `Picker_Resist_<school>_<level>` pairs.
 - **FORT tails serialize siege assault slots**: `Offense_nn` /
   `Defense_*` entries pair name hash + bool + `04 u32`
   **global member index** (the `n` in `_NPC_n`) — the assault
