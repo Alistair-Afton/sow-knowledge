@@ -108,14 +108,20 @@ length agreement; chunk semantics below are from the external note.
   self-consistent and lands exactly on the next `0f` token.
 - **Member-reference graph**: records embed `05`-blob refs to
   other members — `<u64 a> <u64 b> <u16>` where `b` = the target's
-  GUID64B and `a` = `{u32 section-kind | u32 owner-state-
-  flagword}` — usually the containing record's own flagword;
-  foreign owners occur (a section inside one member's span
-  carrying another member's flagword under a different kind —
-  verified). `a`.low32 is a shared member-state flag vocabulary:
-  `0xC0000000` marker on ~98% of records plus ~14 flag bits.
-  ~157 candidate edges on a retail save; edge types undecoded —
-  `a`'s high word is the discriminator candidate (UNVERIFIED).
+  GUID64B and `a` = `{u32 kind-flagword | u32 owner-state-
+  flagword}` — BOTH halves compose flag bits (kind examples:
+  `0x208 = 0x200|0x8`, `0x104ff = 0x10000|0x400|0xff`; owner:
+  `0xC0000000` marker + ~14 member-state bits, shared across
+  the record vocabulary). Usually the owner half equals the
+  containing record's own flagword; foreign owners occur (a
+  section inside one member's span carrying another member's
+  flagword under a different kind — verified). Filtered
+  census: ~2.4k `05` blobs in slot-1 WHDC — kind `0x0` ×512,
+  `0x104ff` ×1281 (dominant dense array, u16 = small index —
+  INFERRED per-member sub-list), `0x8` ×74, `0x200` ×44,
+  `0x400` ×31, `0xc0` ×35, `0x800` ×15. ~157 candidate edges
+  on a retail save; individual kind-bit meanings undecoded
+  (UNVERIFIED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
