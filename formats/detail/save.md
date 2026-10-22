@@ -166,6 +166,11 @@ length agreement; chunk semantics below are from the external note.
   team's slot assignments, `0xffffffff`-padded. Referenced
   indices exceed the live token set (dead/archived members) —
   the graveyard indices remain addressable.
+- **One FORT field increments across saves** (5-slot
+  cross-save diff): a u32 in the MinasIthil/island `FORT_0`
+  steps 24950 → 25050 in timestamp order with non-uniform
+  increments while all other FORT/NPC fields are static —
+  a game-time tick or accumulator (INFERRED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
