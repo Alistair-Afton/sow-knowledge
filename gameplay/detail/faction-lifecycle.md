@@ -196,6 +196,28 @@ captain who cheats death comes back hating his killer. Matching
 do `CombatCritElementState` and `ObjectivePicker` presentation
 records for both rival types.
 
+`Quest/Jobs/Relationship` holds five records (VERIFIED), each
+carrying only a `RelationshipType` ref: `BloodBrother`,
+`BazGazBloodBrother`, `Script_BloodBrother_OutOfHierarchy`,
+`Rival_Terror`, `Rival_Hate`. They are the endpoint half of
+`_StructuresQuestJobRelationshipPair` (120 rows) — pairs that bind
+a mission job slot (`PS_Subject`, `PS_Other`, and scripted story
+captain jobs like `BladeSide5_Captain2`, `She2_Captain3`) to a
+relationship job. That is the authored channel that casts the
+subject's blood brother or nemesis rival into a mission slot.
+
+The avenger delivery channel is also authored:
+`Faction/Traits/RelationshipEventPicker` holds one record,
+`BloodBrother_SubjectDeath`, with two entries forked on killer
+type (VERIFIED) — `OutsiderCharTypeIncluded=All_Orcs` +
+`OutsiderMustBeFactionMember` fires `BrotherKilledByOrc`, while
+`Player_Character` fires `BrotherKilledByPlayer`.
+`BrotherKilledByOrc` sets `UseThisFactionMemberForAmbusher` (the
+avenging brother physically arrives as an ambusher) and carries
+`GearTagWeight_bloodBrother` loot tags. `Faction/Traits/
+RelationshipTypes` groups the five bonds into two categories,
+`BloodBrother` and `Nemesis`.
+
 A member's rank and seat class agree on the live roster — no living
 captain-tier member holds a Warchief/Overlord seat and vice versa
 — so a demoted/death-returned member re-seats into its new tier's
