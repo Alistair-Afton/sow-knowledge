@@ -119,9 +119,45 @@ Relationship persistence — verified negative results:
 - Story-captain records use `Role`-containing names without an
   underscore suffix (`SQ_ZogRoleDef` — Zog, Sorcerous tribe,
   `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
-- Gear items carry `05`-tagged 16-byte binary GUIDs (one per piece).
+- Gear items carry `05`-tagged 18-byte binary GUIDs (one per piece).
   A `CharEvent_*` hash hit inside one gear blob was a byte
   coincidence — nemesis-memory events are not stored as name hashes.
+- **Cross-save diffs are permutations, not mutations**: aligning the
+  same captain's record across two saves shows byte differences that
+  are pure swaps — `Picker_*` hash entries trade positions. The
+  marker/picker lists are unordered hash sets re-serialized in a
+  different order on each save; positional diffing is not a field
+  oracle.
+
+## Member record layout (verified, `save rec` field walk)
+
+```text
+0f <len> <32-hex>_NPC_<n>   identity token (faction-guid + member idx)
+09 <u64>                  type/category id — shared by members of the
+                          same kind; all NPC_0 board sentinels share
+                          one value. NOT a unique member GUID.
+04 <u32> ×3, 0c <bool>,   head scalars, two (often empty) `0f` strings,
+0f <str> ×2, 08/04 pair   then `08 <u32>` + equal `04 <u32>` pair
+02 <u8>, 05 <18B>, 00     flag, 18-byte blob, one scalar field
+00 <Marker_* hash> …      marker list (potential/class/personality/
+                          appearance/learn-speed/rarity markers)
+00 <Picker_* hash> +      picker pairs — resists/vulns/behaviors:
+  00 <u32 param=0>          each hash followed by a zero param field
+04 <count> + 00 <name>…   trait names (Default_Act1, Traits_*,
+                          Orc_<personality>)
+08 <u32> ×9               stat array
+03 <7B> ×~31              fixed slot array (all-zero = empty)
+02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
+                          then AD_* attachment names
+00 <Tag_* hash> +         appearance-tag counts
+  08 <u32 count>
+00 <TraitLevelOffset_*>   level-offset marker
+ff ff ff …                tail (record ends at next `0f` token)
+```
+
+Field-tag vocabulary: `00`=32-bit (hash or scalar), `02`=u8,
+`03`=8-byte slot, `04`=u32, `05`=18-byte blob, `08`=u32, `09`=u64,
+`0c`=bool u8, `0f`=len-string, `10`=len32-blob.
 
 CLI: `save <f> whdc` (full resolved-hash dump) / `save <f> captains`
 (clustered captain roster) / `save <f> npcs` (`_NPC_` token census) /
