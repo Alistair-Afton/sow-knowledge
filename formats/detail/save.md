@@ -176,7 +176,9 @@ length agreement; chunk semantics below are from the external note.
   and one 5-member group shares a single `b` — the working
   read is head `b` = **bound-entity reference** (self for
   ordinary members, another entity for proxies, shared for
-  multi-member bindings), not a unique id (INFERRED).
+  multi-member bindings), not a unique id (INFERRED). Bound
+  members are not seat-specific (warchief + roamers alike) —
+  what picks the sentinel's member is UNRESOLVED.
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
