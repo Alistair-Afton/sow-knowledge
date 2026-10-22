@@ -443,6 +443,19 @@ the "DynamicWeight 1-use lockout" the mod bypasses — the field
 names are verified retail, and `OnUseThisReturnToValue=0` on the
 `Transformed_*` rows is the serialized lockout itself.
 
+**Save persistence (VERIFIED):** the live weight values are
+serialized into the campaign save — slot-1 WHDC `_FORT_` records
+carry a name-hash + f32 list covering exactly the DynamicWeight
+vocabulary: `OriginDeathTaunt_*` (~21), `Transformed_{Blight,
+Forsaken,Infested}` (each at `0` = locked out), `AdvancedClass_*`
+classes and `Weight_*_BlownOutInitially` starters. So lockouts and
+decay state persist per save — the GameDB `InitialValue` is only
+the new-game seed. (Pairing order of hash↔f32 entries and whether
+values are raw weights or fixed-point flags is INFERRED; some
+values are powers of two.) The same FORT record also serializes
+the region board: `Faction_<region>`, `FortAssault` and
+`<region>_Row_Captain_*` references with a u32 captain-index list.
+
 **Mod evidence (Nemesis Recurrence v1.0.0, YoRHa9S — Nexus 278):**
 the mod's in-memory patcher names nine retail code sites it
 neutralizes, which independently confirm the mechanic set:

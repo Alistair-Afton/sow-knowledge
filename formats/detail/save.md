@@ -82,9 +82,13 @@ length agreement; chunk semantics below are from the external note.
   matches the captain-roster faction ids); slots 2 and 3 each carry a
   single bare `_FORT_0` record (no guid prefix) even on profiles that
   never started those campaigns. FORT records use one extra tag:
-  `0a` = f32, appearing as a `(0a f32, 00 name-hash)` pair list
-  (fort stat/upgrade values — mostly 1.0 with 16/32/128 outliers),
-  followed by a further `01`-tagged section (semantic open).
+  `0a` = f32, paired with `00` name-hashes — the list resolves to
+  the `Faction.DynamicWeight` vocabulary (`OriginDeathTaunt_*`,
+  `Transformed_*` at 0 = locked out, `AdvancedClass_*`,
+  `Weight_*_BlownOutInitially`), i.e. the save-persisted live
+  weights. The tail serializes the region board
+  (`Faction_<region>`, `FortAssault`, `<region>_Row_Captain_*` +
+  u32 index list) before a further `01`-tagged section (open).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
