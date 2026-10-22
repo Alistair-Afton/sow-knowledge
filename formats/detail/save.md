@@ -201,8 +201,11 @@ Relationship persistence — verified negative results:
   underscore suffix (`SQ_ZogRoleDef` — Zog, Sorcerous tribe,
   `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
 - Gear items carry `05`-tagged 18-byte binary GUIDs (one per piece).
-- `05` blobs decode as `<u64 id_a> <u64 id_b> <u16>` — `id_a` shared
-  per army (GUID64A/board scope), `id_b` per-member unique (GUID64B).
+- `05` blobs decode as `<u64 a> <u64 b> <u16>` — `a` = per-instance
+  context/kind id + high-word flag (`a`.low32 is **not**
+  faction-scoped — same-faction members carry many distinct
+  low32s; ~100 values like `c0400080`/`c2000000`/`c86222a4`),
+  `b` per-member unique (GUID64B).
   Other records carry the same pair with flag bits OR'd into `id_a`
   (e.g. `a|0x08`) — the on-disk member-reference form used by
   tokenless mission/instance records (INFERRED).
