@@ -1,7 +1,7 @@
 # Save files — `SOM3` / `SAVE` (M13 persistence)
 
 > **Status:** **verified** — real endgame saves parse; captain census extracted; semantics still expanding
-> **Provenance:** real endgame saves parsed; 534-record captain census extracted.
+> **Provenance:** real endgame saves parsed; 544-record captain census extracted.
 
 Externally sourced spec (Universal Modder knowledge base, MIT —
 `middle-earth-shadow-of-war/save-format-decrypt-and-collectible-quests.md`,
@@ -56,7 +56,7 @@ bare 4-byte name hash** (no type tag — e.g. `Role_SlaveLover` =
 `01 dd 22 2e` where the `01` is part of the hash, not a tag), followed
 by scalar fields and a `00`-prefixed list of name-hash references.
 
-A **captain record** reads (all verified, 534 records in a real save):
+A **captain record** reads (all verified, 544 records in a real save):
 
 ```text
 [spawn-point name hash]     MP_FortFront, AD_Orc_Body_LOD, …
@@ -77,9 +77,50 @@ pairs (per the runtime dump), not by name hash — display names hash to
 a different table. The `IVPD` chunk (before WHDC) holds the role pool:
 a dense `<Role_* hash>` + small-u32 list (~914 entries).
 
+## Member identity tokens and relationships (verified on a retail save)
+
+Each member record is preceded by a length-prefixed ASCII token
+`0f <len> <32-hex>_NPC_<n>` (tag `0f`, 39-char value). The 32-hex
+prefix is a per-board faction GUID — shared by every member of one
+army, distinct per region board, with separate prefixes for the
+Gondorian ally faction (`GP_Baranor`, `AI_Gondorian_*` members) and
+special records. `NPC_<n>` is the per-board member index; this token
+is the on-disk form of the `GUID64A`/`GUID64B` pair.
+
+Relationship persistence — verified negative results:
+
+- **No guid cross-references.** A captain's full token (ASCII) and its
+  16-byte binary form occur only inside that captain's own record.
+  Nemesis bonds, blood brothers and killer references are not stored
+  as guid cross-references.
+- **No numeric partner index.** Scanning captain records for aligned
+  u32s equal to another member's `NPC_<n>` index yields only
+  coincidence-level noise (levels, counts, array data); the
+  reciprocal-pair check (A→B and B→A at the same field offset — the
+  bilateral bond signature) finds no consistent structural slot.
+- **What is stored:** relationship *state*, not edges —
+  `Marker_Generate_BloodBrother` (the brother-generator side),
+  `BloodBrother_SpawnIn` (partners pulled in by the spawn channel),
+  `Marker_Instance_{BloodBroAmbush,BetrayalAmbush,ForcedBetrayal}`
+  (live instance flags), and `Ambush_Presented_{BloodBro,
+  BloodBro_Killed, Betrayal_BloodBro}` (presented-event history).
+  Story captains ride the same mechanism: `BloodBrother_BazGaz`
+  appears on the NPC_611/NPC_612 pair (consecutive indices — spawned
+  together), alongside `BruzBrothers_{Baz,Gaz,Daz}{,Dead}` quest
+  markers.
+- Story-captain records use `Role`-containing names without an
+  underscore suffix (`SQ_ZogRoleDef` — Zog, Sorcerous tribe,
+  `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
+- Gear items carry `05`-tagged 16-byte binary GUIDs (one per piece).
+  A `CharEvent_*` hash hit inside one gear blob was a byte
+  coincidence — nemesis-memory events are not stored as name hashes.
+
 CLI: `save <f> whdc` (full resolved-hash dump) / `save <f> captains`
-(clustered captain roster). Requires `ANDURIL_HASHDB` pointing at the
-harvested name dictionary.
+(clustered captain roster) / `save <f> npcs` (`_NPC_` token census) /
+`save <f> links` (cross-record guid scan) / `save <f> relscan`
+(numeric member-index scan) / `save <f> names <substr>` (resolved-name
+hits with owning record) / `save <f> hex|raw <off> <len>` (dumps).
+Requires `ANDURIL_HASHDB` pointing at the harvested name dictionary.
 - Value tags: `04` = u32, `00` = 32-bit AttrHash name (same
   `h*0x397 + map[c]` hash as gamedb/strdb), `0c` = bool, `10` =
   length-prefixed blob.
