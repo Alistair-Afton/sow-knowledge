@@ -157,8 +157,11 @@ Relationship persistence — verified negative results:
                           ActiveKillPlayer_*), 0x160 sub-events,
                           0x161 encounter history (GuardWarCouncil_*,
                           ActiveKilledOnSimEvent, interrogation/wraith-
-                          world ids), 0x162 tail, 0 = archetype ref
-                          (Orc_Spearman). Zero entries terminate it.
+                          world ids), 0x162 tail, 0 = identity/template
+                          refs (Orc_Spearman, OlogHai_Infantry) and
+                          story quest-state (BruzBrothers_* on NPC_611).
+                          Fixed-length array (~31 slots); zero entries
+                          are empty slots.
 02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
                           then AD_* attachment names
 04 <count> + 04 <u32>…    body-parameter block — 0xff……-prefixed
