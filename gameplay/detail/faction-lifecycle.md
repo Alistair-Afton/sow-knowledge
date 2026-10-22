@@ -82,9 +82,69 @@ the caps carries `row='-'` (a roamer — ~63% of the board):
 ≈26 seated per region. Seating is therefore a *contest for a
 finite slot*: a spawn seats only while its tier's rows have a
 hole, and a dead/shamed occupant holds the seat until the
-hole-timer path refills it. (`Faction/Rows` holds 83 unnamed row
-records — the per-row capacity field is UNVERIFIED in the schema;
-the caps above are measured occupancy, not decoded config.)
+hole-timer path refills it.
+
+**The caps are schema, not just occupancy — VERIFIED
+(`Faction/Rows` `ColumnMax` attr, all 83 records):** Row records
+are variable-layout attribute lists; `ColumnMax` is the seat cap.
+Every standard region row set reads exactly the table above, with
+two real exceptions — `MinasIthil_Row_Outer_Warchief` (and its
+`DLC3_` twin) = **5**, and Desolation of Mordor's desert board
+adds `Row_Mercs_0/1/2` = 5 each (mercenary seats, DLC4-only).
+`GoldenPath_Zog_Carnan_{1,5,6}` rows cap at 1 (story boards),
+`player_created` caps at 32 (player-appointed bodyguards),
+Prototype/demo rows at 1. Other decoded Row attrs:
+`ResurrectionEnabled` (bool — VERIFIED `false` only on `Prototype_*`, DLC4 `Mercs_*`, and `player_created` rows: mercenary and player-appointed seats never resurrect; every standard-board row is `true`),
+`HenchmenRows` (VERIFIED ref list: every Warchief/Overlord
+row links to its region's three `Row_Captain_*` rows — the seats
+a boss's henchmen occupy; `DLC3_MtnPass_Row_Overlord` and
+`DLC_MinasIthil_Row_Overlord` carry an empty list, no henchmen), `RewardListOnEnterRow` (VERIFIED packages rolled on seat
+entry: captain rows → `Default_BloodBrother` — a
+spawn-duplicate def (`CopyAndHideFactionMemberData`,
+`SetRoleFromFilter`), i.e. sitting in a captain seat can
+spawn a paired blood brother (gated on
+`Marker_Generate_BloodBrother`, consumed on fire — the marker
+comes from `RewSub_SubSucOth{Fled,Died}_Backup` Events fired
+by `SimEventResultJobEventPairs` on 'subject succeeded, other
+died/fled' results, rolling ~15% vs `Nothing_Weight_85`);
+warchief rows →
+`Default_TerrorBodyguardDefeat` — a pick-1 weighted draw
+over `SW_Terror_/Hate_/WeakBy_BodyguardDefeat`+
+`Nothing_Weight_40` (Shadow-Wars-gated); overlord rows →
+`OverlordSetup_LegendaryUpgrade_{Common,Epic}Orc` +
+`Default_EpicTraits_PickRemovable` +
+`Contract_LegendaryTraining_MarkerSwap` +
+`Overlord_ElementalVent_Resistances`), `InitialLevels` (VERIFIED struct: a list of
+`_StructuresFactionInitialXPLevel` candidate rules, each =
+`Difficulty_Captain_BonusLevels` base + `GlobalVarPredicate`
+gate + optional `PlayerBasedXPLevel/Delta` ref — spawn level
+is difficulty-scaled and can go player-relative; gates seen:
+`Act1`, `DLC3_Finale_Completed`, `ShadowWarUnlocked`; deltas
+incl. `PlayerLevel_Plus5`, `Plus5_To_Minus15`,
+`Plus15_To_Plus0`, `Minus5ToPlus5`, `1_to_2_levels`),
+`HireCost` (merc rows), `HenchmenAddChance` (VERIFIED:
+0.35 on every Warchief/Overlord row, 0 elsewhere — the
+boss-row rate for gaining henchmen), `CanBeRevengeTarget`
+(VERIFIED `false` on every Warchief/Overlord row — boss-tier
+members are never drawn as revenge targets),
+`RequiredDataLevelToSpawn` (VERIFIED: 1 on every
+`Row_Overlord` + prototype/demo rows, 0 on captain/warchief
+rows — overlord seats additionally require the later data
+level, independent of `OverlordsUnlocked`),
+`GlobalVarPredicate` (per-row story gate —
+VERIFIED map: `MtnPass` Inner/Outer Warchief +
+Overlord carry `WarchiefsUnlocked`/`OverlordsUnlocked`,
+`island` Overlord `OverlordsUnlocked`, `MinasIthil` Outer
+Warchief + Overlord `IntroComplete`; `snowMtn`, `volcano`,
+`desert` rows are ungated; the `DLC3_*` mirror rows repeat the
+pattern). Locked rows seat nobody until their flag flips.
+
+A member's rank and seat class agree on the live roster — no living
+captain-tier member holds a Warchief/Overlord seat and vice versa
+— so a demoted/death-returned member re-seats into its new tier's
+rows (or roams) rather than keeping the old seat (INFERRED from
+the absence of rank/seat mismatches; the demotion-time seat swap
+itself is not directly observed).
 
 ## Resurrection return package (VERIFIED — 58-member diff)
 
@@ -107,6 +167,22 @@ undead. Retail sources of the undead package are therefore the
 player's Raise Dead ability and necromancer-captain resurrection
 (`DLC5_Necromancer_SelfRes*`, `Picker_Undead`); a natural
 cheat-death returns scarred (`Marker_Deranged` etc.) but living.
+
+**Necromancer channel (VERIFIED records):** the specialization is
+`Marker_IsNecromancer` (12/562 live members ≈ 2%; excluded by
+`Marker_DoNotBecomeNecromancer`, 69 holders). Record surface:
+`Item_Necromancer_SelfRes`/`_Activated`/`_HasRisenThisSpawn` — the
+once-per-spawn self-resurrection gate; `BIP_Necro_RaiseDead_AOE`
++ `Combat/ResurrectionData` — the AoE raise; `Faction/Events:
+DLC5_Necromancer_SelfResurrect_Activated` — the board event fired
+when one resolves; `Picker_Necromancer_SelfRes` +
+`Necromancer_SelfRes_RemovePicker` for grant/removal; the audio
+system conditions on `SourceHasMarkerNecromancer`. 2/12 live
+necromancers are undead (self-res resolved at least once).
+`Faction/Resurrection/Chance` also encodes the serial-returnee
+decay — separate tables per return count (`Resurrection_1st`,
+`_2ndFew`, `_3rdFew`, `ResurrectSameGuy_Again{,2,3}`) keyed by
+death manner (`_OlogHeadRemoved`, `_FallOnly`, `BodyCleave`).
 
 ## Shame reward pools (VERIFIED — GameDB `Faction/Rewards/Lists`)
 
