@@ -76,6 +76,14 @@ length agreement; chunk semantics below are from the external note.
   `_NPC_` occurs only in slot 1). Eltariel's allied captains and
   Baranor's nemeses are keyed differently — probably by
   `Role_`/`Real_Faction_`-keyed records (UNVERIFIED).
+- Identity tokens generalize to `<32-hex-guid>_<KIND>_<n>`; besides
+  `_NPC_` the saves carry `_FORT_` tokens. Slot 1 holds fortress
+  records per region army (`<faction-guid>_FORT_0/1`, and the guid
+  matches the captain-roster faction ids); slots 2 and 3 each carry a
+  single bare `_FORT_0` record (no guid prefix) even on profiles that
+  never started those campaigns. FORT records terminate on a
+  `0a`-tagged field — a tag not used in captain records (semantic
+  open).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
@@ -122,7 +130,9 @@ a dense `<Role_* hash>` + small-u32 list (~914 entries).
 ## Member identity tokens and relationships (verified on a retail save)
 
 Each member record is preceded by a length-prefixed ASCII token
-`0f <len> <32-hex>_NPC_<n>` (tag `0f`, 39-char value). The 32-hex
+`0f <len:u8> <32-hex>_<KIND>_<n>` (tag `0f`). `<KIND>` is `NPC` for
+captains; fortress records use `<guid>_FORT_<n>` in slot 1 and bare
+`_FORT_<n>` (no guid) in the DLC slots. The 32-hex
 prefix is a per-board faction GUID — shared by every member of one
 army, distinct per region board, with separate prefixes for the
 Gondorian ally faction (`GP_Baranor`, `AI_Gondorian_*` members) and
@@ -175,7 +185,7 @@ Relationship persistence — verified negative results:
 ## Member record layout (verified, `save rec` field walk)
 
 ```text
-0f <len> <32-hex>_NPC_<n>   identity token (faction-guid + member idx)
+0f <len:u8> <32-hex>_<KIND>_<n>  identity token (NPC/FORT; DLC FORTs drop the guid)
 09 <u64>                  type/category id — shared by members of the
                           same kind; all NPC_0 board sentinels share
                           one value. NOT a unique member GUID.
