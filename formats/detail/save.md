@@ -281,8 +281,10 @@ Head scalars (roster census): the `08`+`04` pair after the two
 79/89-90, a `TribeDef_Sauron` captain 84/90, and the follower-state
 Bruz record NPC_32 (`TribeDef_Bruz`) at 80/18 (power-vs-level
 direction INFERRED; divergence pattern verified). `f4b`/`f4c` are
-near-always 0; `f4a` groups by army but not uniquely — possibly a
-board/region slot index.
+near-always 0; `f4a` tracks **creation time**, not seat or
+level — the early-conquered snowMtn army reads ~5–7 across all
+34 members, MinasIthil's late refills 117–128, story members
+scatter 1–29 (INFERRED creation tick/batch index).
 
 Bruz brothers: faction `fe44e382` is a three-member story army —
 Baz (NPC_611, `BruzBrothers_Baz`+`BazDead`), Gaz (NPC_612,
