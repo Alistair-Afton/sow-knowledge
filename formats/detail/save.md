@@ -108,9 +108,12 @@ length agreement; chunk semantics below are from the external note.
   self-consistent and lands exactly on the next `0f` token.
 - **Member-reference graph**: records embed `05`-blob refs to
   other members — `<u64 a> <u64 b> <u16>` where `b` = the target's
-  GUID64B and `a` = context id + flag word (usually the
-  containing record's own `a`; flagged/foreign variants occur —
-  evidence sections can belong to other owner contexts).
+  GUID64B and `a` = `{u32 section-kind | u32 owner-state-
+  flagword}` — usually the containing record's own flagword;
+  foreign owners occur (a section inside one member's span
+  carrying another member's flagword under a different kind —
+  verified). `a`.low32 is a shared member-state flag vocabulary:
+  `0xC0000000` marker on ~98% of records plus ~14 flag bits.
   ~157 candidate edges on a retail save; edge types undecoded —
   `a`'s high word is the discriminator candidate (UNVERIFIED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
@@ -211,11 +214,11 @@ Relationship persistence — verified negative results:
   underscore suffix (`SQ_ZogRoleDef` — Zog, Sorcerous tribe,
   `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
 - Gear items carry `05`-tagged 18-byte binary GUIDs (one per piece).
-- `05` blobs decode as `<u64 a> <u64 b> <u16>` — `a` = per-instance
-  context/kind id + high-word flag (`a`.low32 is **not**
-  faction-scoped — same-faction members carry many distinct
-  low32s; ~100 values like `c0400080`/`c2000000`/`c86222a4`),
-  `b` per-member unique (GUID64B).
+- `05` blobs decode as `<u64 a> <u64 b> <u16>` — `a` = `{u32
+  section-kind | u32 owner-state-flagword}`; the low32 flagword
+  is `0xC0000000` marker + ~14 member-state bits (shared
+  vocabulary, not an id — bit census verified), `b` per-member
+  unique (GUID64B).
   Other records carry the same pair with flag bits OR'd into `id_a`
   (e.g. `a|0x08`) — the on-disk member-reference form used by
   tokenless mission/instance records (INFERRED).
