@@ -37,42 +37,48 @@ length agreement; chunk semantics below are from the external note.
 - Global chunks, then slot records `06000000 <u32 len> 00000000` each
   followed by a `SAVE` v31 block of `len` bytes.
   **Verified on retail**: 3 slot records per save — slot 1
-  (campaign, ~1.5 MB: IVPD/WHDC-1.27MB/ASMC/CBTC/QSTD/IIUC/STOR),
-  slot 2 (~655 KB: LTMR/ASMC/CBTC/LPDC/UITC), and slot 3
-  (~288 KB: IVGD/PPDC/IEUC/IVPD/WHDC-122k plus
-  ASMC/CBTC/LPDC/IIUC; identical byte length on all six saves).
-  Slot records are NOT 4-aligned (slot 3 begins at an odd
-  offset) — scanners must check every byte position.
-- Slot-3 WHDC is the same tagged-field grammar but carries **no
-  `_NPC_` member tokens** — its head records resolve to `Player`,
-  `QuestReplay`, `BG_Ruins_Main`, `Traits_Commander`. It is a
-  player/quest-side world state (INFERRED: the quest-replay/DLC
-  world — static size across all saves suggests it has never been
-  entered on this profile).
-- Inside a slot: chunks `<4CC> <u32 ver> <u32 size> <u32 0> <u32 size-4>`.
-  **Every size field changes when a chunk grows.**
-- Observed chunks (verified per-region inventory):
-  `GOXC` v5 global; slot-1 inner `IVPD` v4, `WHDC` v1190
-  (≈1.27 MB world/nemesis state — AttrHash probes place the live
-  `FactionRole` roster inside), `ASMC` v8, `CBTC` v1, `QSTD` v23,
-  `IIUC` v48, `STOR` v159; slot 2: `LTMR` v1, `ASMC` v8,
-  `CBTC` v1, `LPDC` v4, `UITC` v3; slot 3: `IVGD` v3, `PPDC` v3,
-  `IEUC` v1, `IVPD` v4, `WHDC` v1190 (≈122 KB — second nemesis
-  world), `ASMC` v8, `CBTC` v1, `LPDC` v4, `IIUC` v48.
-  (`GCPT`, `DIFF`, `IUC0` observed on earlier/other saves;
-  `PAIC` exists in the editor's chunk model.)
+  (~1.5 MB), slot 2 (~655 KB), slot 3 (~288 KB; identical byte
+  length on all six saves). Slot records are NOT 4-aligned
+  (slot 3 begins at an odd offset) — scanners must check every
+  byte position.
+- Chunk headers are `<4CC> <u32 ver> <u32 size> <u32 0> <u32 size-4>`,
+  packed **with no alignment** — a chunk ends at `off + 16 + size`
+  and the next tag follows immediately. Aligned scans silently miss
+  most chunks.
+- Every slot carries the **same ~26-chunk battery** — the slots are
+  three parallel world states, not different data kinds. Per-slot
+  order (verified `07010497_1`): `IVGD v3, IVSH v1, PPDC v3,
+  PDIC v9, PAIC v1, IEUC v1, IVMG v43, IVPD v4, TTRL v10, LTMR v1,
+  WHDC v1190, FAST v1, FOTP v1, ASMC v8, DIFF v9, CBTC v1,
+  GCPT v5, INVA v9, QSTD v23, PDCC v5, LPDC v4, AUDI v1, IIUC v48,
+  UITC v3, STOR v159`. Global-only chunks: `GOXC` v5, `PERF` v6,
+  `PICB` v8, `GPDC` v5, `GMSC` v5. (`IUC0` seen on other saves;
+  `SAVE` v31 is the slot inner header.)
+- The three WHDC chunks are three different world states —
+  **slot 1 (≈1.27 MB)** = live campaign nemesis world (544 member
+  tokens, 165 captain records); **slot 2 (≈488 KB)** = the
+  definition world — dense archetype tables (~35k resolved names:
+  7196 `Picker_`, 947 `Role_`, 856 `RoleMarker_`, `Traits_`,
+  `Offense_`/`Defense_`, `Orc_`/`Olog_`/`Easterling_` gear, `Tag_`,
+  `Marker_`, `NemesisForge_`, `OriginDeathTaunt_`) with **zero
+  `_NPC_` member tokens**; **slot 3 (≈122 KB)** = player/quest-side
+  world (`Player`, `QuestReplay`, `BG_Ruins_Main`,
+  `Traits_Commander`, `Role_Lithlad`, `Role_Desolation`; INFERRED:
+  the quest-replay/DLC world — identical size across all six saves
+  suggests it has never been entered on this profile).
+- 4CC scans produce false positives inside payload data — `FYJB`,
+  `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
+  regions with garbage version/size fields; validate by
+  end-chaining (`off + 16 + size` == next tag) before trusting.
 - **Full chunk-tag registry** (exe, verified static): the binary
   carries a table of `mov eax,'TAG'; ret` thunks — 38 entries:
   `PERF PDIC PPDC IVGD DIFF ASMC FAST WHDC CBTC IVMG IVPD IVSH ENT2
   TTRL SAVE QSTD LPDC GPDC PICB GOXC` (main table) plus
   `ATI1 ATI2 AUDI FOTP GCPT GMSC IEUC IIUC INVA LTMR PAIC PDCC REEL
   STOR UITC` elsewhere. ATI*/DXT* are texture-codec tags; the rest
-  are save/subsystem chunk ids. Confirmed observed on retail:
-  `GOXC IVPD WHDC ASMC CBTC QSTD IIUC STOR LTMR LPDC UITC IVGD
-  PPDC IEUC` (plus `GCPT`/`DIFF`/`IUC0` on other saves). The
-  unobserved ones (PERF, PDIC, PDCC, IVSH, ENT2, TTRL, GPDC,
-  PICB, INVA, GMSC, FOTP, REEL, AUDI) mark subsystem channels
-  retail didn't emit on the investigated saves.
+  are save/subsystem chunk ids. With an unaligned scan, nearly
+  every registry tag is now observed on retail — the exceptions
+  are `ENT2` and `REEL` (never emitted in the six saves).
 
 ## WHDC captain records (verified against retail save + dictionary)
 
@@ -233,7 +239,9 @@ record diff) / `save <f> roster` (TSV census: token, typeid, head
 scalars, tribe, marker/picker/event/trait counts) /
 `save <f> hex|raw <off> <len>` (dumps). `roster` and `rec` accept
 an optional trailing hex arg selecting a non-first WHDC chunk by
-its tag offset.
+its tag offset; `names <substr>` accepts the same arg.
+`save <f> find <hex>` searches the whole plaintext for a byte
+pattern.
 Requires `ANDURIL_HASHDB` pointing at the harvested name dictionary.
 - Value tags: `04` = u32, `00` = 32-bit AttrHash name (same
   `h*0x397 + map[c]` hash as gamedb/strdb), `0c` = bool, `10` =
