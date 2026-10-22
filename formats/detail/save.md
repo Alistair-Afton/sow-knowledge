@@ -139,21 +139,30 @@ Relationship persistence — verified negative results:
 04 <u32> ×3, 0c <bool>,   head scalars, two (often empty) `0f` strings,
 0f <str> ×2, 08/04 pair   then `08 <u32>` + equal `04 <u32>` pair
 02 <u8>, 05 <18B>, 00     flag, 18-byte blob, one scalar field
-00 <Marker_* hash> …      marker list (potential/class/personality/
-                          appearance/learn-speed/rarity markers)
-00 <Picker_* hash> +      picker pairs — resists/vulns/behaviors:
-  00 <u32 param=0>          each hash followed by a zero param field
-04 <count> + 00 <name>…   trait names (Default_Act1, Traits_*,
-                          Orc_<personality>)
+00 <TribeDef_* hash>      tribe record
+04 <count> +              marker list, count verified exact:
+  00 <Marker_* hash> ×n     potential/class/personality/appearance/
+                            learn-speed/rarity/specialization markers
+04 <count> +              picker list, count verified exact — each
+  00 <Picker_* hash> +      entry = ability/resist/vuln name hash
+    00 <u32 param=0>        followed by a (zero) param field
+04 <count> + 00 <name>…   trait names (Traits_*, Orc_<personality>,
+                          sometimes led by Default_Act*)
 08 <u32> ×9               stat array
 03 <7B> ×~31              fixed slot array (all-zero = empty)
 02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
                           then AD_* attachment names
+04 <count> + 04 <u32>…    body-parameter block — 0xff……-prefixed
+                          values are ARGB colors
 00 <Tag_* hash> +         appearance-tag counts
   08 <u32 count>
 00 <TraitLevelOffset_*>   level-offset marker
 ff ff ff …                tail (record ends at next `0f` token)
 ```
+
+Head scalars: the `08`/`04` pair reads `79/89` vs `79/90` on the
+NPC_611/NPC_612 Bruz brothers — consistent with `08` = power rating
+and `04` = level (INFERRED; pairing structure verified).
 
 Field-tag vocabulary: `00`=32-bit (hash or scalar), `02`=u8,
 `03`=8-byte slot, `04`=u32, `05`=18-byte blob, `08`=u32, `09`=u64,
