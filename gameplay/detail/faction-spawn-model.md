@@ -13,7 +13,13 @@
   Delta rows carry relative-level ranges (e.g. `-1_to_1_levels`,
   `10_to_20_levels`); `CLI level=N` sims the board baseline.
 - Board mixes levels widely (live endgame: lv0-84, dominant cohort
-  lv76+; earlier capture lv20-43).
+  lv76+; earlier capture lv20-43). The endgame histogram is
+  **bimodal at the player level**: 144/562 sit exactly at 79 and
+  123/562 at 84 — the census player was level 79, so the mass is
+  `player_level + delta` (deltas top out at +5, matching the 84
+  spike; `XPLevelInit` draws clamp at 85).
+- The menace cap is ~85, not 80 — INFERRED: the roster reaches 84
+  and the delta records clamp at 85.
 - **Per-seat `InitialLevels` — VERIFIED (real `Faction/Rows`)**:
   each row record refs ordered `_StructuresFactionInitialXPLevel`
   struct entries; first match wins:

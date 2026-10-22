@@ -64,6 +64,19 @@
   0.43 (≈ seated follower-flag share), re-grant on return.
   Residual region spread UNVERIFIED at mechanism level.
 
+## `MustBePlayerFollower` — reward allegiance gate (VERIFIED)
+
+Every `Rewards/Definitions` reward carries a `MustBePlayerFollower`
+gate: census over 1,239 defs — 1,099 `=0` (don't care), 132 `=2`,
+8 `=1`. The split is semantic (VERIFIED by member names): `=1` marks
+follower-only rewards (`Betrayal_CheatDeath_Ambush`,
+`FollowerLoyal_CheatDeath_Ambush`, `Reward_StoryRole_Reject`) — things
+only a dominated captain can receive; `=2` marks enemy-only rewards
+(`Champion*`/`Mighty*`/`PS_*` titles, `AI_BreakPlayerSword_Breaker`,
+`BloodBrother`) — a dominated captain stops drawing them. So
+domination doesn't just change side: it swaps the member into a
+different reward space.
+
 ## Row seats (VERIFIED — live roster occupancy)
 
 Each region board holds a fixed seat grid; on the mature live
@@ -103,10 +116,21 @@ entry: captain rows → `Default_BloodBrother` — a
 spawn-duplicate def (`CopyAndHideFactionMemberData`,
 `SetRoleFromFilter`), i.e. sitting in a captain seat can
 spawn a paired blood brother (gated on
-`Marker_Generate_BloodBrother`, consumed on fire — the marker
-comes from `RewSub_SubSucOth{Fled,Died}_Backup` Events fired
-by `SimEventResultJobEventPairs` on 'subject succeeded, other
-died/fled' results, rolling ~15% vs `Nothing_Weight_85`);
+`Marker_Generate_BloodBrother`, consumed on fire — the marker is
+granted at member generation: `Setup::Default`'s
+`PostRoleMarkerTraitLists` roll `MarkerList_HasBloodBrother`,
+~7% weighted `[Marker_Generate_BloodBrother w0.075, nothing w1.0]`,
+forbidden to deranged/butterfly members; ~2% of the live roster
+carries it pending, i.e. granted but never captain-seated. A
+second channel exists — `RewSub_SubSucOth{Fled,Died}_Backup`
+Events fired by `SimEventResultJobEventPairs` on 'subject
+succeeded, other died/fled' results roll the `BloodBrother`
+spawn-def directly, ~15% vs `Nothing_Weight_85`. The pair rows
+bind each sub-event to a job slot — `PS_Subject`/`PS_Other`
+name existing participants while `PS_Backup2_05`/`PS_Ambusher_05`
+are spawn slots: the sub-event spawns its own member, the same
+mechanism behind the `RewSub_SubSucOthDied`/`RewOth_*` backup
+and ambusher reinforcements);
 warchief rows →
 `Default_TerrorBodyguardDefeat` — a pick-1 weighted draw
 over `SW_Terror_/Hate_/WeakBy_BodyguardDefeat`+
@@ -138,6 +162,26 @@ Overlord carry `WarchiefsUnlocked`/`OverlordsUnlocked`,
 Warchief + Overlord `IntroComplete`; `snowMtn`, `volcano`,
 `desert` rows are ungated; the `DLC3_*` mirror rows repeat the
 pattern). Locked rows seat nobody until their flag flips.
+
+**Blood-brother avenger (VERIFIED catalyst chain):** the
+`BloodBrother_SpawnIn` relationship is driven by trait
+`Quirk_BloodBrother_Killed` → catalyst
+`Quirk_BloodBrother_KilledCatalyst` → procs
+`Proc_{Player,AI}KillBloodBrother`, which fire when the killer of a
+member's linked brother strikes — the proc's
+`TargetMustBeInRelationship=BloodBrother_SpawnIn` condition is what
+makes it brother-specific. The catalyst result
+`BloodBrother_BetrayPlayer_KilledBrother` grants items
+`CounterBlock_1`, `Item_Immune_GrabKnockdown`,
+`EventItem_I_Am_Enraged`, buff `AI_Rage`, and
+`FleeSetup=BetrayPlayer_BloodBrotherKilled`: **a dominated follower
+whose blood brother the player kills betrays and enrages** (the
+classic "you killed my brother" moment); an AI-kill enrages without
+the allegiance flip. Brothers also surface as ambushers —
+`ActiveBecame_Maniac`/`ActiveBecame_DerangedNonManiac` Events draw
+their `AmbusherFromRelationship` from `BloodBrother_SpawnIn`, and a
+`Quest/Jobs/Relationship/BloodBrother` quest-job exists
+(`MustBeSource=0`).
 
 A member's rank and seat class agree on the live roster — no living
 captain-tier member holds a Warchief/Overlord seat and vice versa
@@ -229,8 +273,10 @@ marker selects an `EventAwards` record whose
 `_StructuresFactionPlayerBasedXPLevelAward` rows `[hi, lo, _, Delta
 ref]` band on player level; the `Delta` record's tail cells are an
 equiprobable draw (`negative_05`→-5, `about_31_levels`→{29..33}).
-Sim applies `power += delta` clamped [1, 80] — INFERRED application
-(retail may set relative to player level rather than adjust).
+Sim applies `power += delta` clamped [1, `max_level`] (default 85 —
+the roster reaches 84 and delta records clamp at 85) — INFERRED
+application (retail may set relative to player level rather than
+adjust).
 Scar-visual defs (`PinnicleScar_*`) still OPEN (appearance only).
 
 ## Return reward pools (VERIFIED — GameDB `Faction/Rewards/Lists`)
