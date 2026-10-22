@@ -183,6 +183,19 @@ their `AmbusherFromRelationship` from `BloodBrother_SpawnIn`, and a
 `Quest/Jobs/Relationship/BloodBrother` quest-job exists
 (`MustBeSource=0`).
 
+The full `Faction/Traits/Relationships` census is five records
+(VERIFIED): `BloodBrother_SpawnIn`, `Script_BloodBrother_SpawnIn`,
+`BloodBrother_BazGaz` (Baz/Gaz DLC twins), `Hate_Nemesis` and
+`Terror_Nemesis` — the nemesis-rival bonds. Reward defs carry
+`RelationshipToAdd` for all five: `HateNemesis`,
+`Default_Nemisis_{Hate,Terror}`, `Sub{Suc,Fled}_Ambu_{Hate,Terror}Nem`
+(ambusher sub-events bind the spawned avenger's nemesis), and
+`ResReward_{Hate,Terror}_Rival` in the resurrection package — a
+captain who cheats death comes back hating his killer. Matching
+`Quest/Jobs/Relationship/Rival_{Hate,Terror}` quest-jobs exist, as
+do `CombatCritElementState` and `ObjectivePicker` presentation
+records for both rival types.
+
 A member's rank and seat class agree on the live roster — no living
 captain-tier member holds a Warchief/Overlord seat and vice versa
 — so a demoted/death-returned member re-seats into its new tier's
