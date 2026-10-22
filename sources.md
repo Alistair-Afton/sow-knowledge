@@ -93,6 +93,14 @@ those sourced from his notes say so.
   Project Nemesis' own per-claim confidence tags and are marked "not
   independently verified" — treat UNVERIFIED/MODEL entries as leads,
   not settled fact.
+- **YoRHa9S — Nemesis Recurrence** (Nexus mod 278; `x64/plugins`
+  DLL that patches the in-memory GameDB and nine engine code sites
+  at runtime) — used as evidence for the scar/cheat-death
+  recurrence system: its bypass-switch names and story-role
+  isolation list independently confirm `WeightReductionPerUse`,
+  `RoleGroup` exclusion, `RoleReplaceValue`, `ScarType` decay and
+  the `TotalResurrected` counter documented in
+  `gameplay/detail/faction-lifecycle.md`.
 - **`ShadowOfWarDllLoader.dll`** — the community plugin loader (a
   generic `dll_loader` build): enumerates `x64/plugins/*.dll` and
   `LoadLibrary`s each at startup; the entry point for all native mods.

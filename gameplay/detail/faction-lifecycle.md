@@ -403,6 +403,64 @@ inventory UI.
   reward rolls (e.g. `Default_HasMount` checkpoints) and event
   reward pools apply. Orders are a player-only lane.
 
+## Recurrence lockouts & scar pools (VERIFIED fields + mod evidence)
+
+The scar/cheat-death return system is gated by real `Faction.Role`
+fields — verified on the installed `game.gamedb` (`Faction/Roles/
+Definitions` schema resolves cleanly):
+
+- `BaseWeight`, `MinWeight`, `WeightReductionPerUse` — role pick
+  weight decays each time the role is used, down to `MinWeight`.
+- `RoleGroup` — mutual-exclusion group (shared-group titles like
+  `FlameOfWar`/`Inflamed`/`Burned`, `Blight`/`Poisoned` cannot
+  coexist on the board).
+- `RoleReplaceValue` — replacement priority ordering.
+- `ScarType` — links a role to its `Combat/Scar/Type` row.
+- `Prediate_GlobalVar` (sic — retail typo), `Predicate_Class`,
+  `Predicate_Personality`, `Predicate_AppearanceTags`,
+  `Predicate_Scale` — gating predicates per role.
+
+`Combat/Scar/Type` holds 24 records whose `WeightPerUse` attr is a
+decay ladder applied per use — standard scars carry
+`1000, 10, 1, 0.01, 0.0001`; `ScarBookmark_Role_{Claw,Machine,
+Stormbringer}` carry `10000, 1, 0.01, 0.0001` (10× heavier first
+draw = the cheat-death/scar pool disparity); the player's
+`Resurrected_PlayerAbility_RaiseDead` carries a flat `1`. Scar rows
+can also exclude items (`ExcludedItems` → `Item_Necromancer_
+SelfRes*` on `Burns`).
+
+**Mod evidence (Nemesis Recurrence v1.0.0, YoRHa9S — Nexus 278):**
+the mod's in-memory patcher names nine retail code sites it
+neutralizes, which independently confirm the mechanic set:
+
+- RoleGroup regional lockout (one shared-group role per region)
+- Active `Faction.Role` duplicate prevention
+- `RoleReplaceValue` priority gate
+- Role usage weight decay (`WeightReductionPerUse`)
+- `DynamicWeight` one-use lockout (Legendary/Pinnacle/Cheat-Death
+  scars/titles are intended to recur only once per save)
+- `ScarType` decay-index init + update paths
+- `TotalResurrected` global counter — decays cheat-death odds on
+  long-running saves
+
+The mod also ships the retail **story-role isolation list** — roles
+the recurrence system must never touch: `Ocker_Baz`, `Ocker_Gaz`,
+`Ripper_Daz` (the Bruz brothers' internal role names), `PlanMaker`,
+`GoldPath`, `WitchKing`, `Castimir`, `RangerRoleDef`,
+`FakeDarkTalion`, `Tutorial`, `CommanderOlog`,
+`MachineDestroyerOlog`, `FeralTrackerOrc`, `Role_IronSkull`,
+`Role_Stitch`, `Role_FlameOfWar`, `Role_RazorJaw`, `Role_Jaws`,
+`Role_LockJaw`, `NemesisForge_Role_{Jaws,LockJaw}`, plus the scar
+catalog `Role_{BagHead,Faceless,Hook,Blight,Inflamed,Poisoned,
+BrokenShield,PlagueBringer,Claw,Defaced,WraithTouched,Burned,
+StormBringer,Machine,Skinless,RawHead,EverWounded,ForgeClaw,
+Forsaken,NamelessOne,SlashFace,Immortal,Unashamed,Abandoned,
+Shamed,Reject,OfTheFlies,Specter,Survivor,Bitter,Infested,
+Unkillable,Beast,Deranged,Mindless,Ruined,Maniac}` — the
+near-complete cheat-death role vocabulary, matching the
+`ResReward_{TransformRole,ChangeRole,PinnicleScar}_*[_Delay]` and
+`PS_*_PinnacleRole_*` reward-row naming in gamedb.
+
 ## OPEN
 
 - Member-aging promotion cadence (how often captains promote/upgrade
