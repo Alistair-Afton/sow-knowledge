@@ -121,7 +121,8 @@ Relationship persistence — verified negative results:
   `Picker_RaiseDead`); a census keyed on `Role_` alone misses them.
 - Gear items carry `05`-tagged 18-byte binary GUIDs (one per piece).
   A `CharEvent_*` hash hit inside one gear blob was a byte
-  coincidence — nemesis-memory events are not stored as name hashes.
+  coincidence — but nemesis memory *is* persisted, as the `03`-tagged
+  `(category, event-name-hash)` event log in the record layout below.
 - **Cross-save diffs are permutations, not mutations**: aligning the
   same captain's record across two saves shows byte differences that
   are pure swaps — `Picker_*` hash entries trade positions. The
@@ -149,7 +150,15 @@ Relationship persistence — verified negative results:
 04 <count> + 00 <name>…   trait names (Traits_*, Orc_<personality>,
                           sometimes led by Default_Act*)
 08 <u32> ×9               stat array
-03 <7B> ×~31              fixed slot array (all-zero = empty)
+03 <u24 cat> <u32 hash>   **event log — the member's nemesis memory**:
+                          `03`-tagged (category, event-name-hash) pairs
+                          grouped by log channel — 0x15f sim events
+                          (PromoteDead_*, Chase_Clear, Raid_Checkpoint_*,
+                          ActiveKillPlayer_*), 0x160 sub-events,
+                          0x161 encounter history (GuardWarCouncil_*,
+                          ActiveKilledOnSimEvent, interrogation/wraith-
+                          world ids), 0x162 tail, 0 = archetype ref
+                          (Orc_Spearman). Zero entries terminate it.
 02 <u8> + 00 <hash>…      appearance meshes (orc_anim_base, Orc_Stk_*),
                           then AD_* attachment names
 04 <count> + 04 <u32>…    body-parameter block — 0xff……-prefixed
@@ -165,7 +174,8 @@ NPC_611/NPC_612 Bruz brothers — consistent with `08` = power rating
 and `04` = level (INFERRED; pairing structure verified).
 
 Field-tag vocabulary: `00`=32-bit (hash or scalar), `02`=u8,
-`03`=8-byte slot, `04`=u32, `05`=18-byte blob, `08`=u32, `09`=u64,
+`03`=event-log entry (`u24 category` + `u32 name hash`), `04`=u32,
+`05`=18-byte blob, `08`=u32, `09`=u64,
 `0c`=bool u8, `0f`=len-string, `10`=len32-blob.
 
 CLI: `save <f> whdc` (full resolved-hash dump) / `save <f> captains`
