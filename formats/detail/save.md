@@ -132,6 +132,12 @@ length agreement; chunk semantics below are from the external note.
   (`Tracker_Shoulders`, `Fire_Helmet`, `Orc_Def_*`,
   `Orc_Shld_*`…). UNRESOLVED: pre-token vs post-tail
   ownership.
+- **FORT tails serialize siege assault slots**: `Offense_nn` /
+  `Defense_*` entries pair name hash + bool + `04 u32`
+  **global member index** (the `n` in `_NPC_n`) — the assault
+  team's slot assignments, `0xffffffff`-padded. Referenced
+  indices exceed the live token set (dead/archived members) —
+  the graveyard indices remain addressable.
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
