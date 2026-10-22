@@ -97,6 +97,12 @@ length agreement; chunk semantics below are from the external note.
   `SauronOffense`/`PlayerOffense` and `*_Mon_*` + bool unlock
   flags. One `FORT_1` ran ~3900 fields to the WHDC chunk end —
   the largest record type in the world state.
+- **Tokenless records dominate WHDC**: only ~17% of slot-1's
+  payload is token-anchored member records — ~1.05MB sits in gaps
+  between them, holding member-shaped records without identity
+  tokens (`08` stat arrays, `FactionMember_RoleSelected_*`,
+  `03` event logs incl. a `cat=0x3f` channel, appearance mesh
+  names) — dead/archived/pool members (INFERRED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
