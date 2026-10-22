@@ -171,8 +171,12 @@ length agreement; chunk semantics below are from the external note.
   Caveat: `b` is **not token-unique** — `0xe65e14fd00` heads
   both an Undead Olog (`Marker_Resurrected_PlayerAbility_
   RaiseDead`) and Bruz (`TribeDef_Bruz`) — two unrelated
-  entities sharing one head `b` (non-unique target slot or
-  recycled GUID, UNRESOLVED).
+  entities sharing one head `b`. Duplicates cluster:
+  `NPC_0` sentinel records each share `b` with one captain,
+  and one 5-member group shares a single `b` — the working
+  read is head `b` = **bound-entity reference** (self for
+  ordinary members, another entity for proxies, shared for
+  multi-member bindings), not a unique id (INFERRED).
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
