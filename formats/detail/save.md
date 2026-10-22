@@ -187,7 +187,10 @@ CLI: `save <f> whdc` (full resolved-hash dump) / `save <f> captains`
 (numeric member-index scan) / `save <f> names <substr>` (resolved-name
 hits with owning record) / `save <f> pairs` (shared-marker
 grouping) / `save <f> rec|ids` (record walk /
-head-id crossref) / `save <f> hex|raw <off> <len>` (dumps).
+head-id crossref) / `save <f> recdiff <fB> <NPC_n>` (cross-save
+record diff) / `save <f> roster` (TSV census: token, typeid, head
+scalars, tribe, marker/picker/event/trait counts) /
+`save <f> hex|raw <off> <len>` (dumps).
 Requires `ANDURIL_HASHDB` pointing at the harvested name dictionary.
 - Value tags: `04` = u32, `00` = 32-bit AttrHash name (same
   `h*0x397 + map[c]` hash as gamedb/strdb), `0c` = bool, `10` =
