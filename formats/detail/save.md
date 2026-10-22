@@ -146,12 +146,14 @@ length agreement; chunk semantics below are from the external note.
   each carries one `{kind=0 | owner flagword | GUID64B
   ending 00 | 0}` blob (~2 KB stride), so dead members keep
   GUID64B + last state flagword and stay joinable against
-  `05` refs and event-instance ids. ~800 extra `Faction_`
-  refs ≈ 400 archive entries on one endgame save, consistent
-  with dead members keeping global indices (FORT `Offense_*`
-  slots reference untokened members). A live member's own
-  faction/row/AI is the **first** tuple; later tuples are
-  archive records.
+  `05` refs and event-instance ids. The `{Faction_X,
+  Faction_X}` context-pair census enumerates them: ~523 pairs
+  on one endgame save ≈ 165 live + ~360 dead — dead per
+  region: desert 120, MtnPass 50, volcano 53, island 39,
+  MinasIthil 42, snowMtn 45, Demovolcano 15; total serialized
+  member space ~525 vs max index 613 (the rest were purged
+  transients). A live member's own faction/row/AI is the
+  **first** tuple; later tuples are archive records.
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
