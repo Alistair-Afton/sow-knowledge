@@ -116,12 +116,21 @@ length agreement; chunk semantics below are from the external note.
   containing record's own flagword; foreign owners occur (a
   section inside one member's span carrying another member's
   flagword under a different kind — verified). Filtered
-  census: ~2.4k `05` blobs in slot-1 WHDC — kind `0x0` ×512,
-  `0x104ff` ×1281 (dominant dense array, u16 = small index —
-  INFERRED per-member sub-list), `0x8` ×74, `0x200` ×44,
-  `0x400` ×31, `0xc0` ×35, `0x800` ×15. ~157 candidate edges
+  census of plausible blobs: `0x0` ×512, `0x8` ×74, `0x200`
+  ×44, `0x400` ×31, `0xc0` ×35, `0x800` ×15 (byte-scan kinds
+  ≥ 0x10000 are mostly misparse artifacts — the field triple
+  `02 u8 5`+`04 ffffffff`+`04 1` inside gear entries fakes
+  a `05` tag reading kind `0x104ff`). ~157 candidate edges
   on a retail save; individual kind-bit meanings undecoded
   (UNVERIFIED).
+- **Pre-token member block**: before each `<guid>_NPC_<n>`
+  token sits (a) board-context name hashes resolving to
+  `InvasionFaction_<region>`, `Faction_<region>`, `AI_<role>`,
+  `<region>_Row_Captain_<i>` — the member's faction + board
+  seat + AI role, and (b) ~0x45-stride gear entries
+  `{name-hash, AD_<name>-hash, 05 blob, bools, counters}`
+  (`Tracker_Shoulders`, `Fire_Helmet`, `Orc_Def_*`,
+  `Orc_Shld_*`…). Verified on a retail slot-1 captain.
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
