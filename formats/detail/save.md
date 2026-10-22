@@ -189,22 +189,19 @@ a dense `<Role_* hash>` + small-u32 list (~914 entries).
 Each member record is preceded by a length-prefixed ASCII token
 `0f <len:u8> <32-hex>_<KIND>_<n>` (tag `0f`). `<KIND>` is `NPC` for
 captains; fortress records use `<guid>_FORT_<n>` in slot 1 and bare
-`_FORT_<n>` (no guid) in the DLC slots. The 32-hex
-prefix is a per-board faction GUID — shared by every member of one
-army, distinct per region board, with separate prefixes for the
-Gondorian ally faction (`GP_Baranor`, `AI_Gondorian_*` members) and
-special records. `NPC_<n>` is the per-board member index; this token
-is the on-disk form of the `GUID64A`/`GUID64B` pair.
+`_FORT_<n>` (no guid) in the DLC slots. The 32-hex prefix is a
+**record-group GUID — NOT the member's faction** (corrected:
+members of 15+ distinct prefixes all seat into MtnPass). On FORT
+records it does match the faction GUID (`2ce24c19_FORT_1` ↔
+`Faction_snowMtn`); on members its semantics are UNVERIFIED
+(origin/spawn-group id is the working read). `NPC_<n>` is the
+global member index (dead members keep their indices — FORT
+assault slots reference untokened members).
 
-Observed faction census on an endgame save (165 members): two
-populated boards — `2ce24c19…` (snowMtn, verified via
-`Faction_snowMtn` refs in its `_FORT_`) = 34 members and
-`a5ebbd08…` (MinasIthil/island board, INFERRED via
-`Faction_MinasIthil` + `Faction_island_QuestReplay_RB*` refs) =
-28 — plus a long tail of 3–12-member factions (story armies,
-follower pool, roamers). After the campaign most region boards
-are disbanded; only the last contested region and the player's
-own structures retain populated rosters.
+Observed faction census on an endgame save (165 members, faction
+= each member's post-tail `Faction_<region>` ref): MtnPass 51
+(the active siege board), volcano 30, island 28, desert_Real 25,
+MinasIthil 13, Demovolcano 12, snowMtn 6.
 
 Relationship persistence — verified negative results:
 
