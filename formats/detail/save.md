@@ -172,12 +172,14 @@ Relationship persistence — verified negative results:
 ff ff ff …                tail (record ends at next `0f` token)
 ```
 
-Head scalars (roster census, INFERRED): the `08` head field is a
-mostly-constant flag (160/165 members = 1); the varying level-like
-scalar is the FOURTH `04` head field (9–90 across the census;
-Bruz brothers 89/90/90). `f4b`/`f4c` are near-always 0; `f4a`
-groups by army but not uniquely — possibly a board/region slot
-index.
+Head scalars (roster census): the `08`+`04` pair after the two
+`0f` strings reads `power/level` — EQUAL on 160/165 members
+(9/9 … 84/84), diverging only on story captains: the Bruz trio
+79/89-90, a `TribeDef_Sauron` captain 84/90, and the follower-state
+Bruz record NPC_32 (`TribeDef_Bruz`) at 80/18 (power-vs-level
+direction INFERRED; divergence pattern verified). `f4b`/`f4c` are
+near-always 0; `f4a` groups by army but not uniquely — possibly a
+board/region slot index.
 
 Bruz brothers: faction `fe44e382` is a three-member story army —
 Baz (NPC_611, `BruzBrothers_Baz`+`BazDead`), Gaz (NPC_612,
