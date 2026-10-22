@@ -36,27 +36,37 @@ length agreement; chunk semantics below are from the external note.
   **Verified**: `total == plaintext.len() - 20` on all 6 retail saves.
 - Global chunks, then slot records `06000000 <u32 len> 00000000` each
   followed by a `SAVE` v31 block of `len` bytes.
-  **Verified on retail**: 2 slots per save — slot 1 (campaign,
-  ~1.5 MB, contains IVPD/WHDC/ASMC) and slot 2 (~288 KB to EOF).
-  The external note's "3 slots" (u32 3 = slot count) describes the
-  slot-count field; empty slots may have no `SAVE` block.
+  **Verified on retail**: 3 slot records per save — slot 1
+  (campaign, ~1.5 MB: IVPD/WHDC-1.27MB/ASMC/CBTC/QSTD/IIUC/STOR),
+  slot 2 (~655 KB: LTMR/ASMC/CBTC/LPDC/UITC), and slot 3
+  (~288 KB: IVGD/PPDC/IEUC/IVPD/WHDC-122k — a second, much smaller
+  nemesis world — plus ASMC/CBTC/LPDC/IIUC; identical byte length
+  on all six saves). Slot records are NOT 4-aligned (slot 3 begins
+  at an odd offset) — scanners must check every byte position.
 - Inside a slot: chunks `<4CC> <u32 ver> <u32 size> <u32 0> <u32 size-4>`.
   **Every size field changes when a chunk grows.**
-- Observed chunks (verified): `GOXC` v5 global; slot-1 inner
-  `IVPD` v4, `WHDC` v1190 (≈1.27 MB world/nemesis state — AttrHash
-  probes place the live `FactionRole` roster inside), `ASMC` v8,
-  `CBTC`, `GCPT`, `LPDC`, `UITC`, `LTMR`, `DIFF`, `IUC0`.
-  (`PAIC` also exists in the editor's chunk model.)
+- Observed chunks (verified per-region inventory):
+  `GOXC` v5 global; slot-1 inner `IVPD` v4, `WHDC` v1190
+  (≈1.27 MB world/nemesis state — AttrHash probes place the live
+  `FactionRole` roster inside), `ASMC` v8, `CBTC` v1, `QSTD` v23,
+  `IIUC` v48, `STOR` v159; slot 2: `LTMR` v1, `ASMC` v8,
+  `CBTC` v1, `LPDC` v4, `UITC` v3; slot 3: `IVGD` v3, `PPDC` v3,
+  `IEUC` v1, `IVPD` v4, `WHDC` v1190 (≈122 KB — second nemesis
+  world), `ASMC` v8, `CBTC` v1, `LPDC` v4, `IIUC` v48.
+  (`GCPT`, `DIFF`, `IUC0` observed on earlier/other saves;
+  `PAIC` exists in the editor's chunk model.)
 - **Full chunk-tag registry** (exe, verified static): the binary
   carries a table of `mov eax,'TAG'; ret` thunks — 38 entries:
   `PERF PDIC PPDC IVGD DIFF ASMC FAST WHDC CBTC IVMG IVPD IVSH ENT2
   TTRL SAVE QSTD LPDC GPDC PICB GOXC` (main table) plus
   `ATI1 ATI2 AUDI FOTP GCPT GMSC IEUC IIUC INVA LTMR PAIC PDCC REEL
   STOR UITC` elsewhere. ATI*/DXT* are texture-codec tags; the rest
-  are save/subsystem chunk ids — the unobserved ones (PERF, PDIC,
-  PPDC, PDCC, IVGD, IVSH, ENT2, TTRL, GPDC, PICB, IEUC, INVA, GMSC,
-  FOTP, REEL, STOR, AUDI) mark subsystem channels retail didn't
-  emit on the investigated saves.
+  are save/subsystem chunk ids. Confirmed observed on retail:
+  `GOXC IVPD WHDC ASMC CBTC QSTD IIUC STOR LTMR LPDC UITC IVGD
+  PPDC IEUC` (plus `GCPT`/`DIFF`/`IUC0` on other saves). The
+  unobserved ones (PERF, PDIC, PDCC, IVSH, ENT2, TTRL, GPDC,
+  PICB, INVA, GMSC, FOTP, REEL, AUDI) mark subsystem channels
+  retail didn't emit on the investigated saves.
 
 ## WHDC captain records (verified against retail save + dictionary)
 
