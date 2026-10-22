@@ -88,7 +88,15 @@ length agreement; chunk semantics below are from the external note.
   `Weight_*_BlownOutInitially`), i.e. the save-persisted live
   weights. The tail serializes the region board
   (`Faction_<region>`, `FortAssault`, `<region>_Row_Captain_*` +
-  u32 index list) before a further `01`-tagged section (open).
+  u32 index list), then a `01`-tagged (second u32 class) section
+  opens the **siege board**: `Warchief_*` slot assignments
+  (`WarchiefCount`, `Warchief_1/2`, `WCI_Col*`/`WCO_Col*`),
+  `Offense_*`/`Defense_*` upgrade families (Siege, Onslaught,
+  Beasts, Battlefield, Army, Archers; PoisonMines, FireSpouts,
+  PoisonSiegeBeasts…), `InnerGarrisons`, `Keep_Large`,
+  `SauronOffense`/`PlayerOffense` and `*_Mon_*` + bool unlock
+  flags. One `FORT_1` ran ~3900 fields to the WHDC chunk end —
+  the largest record type in the world state.
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
