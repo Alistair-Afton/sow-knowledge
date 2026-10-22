@@ -178,16 +178,27 @@ across the four bands. SE accrues slowly over a career (~0.4
 expected picks by level 60 backfill), consistent with live 24%@28 /
 60%@80 presence when purpose/event grants are added.
 
-### Purpose level remap + row exclusion (VERIFIED-STATIC, unmodeled)
+### Purpose level remap + row exclusion (VERIFIED-STATIC)
 
 - `FUN_140352f8c` consumes `purpose_levelremap_record`
   (`member+0x280`): a `Faction/Traits/PickerLevelRemap` table of
   `{hi, lo, delta}` entries — first band containing the level
   applies `max(0, level+delta)`. Five tables exist:
   `TraitLevelOffset_{-2,-1,0,+1,+2}`. Applies only to rows whose
-  `FUN_1403530f0` predicate is set. Who selects the table (which
-  GameDB record carries the ref) is OPEN — `Faction/RevengeType`
-  records are empty name-only markers.
+  `FUN_1403530f0` predicate is set.
+- Tier source RESOLVED (VERIFIED-STATIC): the
+  `_StructuresFactionTraitMarkerToLevelRemap` table (10 rows, two
+  identical groups) maps `Marker_LearnSpeed_*` → remap tier:
+  VeryFast→-2, Fast→-1, Medium→0, Slow→+1, VerySlow→+2. The tier
+  is a trait property of the member ("learn speed"), not the
+  spawn-level delta. `member+0x280` is bulk-copied at member init
+  (`FUN_140b80090`) from the spawn context's record-element array;
+  live census: ~94% of members carry `TraitLevelOffset_0`.
+- Band values (VERIFIED): `TraitLevelOffset_-2` = 3..10→≈0,
+  10..20→-3, 20..30→-5, 30..45→-10, 45..60→-15 — a VeryFast
+  captain hits every flag=1 checkpoint up to 15 levels early.
+  `+2` is near-identity (99..0→0) — learn speed accelerates fast
+  learners rather than meaningfully delaying slow ones.
 - `FUN_14034fb7c` reads `member+0x4f0`: a 0x40-stride keyed
   container (key at entry+0x28 via `FUN_14016e240`) whose `+0x18`
   payload is a row blocklist — active purposes/events can suppress
