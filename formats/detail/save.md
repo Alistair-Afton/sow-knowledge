@@ -142,7 +142,11 @@ length agreement; chunk semantics below are from the external note.
   tuple (the dead member's last faction/role/seat). They
   decode with the full member field grammar (`05` blobs, name
   hashes, bools, gear-entry signatures) — complete member
-  records minus the `0f` ASCII token. ~800 extra `Faction_`
+  records minus the `0f` ASCII token, **retaining identity**:
+  each carries one `{kind=0 | owner flagword | GUID64B
+  ending 00 | 0}` blob (~2 KB stride), so dead members keep
+  GUID64B + last state flagword and stay joinable against
+  `05` refs and event-instance ids. ~800 extra `Faction_`
   refs ≈ 400 archive entries on one endgame save, consistent
   with dead members keeping global indices (FORT `Offense_*`
   slots reference untokened members). A live member's own
