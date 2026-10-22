@@ -172,9 +172,18 @@ Relationship persistence — verified negative results:
 ff ff ff …                tail (record ends at next `0f` token)
 ```
 
-Head scalars: the `08`/`04` pair reads `79/89` vs `79/90` on the
-NPC_611/NPC_612 Bruz brothers — consistent with `08` = power rating
-and `04` = level (INFERRED; pairing structure verified).
+Head scalars (roster census, INFERRED): the `08` head field is a
+mostly-constant flag (160/165 members = 1); the varying level-like
+scalar is the FOURTH `04` head field (9–90 across the census;
+Bruz brothers 89/90/90). `f4b`/`f4c` are near-always 0; `f4a`
+groups by army but not uniquely — possibly a board/region slot
+index.
+
+Bruz brothers: faction `fe44e382` is a three-member story army —
+Baz (NPC_611, `BruzBrothers_Baz`+`BazDead`), Gaz (NPC_612,
+`Gaz`+`GazDead`), Daz (NPC_613, `BruzBrothers_Daz`), all sharing
+`09` type id `0x19f82a858e5` and the same Warmonger/Olog
+BeastMaster build (`Marker_SpecialButterfly`).
 
 Field-tag vocabulary: `00`=32-bit (hash or scalar), `02`=u8,
 `03`=event-log entry (`u24 category` + `u32 name hash`), `04`=u32,
