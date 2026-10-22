@@ -168,9 +168,11 @@ length agreement; chunk semantics below are from the external note.
 - **Bonds are not `b`-edges**: the Bruz brothers' GUID64Bs are
   cited only by their own records + one kind-0 ref — the
   blood-brother link is marker-driven, not an `05` edge.
-  Caveat: `b` is not token-unique — one GUID64B heads two
-  different member tokens (shared target slot or duplicated
-  entity record, UNRESOLVED).
+  Caveat: `b` is **not token-unique** — `0xe65e14fd00` heads
+  both an Undead Olog (`Marker_Resurrected_PlayerAbility_
+  RaiseDead`) and Bruz (`TribeDef_Bruz`) — two unrelated
+  entities sharing one head `b` (non-unique target slot or
+  recycled GUID, UNRESOLVED).
 - **Transient members are deleted, not archived** (cross-save
   diff): a save holds one extra member — an Epic Marauder
   Champion-Assassin carrying `ET_CanRemove_ChampionAssassin` —
