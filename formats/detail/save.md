@@ -81,9 +81,10 @@ length agreement; chunk semantics below are from the external note.
   records per region army (`<faction-guid>_FORT_0/1`, and the guid
   matches the captain-roster faction ids); slots 2 and 3 each carry a
   single bare `_FORT_0` record (no guid prefix) even on profiles that
-  never started those campaigns. FORT records terminate on a
-  `0a`-tagged field — a tag not used in captain records (semantic
-  open).
+  never started those campaigns. FORT records use one extra tag:
+  `0a` = f32, appearing as a `(0a f32, 00 name-hash)` pair list
+  (fort stat/upgrade values — mostly 1.0 with 16/32/128 outliers),
+  followed by a further `01`-tagged section (semantic open).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
