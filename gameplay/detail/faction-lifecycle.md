@@ -191,7 +191,17 @@ The full `Faction/Traits/Relationships` census is five records
 `Default_Nemisis_{Hate,Terror}`, `Sub{Suc,Fled}_Ambu_{Hate,Terror}Nem`
 (ambusher sub-events bind the spawned avenger's nemesis), and
 `ResReward_{Hate,Terror}_Rival` in the resurrection package — a
-captain who cheats death comes back hating his killer. Matching
+captain who cheats death comes back hating his killer.
+
+`Default_Nemesis` is also a `Faction/Rewards/XPLevel` bundle: a
+flag=0 creation-time row at Chance≈0.05 (VERIFIED), so roughly
+one in twenty captains spawns already carrying a
+`Default_Nemisis_{Hate,Terror}` nemesis bond. The nemesis axis is
+player-facing — `Rival_*` quest-jobs, `PS_Optional_Terror_Nemesis`
+objectives, and the `BrotherKilledBy*` event forks all face the
+player — so these defs bind the member's nemesis to the player,
+distinct from the member-vs-member binds of the sub-event defs
+above (INFERRED direction there). Matching
 `Quest/Jobs/Relationship/Rival_{Hate,Terror}` quest-jobs exist, as
 do `CombatCritElementState` and `ObjectivePicker` presentation
 records for both rival types.
