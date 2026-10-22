@@ -123,14 +123,15 @@ length agreement; chunk semantics below are from the external note.
   a `05` tag reading kind `0x104ff`). ~157 candidate edges
   on a retail save; individual kind-bit meanings undecoded
   (UNVERIFIED).
-- **Pre-token member block**: before each `<guid>_NPC_<n>`
-  token sits (a) board-context name hashes resolving to
+- **Member context block** (adjacent to each `<guid>_NPC_<n>`
+  token): (a) board-context name hashes resolving to
   `InvasionFaction_<region>`, `Faction_<region>`, `AI_<role>`,
-  `<region>_Row_Captain_<i>` — the member's faction + board
-  seat + AI role, and (b) ~0x45-stride gear entries
-  `{name-hash, AD_<name>-hash, 05 blob, bools, counters}`
+  `<region>_Row_Captain_<i>` — faction + board seat + AI role,
+  and (b) ~0x45-stride gear entries `{name-hash,
+  AD_<name>-hash, 05 blob, bools, counters}`
   (`Tracker_Shoulders`, `Fire_Helmet`, `Orc_Def_*`,
-  `Orc_Shld_*`…). Verified on a retail slot-1 captain.
+  `Orc_Shld_*`…). UNRESOLVED: pre-token vs post-tail
+  ownership.
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by

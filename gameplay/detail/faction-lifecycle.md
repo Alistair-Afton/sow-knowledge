@@ -98,7 +98,7 @@ hole, and a dead/shamed occupant holds the seat until the
 hole-timer path refills it.
 
 **Seat assignment serializes per member — VERIFIED (save
-WHDC):** each member's pre-token context block carries a
+WHDC):** each member's context block carries a
 `<region>_Row_<name>` ref alongside `Faction_<region>` and
 `AI_<role>`. Retail endgame census across the six region
 boards (MtnPass, volcano, snowMtn, island, desert,
