@@ -199,7 +199,14 @@ length agreement; chunk semantics below are from the external note.
     participant memory, incl. the fatal mission itself —
     the shared instance means the killer would be *among*
     the participants, not identified by the edge alone).
-    All 14 edges target just two dead members.
+    All 14 edges target just two dead members. Co-
+    participants of one instance do **not** hold pairwise
+    live→live edges to each other — the instance id rides
+    on the dead-participant edge only. Small nonzero high
+    words (0x8/0x200/0xc0/0x400/0x800) on the ordinary
+    `0x?022a4` family are likely instance *counters* on
+    the same field — common events reused, vs the large
+    hash-like ids of unique instances.
   - **Edges are mostly cross-faction** (101 vs 20
     same-faction on live→live) — consistent with nemesis
     *history* (rivals met via invasions/missions) rather
