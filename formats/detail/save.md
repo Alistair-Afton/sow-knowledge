@@ -213,6 +213,23 @@ length agreement; chunk semantics below are from the external note.
     almost entirely *cross-board* encounters (invasions,
     roaming, missions), not intra-board structure.
     Consistent with henchmen/bonds being marker records
+  - **A second save variant shows an empty graveyard**: a
+    same-account Oct-13 session save carries **zero**
+    dead-target edges and an empty archive — every one of
+    its 156 edges is live-target and instanced (`inst≠0`),
+    with no `-gap-` registry at all. WHDC therefore writes
+    live-edge structure without the death layer when the
+    graveyard is empty (VERIFIED as a shape; the
+    campaign context that empties it is unresolved — a
+    fresh playthrough or a flushed archive both fit).
+  - **Live vs dead kinds are disjoint families**: in the
+    endgame save the dead-only kinds are
+    `{0x4, 0x31a3, 0x40f02, 0xc81f12, 0xbb02af}` while the
+    empty-graveyard save's live kinds are the
+    `0x?0?2?{84,a4,80}`/`0x400000`/`0` set. A raw
+    bit-decomposition does **not** yield clean semantics
+    (bits co-occur as opaque codes) — treat kinds as
+    category codes, not flag masks (INFERRED).
     rather than `b`-edges — board-mates don't cite each
     other.
 - **DLC WHDCs carry no live member records** (VERIFIED,
@@ -226,16 +243,19 @@ length agreement; chunk semantics below are from the external note.
   edge model is format truth, not a base-game quirk).
   `save refs slot=N` selects the Nth WHDC chunk
   (0 = base campaign) and prints a token census.
-  - **`0xc0400000` edges are the death registry**
-    (VERIFIED shape, Aug-7 save): emitted from `-gap-`
-    regions (non-member archive bookkeeping) and from two
-    anchor member records (46 and 54 refs each), the
-    targets enumerate the whole dead roster
-    (`dead:Faction_*` members + a few live). This is the
+  - **The `-gap-`/anchor edge layer is the death registry**
+    (VERIFIED shape, Aug-7 save): `-gap-` regions
+    (non-member archive bookkeeping) and two anchor member
+    records (46 and 54 refs) enumerate the whole dead
+    roster under kind `0x400000`-family codes. This is the
     archive's index layer, not personal nemesis history —
     it dominates an early-campaign save (115 of 168
     edges) and shrinks to a minority later as real
     member-to-member history (`0x?022a4` family) accrues.
+    Note the **kind is not registry-specific**: the same
+    `0x400000` code appears on live member→member edges in
+    the empty-graveyard save — registry-ness is carried by
+    the *source* (`-gap-`/anchor), not the kind alone.
   - **Kind=0 group edges**: 5 members cite one shared
     target (`0x5254997c00`, a member of a *different*
     faction than most citers) all carrying the same
