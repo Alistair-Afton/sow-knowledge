@@ -404,6 +404,11 @@ All addresses are the final Steam build.
   default-job fallback `FUN_141ace168`; instantiate
   `FUN_1404fc51c`. The JobList gate itself is one Bernoulli
   `U(0,1) ≤ chance` (`FUN_1405767a8`, the `[QUEST|JOBROLL]` read).
+- **`Quest/Jobs/List` record shape** (attr-keyed): `RandomOrder`
+  bitflag = the weighted-vs-first-match switch; `ChanceToEvaluate`
+  = the JOBROLL chance (unset on nemesis lists → default);
+  `DefaultJob` = the fallback; `Entries+N` →
+  `_StructuresQuestJobWeightPair` `{Job, Weight}` rows.
 
 ## Open
 
