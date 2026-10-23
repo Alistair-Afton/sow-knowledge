@@ -258,12 +258,25 @@ four timer records — `HalfEmpty`, `CompletelyEmpty`,
 `Faction/Events/Events` payload is `CreatePromotions` — the
 record that spawns the `Promote{Empty,Dead}_Builder_Transform`
 SimEvents that actually seat a promoted member. The TimedEvent
-records carry `MinNumHoles`/`MaxNumHoles` thresholds
-(`HalfEmpty` decodes MinNumHoles ≈ 2 — fires only once ≥2 seats
-stand empty) plus `Cooldown`/`InitialDelay` fields whose raw
-values remain undecoded, so the real promotion *interval* is
-unresolved — INFERRED as an event cadence rather than a per-tick
-sweep. `Resurrection` is the timed-events entry for
+records' decoded cells (raw values, VERIFIED):
+
+| record | TimeToAddDuringQuest (f32) | MinNumHoles | MaxNumHoles | Cooldown | InitialDelay |
+|---|---|---|---|---|---|
+| HalfEmpty | 0.2 | 2 | 99 | 3,223,880 | 6,709,980 |
+| CompletelyEmpty | 0.2 | 19 | 99 | 16,748 | 16,748 |
+| FillUpCompletely_LongDelay | 0.2 | 0 | 99 | 6,708,720 | 6,708,720 |
+| Resurrection | 3.0 | 0 | 0 | 1,848,440 | 1,848,440 |
+
+`MinNumHoles`/`MaxNumHoles` are u32 thresholds — `HalfEmpty`
+fires once ≥2 seats stand empty; `CompletelyEmpty` needs ≥19
+(roughly the whole captain layer). `TimeToAddDuringQuest` is
+f32 — 0.2 on every promotion timer vs 3.0 on Resurrection —
+consistent with a quest-time acceleration factor, not a
+duration. `Cooldown`/`InitialDelay` are u32s of undecoded
+unit (ms → 4.6–111 min; frames@30 → 20–62 h; neither is
+plausible enough to claim) — the promotion *interval* stays
+UNVERIFIED, INFERRED as an event cadence rather than a
+per-tick sweep. `Resurrection` is the timed-events entry for
 return-from-dead scheduling rather than promotion.
 
 Consistent with cadence-limited filling, endgame boards sit well
