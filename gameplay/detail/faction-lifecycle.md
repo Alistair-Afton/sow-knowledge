@@ -275,6 +275,34 @@ through events (`PromoteDeadPlayerKiller_to_Overlord`,
 than the ambient ladder — INFERRED; whether a slow ambient
 overlord fill exists at all is unresolved.
 
+## Campaign-long roster churn (VERIFIED — save-pair GUID join)
+
+Joining two saves ~10 weeks apart on each member record's
+bound-entity GUID (`05`-blob `b`; see `formats/detail/save.md`)
+links 32 of ~150 live members across the pair — meaning roughly
+**4 in 5 live board members are replaced over a campaign**
+(early-campaign file: 158 members, median level 10; endgame file:
+165 members, median level 79; same account/campaign). The churn is
+both directions: ~118 GUIDs disappear and ~105 new GUIDs appear.
+Caveat: `b` is a bound-entity reference and is shared by
+sentinel/resurrection bindings, so the persistence figure is an
+upper bound — direction and scale are nonetheless clear.
+
+Two corollaries, both verified by the same pair:
+
+- **Board level tracks player level.** The early save's board
+  median is ~10 — matching a ~level-10 player — while the endgame
+  board sits at ~79. The board does not carry a fixed level
+  structure; it rides the player's level via
+  `PlayerBasedXPLevel` spawn deltas, and surviving members climb
+  with the campaign.
+- **The endgame low tail is spawn recency, not a stable class.**
+  Persisted members mostly climbed (median delta strongly
+  positive; 29/32 gained levels, many to the 75–84 band). Members
+  found at low level in the endgame save are recent spawns, not a
+  permanently weak tier — consistent with level tracking being
+  per-member accumulation, not a seat property.
+
 ## Resurrection return package (VERIFIED — 58-member diff)
 
 `Quirk_Unbreakable` is the player-raise-dead return state: 54/54

@@ -301,7 +301,16 @@ Relationship persistence — verified negative results:
   section-kind | u32 owner-state-flagword}`; the low32 flagword
   is `0xC0000000` marker + ~14 member-state bits (shared
   vocabulary, not an id — bit census verified), `b` per-member
-  unique (GUID64B).
+  unique (GUID64B) — **verified stable across saves**: joining a
+  save pair 10 weeks apart on each record's first-`b` value links
+  32 of ~150 live members across the two files, making `b` the
+  practical member-identity key for cross-save diffs (the
+  `_NPC_<n>` slot index is NOT stable — it is reused by new
+  spawns). Caveat: `b` is a bound-entity reference, not strictly
+  unique — board-sentinel records share their bound member's `b`,
+  and resurrection/group bindings can share one `b` across
+  several records (the duplicate-`b` census shows every
+  `NPC_0` sentinel pairs with a specific captain).
   Other records carry the same pair with flag bits OR'd into `id_a`
   (e.g. `a|0x08`) — the on-disk member-reference form used by
   tokenless mission/instance records (INFERRED).
