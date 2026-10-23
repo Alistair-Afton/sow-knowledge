@@ -207,11 +207,14 @@ length agreement; chunk semantics below are from the external note.
     `0x?022a4` family are likely instance *counters* on
     the same field — common events reused, vs the large
     hash-like ids of unique instances.
-  - **Edges are mostly cross-faction** (101 vs 20
-    same-faction on live→live) — consistent with nemesis
-    *history* (rivals met via invasions/missions) rather
-    than structural bonds like henchmen, which would be
-    same-board.
+  - **Personal history is ~95% cross-faction** (406 cross
+    vs 21 same-faction after excluding the `0x400000`
+    registry and `-gap-` sources) — nemesis edges are
+    almost entirely *cross-board* encounters (invasions,
+    roaming, missions), not intra-board structure.
+    Consistent with henchmen/bonds being marker records
+    rather than `b`-edges — board-mates don't cite each
+    other.
   - **`0xc0400000` edges are the death registry**
     (VERIFIED shape, Aug-7 save): emitted from `-gap-`
     regions (non-member archive bookkeeping) and from two
