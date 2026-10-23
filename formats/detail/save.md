@@ -215,14 +215,17 @@ length agreement; chunk semantics below are from the external note.
     Consistent with henchmen/bonds being marker records
     rather than `b`-edges — board-mates don't cite each
     other.
-- **The model replicates on DLC worlds** (VERIFIED, same
-  save's slot 1/2 WHDC chunks): slot 2 (`Faction_desert_
-  DLC4`, Desolation of Mordor) carries the `0x?02?a4`
-  kind family on its registry edges; slot 1 (Blade of
-  Galadriel, `Real_Faction_*_DLC3`) is essentially
-  edgeless beyond `FORT_0` index refs — a template-state
-  or differently-shaped roster. `save refs slot=N`
-  selects the Nth WHDC chunk (0 = base campaign).
+- **DLC WHDCs carry no live member records** (VERIFIED,
+  same save's slot 1/2 chunks): each holds exactly one
+  member token (the `FORT_0` region record) — no
+  `NPC_n` identities at all. BoG/DoM have no orc nemesis
+  board; their WHDCs keep only fort/region state plus a
+  **dead archive** — slot 2's 38 edges are all `-gap-`
+  registry refs into `dead:Faction_desert_DLC4` records
+  (the `0x?02?a4` kind family replicates there, so the
+  edge model is format truth, not a base-game quirk).
+  `save refs slot=N` selects the Nth WHDC chunk
+  (0 = base campaign) and prints a token census.
   - **`0xc0400000` edges are the death registry**
     (VERIFIED shape, Aug-7 save): emitted from `-gap-`
     regions (non-member archive bookkeeping) and from two
