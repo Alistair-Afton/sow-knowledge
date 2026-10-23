@@ -269,20 +269,19 @@ records' decoded cells (raw values, VERIFIED):
 
 `MinNumHoles`/`MaxNumHoles` are u32 thresholds — `HalfEmpty`
 fires once ≥2 seats stand empty; `CompletelyEmpty` needs ≥19
-(roughly the whole captain layer). `TimeToAddDuringQuest` is
-f32 — 0.2 on every promotion timer vs 3.0 on Resurrection —
-consistent with a quest-time acceleration factor, not a
-duration. `Cooldown`/`InitialDelay` are u32s. The units stay
-UNVERIFIED but **milliseconds gives a coherent cadence
-family** (INFERRED): CompletelyEmpty ≈ 16.7 s (urgent
-refill when the board is gutted), HalfEmpty ≈ 54 min,
-FillUpCompletely_LongDelay ≈ 112 min, Resurrection ≈
-31 min — sensible retail pacing where urgent states fill
-fast and routine promotion runs on the hour. Frames@30
-(20–62 h) is implausibly slow; engine-day fractions
-don't fit the ratios. `Resurrection` is the
-timed-events entry for return-from-dead scheduling
-rather than promotion.
+(roughly the whole captain layer). **The engine's nemesis
+clock is days**: `SimEvent/LifeSpanGenerated` across the 431-
+event list is a day-count enum `{0,1,3,5,7}` (0 =
+instant/no deadline), and `TimeToAddDuringQuest` f32 reads
+as days too — every promotion timer adds 0.2 days of quest
+time while Resurrection adds 3.0. `Cooldown`/`InitialDelay`
+u32s remain of undecoded unit (plausibly ms of real time
+driving the day counter — CompletelyEmpty 16.7 s,
+HalfEmpty ~54 min, FillUpLongDelay ~112 min, Resurrection
+~31 min form a coherent real-time cadence, INFERRED) — the
+day↔real-time conversion factor is the still-open piece.
+`Resurrection` is the timed-events entry for
+return-from-dead scheduling rather than promotion.
 
 Consistent with cadence-limited filling, endgame boards sit well
 under the seat caps: the live census shows ~45% warchief-seat
