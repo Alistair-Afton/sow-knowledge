@@ -211,9 +211,17 @@ length agreement; chunk semantics below are from the external note.
     same-faction on live→live) — consistent with nemesis
     *history* (rivals met via invasions/missions) rather
     than structural bonds like henchmen, which would be
-    same-board. A `0xc2000000`-flagword group (kind=0)
-    shows 5 members citing one shared target `0x5254997c00`
-    — the multi-member mission binding noted below.
+    same-board.
+  - **Kind=0 group edges**: 5 members cite one shared
+    target (`0x5254997c00`, a member of a *different*
+    faction than most citers) all carrying the same
+    flagword `0xc2000000` — one shared instance/binding
+    across a 6-member group (INFERRED; the flagword-as-
+    instance-id interpretation from `0xbb02af` fits).
+    **Caveat: `NPC_N` names collide across factions** —
+    `save refs` now emits `name@faction` on both ends
+    because per-faction numbering otherwise merges
+    distinct members (two different `NPC_17`s etc.).
 - **Bonds are not `b`-edges**: the Bruz brothers' GUID64Bs are
   cited only by their own records + one kind-0 ref — the
   blood-brother link is marker-driven, not an `05` edge.
