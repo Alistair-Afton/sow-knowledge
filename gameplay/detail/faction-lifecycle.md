@@ -272,12 +272,17 @@ fires once ≥2 seats stand empty; `CompletelyEmpty` needs ≥19
 (roughly the whole captain layer). `TimeToAddDuringQuest` is
 f32 — 0.2 on every promotion timer vs 3.0 on Resurrection —
 consistent with a quest-time acceleration factor, not a
-duration. `Cooldown`/`InitialDelay` are u32s of undecoded
-unit (ms → 4.6–111 min; frames@30 → 20–62 h; neither is
-plausible enough to claim) — the promotion *interval* stays
-UNVERIFIED, INFERRED as an event cadence rather than a
-per-tick sweep. `Resurrection` is the timed-events entry for
-return-from-dead scheduling rather than promotion.
+duration. `Cooldown`/`InitialDelay` are u32s. The units stay
+UNVERIFIED but **milliseconds gives a coherent cadence
+family** (INFERRED): CompletelyEmpty ≈ 16.7 s (urgent
+refill when the board is gutted), HalfEmpty ≈ 54 min,
+FillUpCompletely_LongDelay ≈ 112 min, Resurrection ≈
+31 min — sensible retail pacing where urgent states fill
+fast and routine promotion runs on the hour. Frames@30
+(20–62 h) is implausibly slow; engine-day fractions
+don't fit the ratios. `Resurrection` is the
+timed-events entry for return-from-dead scheduling
+rather than promotion.
 
 Consistent with cadence-limited filling, endgame boards sit well
 under the seat caps: the live census shows ~45% warchief-seat
