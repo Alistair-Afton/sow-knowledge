@@ -247,6 +247,34 @@ rows (or roams) rather than keeping the old seat (INFERRED from
 the absence of rank/seat mismatches; the demotion-time seat swap
 itself is not directly observed).
 
+## Promotion cadence (VERIFIED record graph — timing INFERRED)
+
+Seat filling is not continuous: `Faction/Events/TimedEvents` holds
+four timer records — `HalfEmpty`, `CompletelyEmpty`,
+`Resurrection`, `FillUpCompletely_LongDelay` — each carrying a
+`PromotionEventSetup` ref. `HalfEmpty` and
+`FillUpCompletely_LongDelay` point at `PromotionEventSetup/Default`
+(`MinasIthil` and `HardMode` variants exist), whose
+`Faction/Events/Events` payload is `CreatePromotions` — the
+record that spawns the `Promote{Empty,Dead}_Builder_Transform`
+SimEvents that actually seat a promoted member. The TimedEvent
+records carry `MinNumHoles`/`MaxNumHoles` thresholds
+(`HalfEmpty` decodes MinNumHoles ≈ 2 — fires only once ≥2 seats
+stand empty) plus `Cooldown`/`InitialDelay` fields whose raw
+values remain undecoded, so the real promotion *interval* is
+unresolved — INFERRED as an event cadence rather than a per-tick
+sweep. `Resurrection` is the timed-events entry for
+return-from-dead scheduling rather than promotion.
+
+Consistent with cadence-limited filling, endgame boards sit well
+under the seat caps: the live census shows ~45% warchief-seat
+occupancy (19 holders over ~44 standard seats) and overlords on
+only 2/7 boards. Overlord seats in particular appear to fill
+through events (`PromoteDeadPlayerKiller_to_Overlord`,
+`Promote_DarkTalion_Overlord`, fortress-assault outcomes) rather
+than the ambient ladder — INFERRED; whether a slow ambient
+overlord fill exists at all is unresolved.
+
 ## Resurrection return package (VERIFIED — 58-member diff)
 
 `Quirk_Unbreakable` is the player-raise-dead return state: 54/54
