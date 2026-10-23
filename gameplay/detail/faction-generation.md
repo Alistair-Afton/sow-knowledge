@@ -395,13 +395,22 @@ All addresses are the final Steam build.
   values; authored delays are most plausibly minutes→seconds.
 - **`board+0x260` selector object** holds the active
   JobSetup/JobList pair (accessors `FUN_1405761b8`/`FUN_140576228`).
+- **Job pick math** (`FUN_1405763c4`, "AddJobForMemberFromList"):
+  iterate the JobList's records; per job fetch a name-resolved
+  weight (`FUN_1405766c8`), skip when `weight < 1e-5`
+  (`DAT_14202e9b8`), applicability filter `FUN_140f9bb20`;
+  weighted-reservoir selection via `FUN_1401b3b90` when the list's
+  weighted flag (`FUN_14057673c`) is set, else first match wins;
+  default-job fallback `FUN_141ace168`; instantiate
+  `FUN_1404fc51c`. The JobList gate itself is one Bernoulli
+  `U(0,1) ≤ chance` (`FUN_1405767a8`, the `[QUEST|JOBROLL]` read).
 
 ## Open
 
 - `SimEventChance` 8-float field semantics beyond the win-chance cell.
 - `SimEventGenerationType` cells 0–2 units (variable-length; undecoded).
 - SimEvent→SimEvent ref slot semantics (not proven success/fail chains).
-- JobList→job pick weight math (Bernoulli per JobList verified;
-  per-job pick internals partially traced).
+- Per-job weight source semantics (which authored cell the
+  name-resolved read lands on per record shape).
 - Tick rate / `DAT_14202e644` units and the save-side counter
   relation (runtime-only).
