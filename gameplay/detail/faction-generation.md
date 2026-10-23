@@ -363,9 +363,45 @@ sequence verbatim: **530/530 WHDC genkey records match live members
   or the fill code path read statically. The seat→member mapping is
   fully decodable live.
 
+## Runtime scheduling (VERIFIED-STATIC, retail exe disasm)
+
+The schema above is data; this is the engine loop that consumes it.
+All addresses are the final Steam build.
+
+- **Evaluation rounds, not per-frame ticks.** Generation runs when a
+  board evaluation triggers — the observed producer is
+  `FadeOut_OnEnter` (region-enter, `0x1405769a8`–`0x140576b33`): it
+  posts a 0x60-byte **wake token** into the board's `+0x1c8` queue
+  (ctor `FUN_140621790`, enqueue `FUN_140622438`) and immediately
+  processes the selected setup — `FUN_141b5e19c(ctx, JobSetup,
+  queue_head)` with JobList fallback `FUN_141b5e1f8`. Two further
+  producers share the shape (`FUN_1419f0e98` deferred evaluator —
+  also services an in-flight object at `board+0x210` — and a board
+  step at `0x1419f72fe`).
+- **Queue & dispatch.** `+0x1c8` entries are wake/process tokens
+  consumed on **kind-0xC, sub-code-2** dispatches of the board's
+  runtime-bound state machine (dispatcher `0x140115fd8`, popper
+  `FUN_1405756c8`, dequeue `FUN_1404f923c`, per-child work
+  `FUN_1404f84e8`). Empty queue → SM state `0xD` via
+  `FUN_140159de4(board+0x120)`. Next drain is re-armed by
+  `FUN_14059ab3c` with a dt from `DAT_14202e030`.
+- **Authored delays → absolute fire-times.** In the SimEvent fill
+  path `FUN_14061ef8c`: `t = min + U(0,1)·(max−min)`; when
+  `FUN_14059662c(ev)==1` (authored-units event) `t *= 60.0`
+  (`DAT_14202e464`); `FUN_14011ca8c` stores
+  `ev+0x90 = clock.now_u32 + int(t·DAT_14202e644)` — a u32 stamp
+  against the `g_world` (`0x142702598`) `+8` sub-manager tick
+  (`+0x18`). The second scale and the tick rate are runtime-only
+  values; authored delays are most plausibly minutes→seconds.
+- **`board+0x260` selector object** holds the active
+  JobSetup/JobList pair (accessors `FUN_1405761b8`/`FUN_140576228`).
+
 ## Open
 
 - `SimEventChance` 8-float field semantics beyond the win-chance cell.
 - `SimEventGenerationType` cells 0–2 units (variable-length; undecoded).
 - SimEvent→SimEvent ref slot semantics (not proven success/fail chains).
-- Engine-side job/cadence logic that turns picker routing into rates.
+- JobList→job pick weight math (Bernoulli per JobList verified;
+  per-job pick internals partially traced).
+- Tick rate / `DAT_14202e644` units and the save-side counter
+  relation (runtime-only).
