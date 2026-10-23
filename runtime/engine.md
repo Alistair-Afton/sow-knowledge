@@ -120,6 +120,18 @@ a string's VA. The blob loader is the function that calls stream
 `0x28d6a00`); the `.bind` section is the Steam DRM stub. Build: final
 Steam exe, 117,732,784 bytes, dated 2021-01-06.
 
+**`.xtext` method-range tables** (Andúril, VERIFIED): beside vtables
+the section holds serialized per-class method tables — repeating
+records of `{fn_start_rva, fn_end_rva}` dword pairs (both resolve to
+`.pdata`-registered function bounds) separated by small opcode dwords
+(`0x21`, `0x10401`, `0x4204`…) and intra-table self-reference dwords
+(`0x237f144`-style). One such table at `0x14237f040` enumerates 337
+method ranges across `0x140575054–0x14058139d` — the faction-board /
+JobSetup / JobList class (it contains the timed-queue popper
+`0x1405756c8` and `FadeOut_OnEnter` `0x1405769a8`'s neighbours).
+Reading `.pdata` alone yields the full 163,575-function map for
+xref-free analysis (this is how the Andúril `fnmap` tool anchors).
+
 **Third-party anchors** (from a mod menu's log on the same build, via
 THaych; unverified here): LocalPlayer access `0x14051CAE6`, entity
 access `0x140145569`, camera `0x1406E1FA0`, health write
