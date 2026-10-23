@@ -198,7 +198,13 @@ length agreement; chunk semantics below are from the external note.
     now-dead member (INFERRED; consistent with mission
     participant memory, incl. the fatal mission itself —
     the shared instance means the killer would be *among*
-    the participants, not identified by the edge alone).
+    the participants, not identified by the edge alone —
+    and VERIFIED: dead records hold **no outgoing edges**
+    (their `-gap-` region emits only `0x400000` registry
+    refs plus one self-identity blob; there is no
+    victim→killer edge in the archive), so the
+    participant set is the only in-save attribution
+    channel).
     All 14 edges target just two dead members. Co-
     participants of one instance do **not** hold pairwise
     live→live edges to each other — the instance id rides
