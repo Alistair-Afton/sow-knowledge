@@ -165,6 +165,18 @@ length agreement; chunk semantics below are from the external note.
   words 0/8/0x200/0xc0/0x800 — same vocabulary as live
   edges) point at **119 dead members** from other entities'
   records — relationship/mission history survives death.
+  **But the archive is a rolling graveyard, not cumulative**
+  (VERIFIED — GUID join of two saves ~10 weeks apart):
+  ~118 GUIDs left the live roster between the saves and
+  **zero** of them appear in the later save's archive.
+  Dead records purge out of WHDC entirely (mechanism
+  undecoded — plausibly the same removal path as the
+  `ET_CanRemove_*` transient deletes), so
+  the ~360 archive holds only *recently* dead members —
+  live-roster diffing undercounts total deaths, and
+  killer attribution across long gaps is impossible
+  because both the dead records and the edges into them
+  are garbage-collected.
 - **Bonds are not `b`-edges**: the Bruz brothers' GUID64Bs are
   cited only by their own records + one kind-0 ref — the
   blood-brother link is marker-driven, not an `05` edge.

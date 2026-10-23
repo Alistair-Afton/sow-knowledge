@@ -288,6 +288,16 @@ Caveat: `b` is a bound-entity reference and is shared by
 sentinel/resurrection bindings, so the persistence figure is an
 upper bound — direction and scale are nonetheless clear.
 
+A second result from the same join sharpens the churn model:
+**none** of the ~118 GUIDs that left the live roster appear in the
+later save's ~360-record dead archive — dead records are purged
+from WHDC over time (mechanism undecoded), so the archive is a
+*rolling* graveyard holding
+only recently dead members. Live-roster diffing therefore
+undercounts total deaths, and killer attribution across long gaps
+is impossible — the dead records and the edges into them are
+garbage-collected.
+
 Two corollaries, both verified by the same pair:
 
 - **Board level tracks player level.** The early save's board
