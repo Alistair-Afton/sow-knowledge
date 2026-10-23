@@ -161,9 +161,10 @@ length agreement; chunk semantics below are from the external note.
   `..040000`-pattern `b` family in raw scans is a different
   small-index layout, not a GUID). Splitting on the owner
   flagword: 339 citations are sections inside the dead
-  member's own archive record; **182 external refs** (kind
-  words 0/8/0x200/0xc0/0x800 — same vocabulary as live
-  edges) point at **119 dead members** from other entities'
+  member's own archive record; **182 external refs**
+  (flagword bits 0/8/0x200/0xc0/0x800 — corrected: those
+  are owner-state bits; the edge *kind* is the low 24
+  bits, see the census below) point at **119 dead members** from other entities'
   records — relationship/mission history survives death.
   **But the archive is a rolling graveyard, not cumulative**
   (VERIFIED — GUID join of two saves ~10 weeks apart):
@@ -177,6 +178,28 @@ length agreement; chunk semantics below are from the external note.
   killer attribution across long gaps is impossible
   because both the dead records and the edges into them
   are garbage-collected.
+- **Edge kind census** (165-member endgame save, `save refs`):
+  the `a` word is `{owner-state-flagword:u32 | kind:u32}` —
+  flagword vocabulary {0, 0x8, 0xc0, 0x200, 0x800, 0x40, 0x18}
+  on the high half, kind values on the low 24 bits. 156
+  live→live + 306 live→dead edges; the dominant kinds are the
+  `0x?022a4`/`0x400080` family (generic member refs, both
+  directions). Two discriminators stand out:
+  - **`0xbb02af` edges are dead-only** (n=14) and concentrate
+    on just two dead members — `0x676ec73200` (MtnPass) cited
+    by **11 different live members**, `0x9f02ca4000` by 3.
+    One dead captain remembered by a crowd of live members
+    reads as a *victim→killer* memory edge (INFERRED — could
+    also be shared-mission roster; the shape favors killer
+    memory because the sources are otherwise unrelated
+    members across factions).
+  - **Edges are mostly cross-faction** (101 vs 20
+    same-faction on live→live) — consistent with nemesis
+    *history* (rivals met via invasions/missions) rather
+    than structural bonds like henchmen, which would be
+    same-board. A `0xc2000000`-flagword group (kind=0)
+    shows 5 members citing one shared target `0x5254997c00`
+    — the multi-member mission binding noted below.
 - **Bonds are not `b`-edges**: the Bruz brothers' GUID64Bs are
   cited only by their own records + one kind-0 ref — the
   blood-brother link is marker-driven, not an `05` edge.
