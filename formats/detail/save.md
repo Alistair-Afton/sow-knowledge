@@ -246,6 +246,20 @@ length agreement; chunk semantics below are from the external note.
     `save refs` now emits `name@faction` on both ends
     because per-faction numbering otherwise merges
     distinct members (two different `NPC_17`s etc.).
+  - **Kind `0x?02284` is a mutable role-binding edge, not
+    history** (VERIFIED by a 45-minute in-session save
+    series): the edge `{instance 0x200c862 | kind 0x2284}
+    -> NPC_4` moved from member NPC_3 to a freshly spawned
+    member when it appeared, and back to NPC_3 when that
+    member left ~13 minutes later — identical `a`, `b`, and
+    flags throughout. The edge sits on *whichever member
+    currently holds the role* toward the target in that
+    event instance; `b` equals the target member's own
+    head GUID here. Edges are only rewritten on membership
+    events — two further diffs in the same series (8 min,
+    and 5 days with no intervening play) show **zero** edge
+    churn, so the `0x?022a4` history family accrues on
+    event scale, not per-tick.
 - **Bonds are not `b`-edges**: the Bruz brothers' GUID64Bs are
   cited only by their own records + one kind-0 ref — the
   blood-brother link is marker-driven, not an `05` edge.
@@ -267,7 +281,13 @@ length agreement; chunk semantics below are from the external note.
   plaintext). `ET_CanRemove_*` members are removed wholesale
   and their singleton group prefix disappears with them —
   consistent with the prefix being a spawn-batch id
-  (INFERRED). Member bodies also serialize marker/picker
+  (INFERRED). A 45-minute in-session save series sharpens
+  this: a `Faction_desert_Real` Marauder captain (level 75,
+  a singleton record group) appears in one save and is gone
+  ~13 minutes later — no corpse, no archive entry — having
+  held a `0x2284` role edge during its stay. Mission-spawned
+  members are written into WHDC for the duration of the
+  event, then deleted (VERIFIED). Member bodies also serialize marker/picker
   vocabularies directly: `Marker_Potential_*`,
   `ClassMarker_*`, `PersonalityMarker_*`, `Marker_OrcRarity_*`,
   `Marker_StatusEffect_*`, `RoleMarker_SpecializationProb_*`,
