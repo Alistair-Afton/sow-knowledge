@@ -162,9 +162,9 @@ length agreement; chunk semantics below are from the external note.
   small-index layout, not a GUID). Splitting on the owner
   flagword: 339 citations are sections inside the dead
   member's own archive record; **182 external refs**
-  (flagword bits 0/8/0x200/0xc0/0x800 — corrected: those
-  are owner-state bits; the edge *kind* is the low 24
-  bits, see the census below) point at **119 dead members** from other entities'
+  (flagword values 0/8/0x200/0xc0/0x800 — the edge *kind*
+  is the low 24 bits of `a`, see the census below) point
+  at **119 dead members** from other entities'
   records — relationship/mission history survives death.
   **But the archive is a rolling graveyard, not cumulative**
   (VERIFIED — GUID join of two saves ~10 weeks apart):
@@ -179,20 +179,27 @@ length agreement; chunk semantics below are from the external note.
   because both the dead records and the edges into them
   are garbage-collected.
 - **Edge kind census** (165-member endgame save, `save refs`):
-  the `a` word is `{owner-state-flagword:u32 | kind:u32}` —
-  flagword vocabulary {0, 0x8, 0xc0, 0x200, 0x800, 0x40, 0x18}
-  on the high half, kind values on the low 24 bits. 156
+  the `a` word is `{instance-id:u32 | kind:u32}` — the
+  high word is 0 for plain refs or a shared event-instance
+  id (bits 0/8/0xc0/0x200/0x800 seen as residual values on
+  some), kind values on the low 24 bits. 156
   live→live + 306 live→dead edges; the dominant kinds are the
   `0x?022a4`/`0x400080` family (generic member refs, both
   directions). Two discriminators stand out:
-  - **`0xbb02af` edges are dead-only** (n=14) and concentrate
-    on just two dead members — `0x676ec73200` (MtnPass) cited
-    by **11 different live members**, `0x9f02ca4000` by 3.
-    One dead captain remembered by a crowd of live members
-    reads as a *victim→killer* memory edge (INFERRED — could
-    also be shared-mission roster; the shape favors killer
-    memory because the sources are otherwise unrelated
-    members across factions).
+  - **`0xbb02af` edges are dead-only** (n=14) and their
+    flagword is a **shared event-instance id** (VERIFIED by
+    collision): `0x581030eb` appears on NPC_12, NPC_13 *and*
+    NPC_14 all citing the same dead member — three live
+    members + the dead one = one 4-participant event;
+    `0x123747b9` links NPC_13+NPC_3+the same dead member;
+    two further instance ids are singletons. So
+    `0xbb02af` = *dead-participant event edge* — a member's
+    record of an event instance whose roster included a
+    now-dead member (INFERRED; consistent with mission
+    participant memory, incl. the fatal mission itself —
+    the shared instance means the killer would be *among*
+    the participants, not identified by the edge alone).
+    All 14 edges target just two dead members.
   - **Edges are mostly cross-faction** (101 vs 20
     same-faction on live→live) — consistent with nemesis
     *history* (rivals met via invasions/missions) rather
