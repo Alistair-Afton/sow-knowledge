@@ -324,11 +324,35 @@ length agreement; chunk semantics below are from the external note.
   team's slot assignments, `0xffffffff`-padded. Referenced
   indices exceed the live token set (dead/archived members) —
   the graveyard indices remain addressable.
-- **One FORT field increments across saves** (5-slot
-  cross-save diff): a u32 in the MinasIthil/island `FORT_0`
-  steps 24950 → 25050 in timestamp order with non-uniform
-  increments while all other FORT/NPC fields are static —
-  a game-time tick or accumulator (INFERRED).
+- **One FORT field increments across saves** (now measured
+  on the 45-minute in-session series + a 5-day gap): a u32
+  in the MinasIthil/island `FORT_0` record tail steps
+  **24950 → 24992 → 24998 → 25050** — +42 over 37 min of
+  play, +6 over 8 min, +52 over a 5-day wall-clock gap.
+  The counter therefore advances **only during play** at
+  ~1.1 units/minute — a game-session time accumulator, and
+  the leading candidate for the real-time driver behind the
+  nemesis lifecycle clock (INFERRED unit — plausible
+  game-minutes or a frame-rate-normalized tick; ~47 min of
+  play elapsed between the 5-day pair). An identical delta
+  appears on a paired u32 field (+42/+6 in lockstep — an
+  echo/checksum or second accumulator).
+  Adjacent to it sit the record's per-entry
+  `{id, tag 0x04, revision}` counters — each bumped +0x100
+  (u24 low byte) when that entry's data is rewritten —
+  **records carry a write-revision index** (VERIFIED by the
+  byte-diff), which is what made the transient member's
+  appearance/removal visible as discrete +1 bumps on ~6
+  member records + 8 index fields.
+- **Member records gain `04 <seq:u32>` + `0f 26 <38-char
+  member-token>` association entries at event scale**
+  (VERIFIED by the same byte-diff): over 37 min, NPC_16
+  gained seq `0x14c` → group `8ebe0957…` and NPC_2 gained
+  seq `0xf9` → group `5b20bf89…`, written into previously
+  `0xffffffff` slots. These are *not* `03` event-log slots
+  (the log census is unchanged) — a second, token-string
+  association layer, plausibly group/roster membership
+  entries (INFERRED).
 - 4CC scans produce false positives inside payload data — `FYJB`,
   `TZEB`, `JNXO`, `LODL`, `LODS` appear inside slot-1 WHDC/global
   regions with garbage version/size fields; validate by
