@@ -494,7 +494,23 @@ Relationship persistence — verified negative results:
     00 <u32 param=0>        followed by a (zero) param field
 04 <count> + 00 <name>…   trait names (Traits_*, Orc_<personality>,
                           sometimes led by Default_Act*)
-08 <u32> ×9               stat array
+08 <u32> ×9               stat array — width varies by member
+                          (observed 9–19 `08` fields before the
+                          `03` log; trailing `08`s are the later
+                          Tag_* count / tail fields). Census of a
+                          live board (54 members sharing the dominant
+                          15-wide shape): `c0`/`c6` are two
+                          near-identical counters (r=0.999, member-
+                          unique deltas 14–166, correlated with
+                          event-log length r≈0.44 — INFERRED
+                          spawn/last-activity ticks); `c7`/`c8`
+                          range 0–100 and correlate with the event
+                           count (r≈0.65) and head power — INFERRED
+                          XP/interaction-score pair; `c9`–`c13` are
+                          five binary flags (1/2) and `c14` a constant
+                          1. None of the nine fields moved between
+                          two saves 5 days apart — they are written
+                          at creation/event time, not per-tick.
 03 <u24 cat> <u32 hash>   **event log — the member's nemesis memory**:
                           `cat` is a **shared, sequenced event-instance
                           id**, not a category — one gameplay event
