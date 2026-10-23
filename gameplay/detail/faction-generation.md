@@ -70,6 +70,18 @@ mission against the seated holder.
   `SimEventAbortCondition` (3) names real abort cases;
   `SimEventGenerationSetup/Type/TypeWeight` (18/68/4) hold
   spawn-selection weights.
+- **Member-lethality is readable from the participant cast**
+  (VERIFIED — `SimEventParticipant.JobRecord`): events that kill
+  a *board member* cast an `Other` participant whose `JobRecord`
+  is a `PS_Other_Cap_*` victim role — `Execution2` has four
+  participant slots and `Execution2_02.JobRecord =
+  PS_Other_Cap_ExecutionVictim`. Single-subject events are
+  activity against off-board victims: `Execution1` (the Hunting
+  generation list's execution) has one participant,
+  `PS_Subject_Cap_Executioner1` — the captain performs an
+  execution, no faction member dies. So event-name prefixes
+  alone do not predict board lethality; the participant list
+  does.
 - `SimEventChance`/`SimEventParticipant` bind to events **by name** —
   19 of 34 chance profiles and 38 of 572 participant records share a
   SimEvent name (the rest are generic profiles like
