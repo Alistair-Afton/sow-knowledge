@@ -212,6 +212,16 @@ length agreement; chunk semantics below are from the external note.
     *history* (rivals met via invasions/missions) rather
     than structural bonds like henchmen, which would be
     same-board.
+  - **`0xc0400000` edges are the death registry**
+    (VERIFIED shape, Aug-7 save): emitted from `-gap-`
+    regions (non-member archive bookkeeping) and from two
+    anchor member records (46 and 54 refs each), the
+    targets enumerate the whole dead roster
+    (`dead:Faction_*` members + a few live). This is the
+    archive's index layer, not personal nemesis history —
+    it dominates an early-campaign save (115 of 168
+    edges) and shrinks to a minority later as real
+    member-to-member history (`0x?022a4` family) accrues.
   - **Kind=0 group edges**: 5 members cite one shared
     target (`0x5254997c00`, a member of a *different*
     faction than most citers) all carrying the same
