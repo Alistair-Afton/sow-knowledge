@@ -415,7 +415,11 @@ All addresses are the final Steam build.
 - `SimEventChance` 8-float field semantics beyond the win-chance cell.
 - `SimEventGenerationType` cells 0–2 units (variable-length; undecoded).
 - SimEvent→SimEvent ref slot semantics (not proven success/fail chains).
-- Per-job weight source semantics (which authored cell the
-  name-resolved read lands on per record shape).
+- Per-job weights on *quest* `Quest/Jobs/List` lists live in the
+  `JobWeightPair` rows. On generation (`SimEventGenerationType`)
+  lists the iterated `SimEvents` records carry no f32 cell, so the
+  typed weight getter (`FUN_1405766c8` → `FUN_14115b43c`) returns
+  the default for every job — **generation picks are uniform
+  draws among the filtered candidates** (VERIFIED).
 - Tick rate / `DAT_14202e644` units and the save-side counter
   relation (runtime-only).
