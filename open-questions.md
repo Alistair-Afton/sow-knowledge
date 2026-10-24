@@ -83,6 +83,20 @@ kept.
   transition mechanics, light-probe usage.
 - **Shaders:** real alpha-test/blend states (only name heuristics
   exist); 4-layer blend formula; `k_fSkyLerp` sky patch maps.
+- **Nemesis lifecycle clock:** the SimEvent pipeline is statically
+  mapped (region-enter evaluation rounds → `+0x1c8` wake queue →
+  kind-0xC dispatch → JobSetup/JobList → u32 fire-time stamps on
+  `ev+0x90`; see `gameplay/detail/faction-generation.md`), but the
+  tick's real-time rate and the `DAT_14202e644` second scale are
+  runtime-only values; the FORT_0 save tail counter (~1.1 units/min
+  of play) is the suspected save-side mirror — needs a live probe
+  or a save pair over known played time.
+- **WHDC edge-kind names:** the `05`-blob edge vocabulary is
+  structurally decoded (`{instance-id|kind}`; `0` bonds, `0x2284`
+  mutable role bindings, `0xbb02af` dead-participant events,
+  `0x400000` registry sources — see `formats/detail/save.md`), but
+  per-kind event names inside the accrued-history family need a
+  labeled-event capture (make a known kill → save → diff).
 
 ## Engine
 
