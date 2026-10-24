@@ -393,6 +393,19 @@ All addresses are the final Steam build.
   against the `g_world` (`0x142702598`) `+8` sub-manager tick
   (`+0x18`). The second scale and the tick rate are runtime-only
   values; authored delays are most plausibly minutes→seconds.
+- **Fire-time consumption** (VERIFIED): each SimEvent instance
+  polls its own stamp on update — `0x140fe1d3a` reads `inst+0x90`,
+  skips when zero (**untimed/immediate**), compares
+  `now = [g_world+8]+0x18`, and fires only when `now > stamp`
+  (a `+0x48` record flag-bit test gates the final fire). The
+  queue/wake tokens decide *which* instances update; the stamps
+  decide *when* they fire.
+- **Second board lane** (VERIFIED): kind-12/sub-1 (`0x1407d3dd4`)
+  sweeps `board+0x2f8`, a u32-key reconcile list — each key finds a
+  child object (`+0x34` match, global intrusive list) and
+  validity-checks it (`FUN_14017a014`), re-armed on a separate dt
+  global `0x14202ea30`. Periodic live-reference pruning, not the
+  delayed-event lane.
 - **`board+0x260` selector object** holds the active
   JobSetup/JobList pair (accessors `FUN_1405761b8`/`FUN_140576228`).
 - **Job pick math** (`FUN_1405763c4`, "AddJobForMemberFromList"):
