@@ -131,6 +131,11 @@ JobSetup / JobList class (it contains the timed-queue popper
 `0x1405756c8` and `FadeOut_OnEnter` `0x1405769a8`'s neighbours).
 Reading `.pdata` alone yields the full 163,575-function map for
 xref-free analysis (this is how the Andúril `fnmap` tool anchors).
+A second table flavor also exists: `{method_ptr, desc_backref}`
+pairs pointing into a descriptor record (e.g. `0x14257a7fc` →
+`{0x140fe1d3a, 0x14257a7d8}`) — the same registry bound via
+back-referenced descriptors rather than inline `{start,end}`.
+Both flavors appear in `.xtext` alongside ordinary vtables.
 
 **Third-party anchors** (from a mod menu's log on the same build, via
 THaych; unverified here): LocalPlayer access `0x14051CAE6`, entity
