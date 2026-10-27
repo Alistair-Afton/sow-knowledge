@@ -176,6 +176,11 @@ overlaps our own parse the two agree.
   `type`'s high byte is a **constant 0x08 tag** across all 278,022
   records (full-emit census, VERIFIED) — a fixed marker, not a
   per-record field; only the low 24 bits carry layout meaning.
+- **`hdr` hi16 = `{attrCount, layoutLo}`** (VERIFIED census, 5,599
+  distinct values). `hi16 == 0` marks **schema-less marker records**
+  (8,223 of them — tag lists, `FortAssault/Stage` names,
+  `TypeOfAttack` predicates, `Combat/CharacterType`): zero cells,
+  pure named markers that exist only as reference targets.
 - **Named records in every category are sorted by `name_hash(name)`**
   and the game **binary-searches** them when resolving references.
   A record appended unsorted is silently invisible to lookups —
