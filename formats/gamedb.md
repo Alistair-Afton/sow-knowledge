@@ -173,6 +173,9 @@ overlaps our own parse the two agree.
   records (`{nameOff, hdr, type, values}`).
   `hdr = u16 valueCount | u8 attrCount << 16 | u8 layoutLo << 24`;
   layout index = `(type & 0xFFFFFF) << 8 | layoutLo`.
+  `type`'s high byte is a **constant 0x08 tag** across all 278,022
+  records (full-emit census, VERIFIED) — a fixed marker, not a
+  per-record field; only the low 24 bits carry layout meaning.
 - **Named records in every category are sorted by `name_hash(name)`**
   and the game **binary-searches** them when resolving references.
   A record appended unsorted is silently invisible to lookups —
